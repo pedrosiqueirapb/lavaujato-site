@@ -1,6 +1,6 @@
 'use client';
 
-import { Tag, Clock } from 'lucide-react';
+import { Tag } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { PromotionItem, SiteConfig } from '@/lib/types';
 
@@ -48,12 +48,6 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
                     <span className="text-xs font-black bg-amber-100 text-amber-800 px-3 py-1 rounded-full uppercase tracking-wider">
                       {promo.badge || 'Desconto Ativo'}
                     </span>
-                    {promo.validUntil && (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-900/70">
-                        <Clock className="w-3.5 h-3.5" />
-                        Válido até {promo.validUntil}
-                      </span>
-                    )}
                   </div>
 
                   <h3 className="text-xl font-black text-brand-navy">{promo.title}</h3>

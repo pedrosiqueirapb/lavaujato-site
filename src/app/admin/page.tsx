@@ -1145,7 +1145,6 @@ export default function AdminDashboardPage() {
                     type="password"
                     value={config.asaasApiKey}
                     onChange={(e) => setConfig({ ...config, asaasApiKey: e.target.value })}
-                    placeholder="$aact_YTU5YTE0M2M6..."
                     className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
                   />
                 </div>
@@ -1232,7 +1231,7 @@ export default function AdminDashboardPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label>Valor (R$) *</label>
-                <input type="number" step="0.01" required value={newCharge.value} onChange={(e) => setNewCharge({ ...newCharge, value: e.target.value })} placeholder="199.00" className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold" />
+                <input type="number" step="0.01" required value={newCharge.value} onChange={(e) => setNewCharge({ ...newCharge, value: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold" />
               </div>
               <div className="space-y-1">
                 <label>Forma de pagamento *</label>
@@ -1255,7 +1254,7 @@ export default function AdminDashboardPage() {
 
             <div className="space-y-1">
               <label>Descrição para a fatura</label>
-              <input type="text" value={newCharge.description} onChange={(e) => setNewCharge({ ...newCharge, description: e.target.value })} placeholder="Assinatura Mensal Banho e Tosa" className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+              <input type="text" value={newCharge.description} onChange={(e) => setNewCharge({ ...newCharge, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="pt-4 flex gap-3">
@@ -1289,26 +1288,36 @@ export default function AdminDashboardPage() {
               </div>
               <div className="space-y-1">
                 <label>Duração estimada</label>
-                <input type="text" placeholder="60 min" value={editingService.duration || ''} onChange={(e) => setEditingService({ ...editingService, duration: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+                <input type="text" value={editingService.duration || ''} onChange={(e) => setEditingService({ ...editingService, duration: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
             </div>
 
             {/* Upload Imagem do Serviço */}
             <div className="space-y-1">
               <label>Anexar imagem do serviço</label>
-              <div className="border-2 border-dashed border-slate-700 hover:border-purple-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+              <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
+                editingService.image ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-purple-500'
+              }`}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, (url) => setEditingService({ ...editingService, image: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
-                  <Upload className="w-6 h-6 text-purple-400" />
+                <div className="flex flex-col items-center justify-center gap-1.5 py-2">
                   {editingService.image ? (
-                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <div className="flex items-center gap-2 text-emerald-400 font-extrabold text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        <span>✓ Imagem anexada com sucesso!</span>
+                      </div>
+                      <span className="text-xs font-medium text-slate-400">Clique para selecionar outra imagem do seu dispositivo</span>
+                    </>
                   ) : (
-                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <Upload className="w-6 h-6 text-purple-400" />
+                      <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    </>
                   )}
                 </div>
               </div>
@@ -1392,15 +1401,9 @@ export default function AdminDashboardPage() {
               <input type="text" value={editingPromo.description || ''} onChange={(e) => setEditingPromo({ ...editingPromo, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label>Texto do desconto (ex: 15% OFF) *</label>
-                <input type="text" required value={editingPromo.discountText || ''} onChange={(e) => setEditingPromo({ ...editingPromo, discountText: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
-              </div>
-              <div className="space-y-1">
-                <label>Válido até</label>
-                <input type="text" placeholder="30/10/2026" value={editingPromo.validUntil || ''} onChange={(e) => setEditingPromo({ ...editingPromo, validUntil: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
-              </div>
+            <div className="space-y-1">
+              <label>Texto do desconto *</label>
+              <input type="text" required value={editingPromo.discountText || ''} onChange={(e) => setEditingPromo({ ...editingPromo, discountText: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="pt-4 flex gap-3">
@@ -1429,7 +1432,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="space-y-1">
                 <label>Categoria</label>
-                <input type="text" placeholder="Higiene" value={editingProduct.category || ''} onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+                <input type="text" value={editingProduct.category || ''} onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
             </div>
 
@@ -1441,19 +1444,29 @@ export default function AdminDashboardPage() {
             {/* Upload Imagem do Produto */}
             <div className="space-y-1">
               <label>Anexar imagem do produto</label>
-              <div className="border-2 border-dashed border-slate-700 hover:border-teal-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+              <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
+                editingProduct.photoUrl ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-teal-500'
+              }`}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, (url) => setEditingProduct({ ...editingProduct, photoUrl: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
-                  <Upload className="w-6 h-6 text-teal-400" />
+                <div className="flex flex-col items-center justify-center gap-1.5 py-2">
                   {editingProduct.photoUrl ? (
-                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <div className="flex items-center gap-2 text-emerald-400 font-extrabold text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        <span>✓ Imagem anexada com sucesso!</span>
+                      </div>
+                      <span className="text-xs font-medium text-slate-400">Clique para selecionar outra imagem do seu dispositivo</span>
+                    </>
                   ) : (
-                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <Upload className="w-6 h-6 text-teal-400" />
+                      <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    </>
                   )}
                 </div>
               </div>
@@ -1487,7 +1500,7 @@ export default function AdminDashboardPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label>Serviço realizado *</label>
-                <input type="text" required placeholder="Banho VIP + Tosa Tesoura" value={editingPost.serviceDone || ''} onChange={(e) => setEditingPost({ ...editingPost, serviceDone: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+                <input type="text" required value={editingPost.serviceDone || ''} onChange={(e) => setEditingPost({ ...editingPost, serviceDone: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
                 <label>Data do atendimento *</label>
@@ -1503,19 +1516,29 @@ export default function AdminDashboardPage() {
             {/* Upload Imagem do Pet */}
             <div className="space-y-1">
               <label>Anexar foto do atendimento</label>
-              <div className="border-2 border-dashed border-slate-700 hover:border-rose-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+              <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
+                editingPost.photoUrl ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-rose-500'
+              }`}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, (url) => setEditingPost({ ...editingPost, photoUrl: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
-                  <Upload className="w-6 h-6 text-rose-400" />
+                <div className="flex flex-col items-center justify-center gap-1.5 py-2">
                   {editingPost.photoUrl ? (
-                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <div className="flex items-center gap-2 text-emerald-400 font-extrabold text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        <span>✓ Imagem anexada com sucesso!</span>
+                      </div>
+                      <span className="text-xs font-medium text-slate-400">Clique para selecionar outra imagem do seu dispositivo</span>
+                    </>
                   ) : (
-                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <Upload className="w-6 h-6 text-rose-400" />
+                      <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    </>
                   )}
                 </div>
               </div>
@@ -1543,19 +1566,29 @@ export default function AdminDashboardPage() {
             {/* Upload por anexo do dispositivo */}
             <div className="space-y-1">
               <label>Anexar foto do espaço *</label>
-              <div className="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+              <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
+                editingPhoto.url ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-indigo-500'
+              }`}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleFileUpload(e, (url) => setEditingPhoto({ ...editingPhoto, url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
-                  <Upload className="w-6 h-6 text-indigo-400" />
+                <div className="flex flex-col items-center justify-center gap-1.5 py-2">
                   {editingPhoto.url ? (
-                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <div className="flex items-center gap-2 text-emerald-400 font-extrabold text-sm">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        <span>✓ Imagem anexada com sucesso!</span>
+                      </div>
+                      <span className="text-xs font-medium text-slate-400">Clique para selecionar outra imagem do seu dispositivo</span>
+                    </>
                   ) : (
-                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    <>
+                      <Upload className="w-6 h-6 text-indigo-400" />
+                      <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                    </>
                   )}
                 </div>
               </div>

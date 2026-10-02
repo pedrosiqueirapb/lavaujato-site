@@ -106,8 +106,7 @@ export default function AdminLoginPage() {
                   disabled={loading}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-white/10 border border-white/15 text-white placeholder-white/30 text-sm font-medium focus:outline-none focus:border-brand-sky focus:ring-1 focus:ring-brand-sky transition-all"
+                  className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-white/10 border border-white/15 text-white text-sm font-medium focus:outline-none focus:border-brand-sky focus:ring-1 focus:ring-brand-sky transition-all"
                 />
               </div>
             </div>
@@ -129,8 +128,7 @@ export default function AdminLoginPage() {
                     maxLength={6}
                     value={twoFactorCode}
                     onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
-                    placeholder="123456"
-                    className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/50 text-white placeholder-white/30 text-center tracking-widest font-mono text-lg focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all"
+                    className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/50 text-white text-center tracking-widest font-mono text-lg focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all"
                   />
                 </div>
                 <p className="text-[11px] text-white/60 text-center font-medium">
