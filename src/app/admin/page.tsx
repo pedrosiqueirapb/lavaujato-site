@@ -124,7 +124,10 @@ export default function AdminDashboardPage() {
       }
       const data = await res.json();
       setConfig(data.config);
-      setClients(data.clients || []);
+      const sortedClients = (data.clients || []).sort((a: Client, b: Client) =>
+        a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' })
+      );
+      setClients(sortedClients);
       setServices(data.services || []);
       setPlans(data.plans || []);
       setPhotos(data.workspacePhotos || []);

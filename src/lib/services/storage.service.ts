@@ -119,7 +119,8 @@ export class StorageService {
         phone: decryptPII(c.phone),
         email: decryptPII(c.email),
         address: decryptPII(c.address),
-      }));
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
   }
 
   static getClientById(id: string): Client | null {
