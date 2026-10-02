@@ -949,7 +949,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Fotos do espaço de trabalho</h1>
-                <p className="text-xs text-slate-400 font-medium">Adicione e remova imagens da seção "Nosso espaço".</p>
+                <p className="text-xs text-slate-400 font-medium">Adicione, edite e remova imagens da seção "Nosso espaço".</p>
               </div>
               <button
                 onClick={() => { setShowWorkspaceModal(true); setEditingPhoto({ order: photos.length + 1 }); }}
@@ -967,8 +967,21 @@ export default function AdminDashboardPage() {
                   </div>
                   <h3 className="text-sm font-bold text-white">{photo.title}</h3>
                   <p className="text-xs text-slate-400">{photo.description}</p>
-                  <div className="pt-2 flex justify-end">
-                    <button onClick={() => handleDeleteWorkspace(photo.id)} className="text-xs text-rose-400 hover:underline font-bold">Excluir foto</button>
+                  <div className="pt-2 flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => { setEditingPhoto(photo); setShowWorkspaceModal(true); }}
+                      className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white flex items-center gap-1 text-xs font-bold"
+                      title="Editar foto do espaço"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" /> Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteWorkspace(photo.id)}
+                      className="p-1.5 bg-rose-500/10 text-rose-400 rounded hover:bg-rose-500/20 flex items-center gap-1 text-xs font-bold"
+                      title="Excluir foto"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" /> Excluir
+                    </button>
                   </div>
                 </div>
               ))}
@@ -1280,9 +1293,9 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            {/* Upload Imagem do Computador */}
+            {/* Upload Imagem do Serviço */}
             <div className="space-y-1">
-              <label>Anexar imagem do seu computador</label>
+              <label>Anexar imagem do serviço</label>
               <div className="border-2 border-dashed border-slate-700 hover:border-purple-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
                 <input
                   type="file"
@@ -1290,19 +1303,14 @@ export default function AdminDashboardPage() {
                   onChange={(e) => handleFileUpload(e, (url) => setEditingService({ ...editingService, image: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                {editingService.image ? (
-                  <div className="space-y-2">
-                    <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
-                      <Image src={editingService.image} alt="Preview" fill className="object-cover" />
-                    </div>
-                    <span className="text-xs text-emerald-400 font-bold block">✓ Imagem anexada! Clique para alterar.</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-1.5 py-3">
-                    <Upload className="w-6 h-6 text-purple-400" />
-                    <span className="text-xs font-bold text-slate-300">Clique para selecionar foto do computador</span>
-                  </div>
-                )}
+                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                  <Upload className="w-6 h-6 text-purple-400" />
+                  {editingService.image ? (
+                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  ) : (
+                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1440,19 +1448,14 @@ export default function AdminDashboardPage() {
                   onChange={(e) => handleFileUpload(e, (url) => setEditingProduct({ ...editingProduct, photoUrl: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                {editingProduct.photoUrl ? (
-                  <div className="space-y-2">
-                    <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
-                      <Image src={editingProduct.photoUrl} alt="Preview" fill className="object-contain" />
-                    </div>
-                    <span className="text-xs text-emerald-400 font-bold block">✓ Foto anexada! Clique para trocar.</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-1.5 py-3">
-                    <Upload className="w-6 h-6 text-teal-400" />
-                    <span className="text-xs font-bold text-slate-300">Clique para selecionar imagem do produto</span>
-                  </div>
-                )}
+                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                  <Upload className="w-6 h-6 text-teal-400" />
+                  {editingProduct.photoUrl ? (
+                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  ) : (
+                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1481,9 +1484,15 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label>Serviço realizado *</label>
-              <input type="text" required placeholder="Banho VIP + Tosa Tesoura" value={editingPost.serviceDone || ''} onChange={(e) => setEditingPost({ ...editingPost, serviceDone: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label>Serviço realizado *</label>
+                <input type="text" required placeholder="Banho VIP + Tosa Tesoura" value={editingPost.serviceDone || ''} onChange={(e) => setEditingPost({ ...editingPost, serviceDone: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+              </div>
+              <div className="space-y-1">
+                <label>Data do atendimento *</label>
+                <input type="date" required value={editingPost.date || new Date().toISOString().split('T')[0]} onChange={(e) => setEditingPost({ ...editingPost, date: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -1501,19 +1510,14 @@ export default function AdminDashboardPage() {
                   onChange={(e) => handleFileUpload(e, (url) => setEditingPost({ ...editingPost, photoUrl: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                {editingPost.photoUrl ? (
-                  <div className="space-y-2">
-                    <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
-                      <Image src={editingPost.photoUrl} alt="Preview" fill className="object-cover" />
-                    </div>
-                    <span className="text-xs text-emerald-400 font-bold block">✓ Foto anexada! Clique para trocar.</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-1.5 py-3">
-                    <Upload className="w-6 h-6 text-rose-400" />
-                    <span className="text-xs font-bold text-slate-300">Clique para anexar foto do pet do seu computador</span>
-                  </div>
-                )}
+                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                  <Upload className="w-6 h-6 text-rose-400" />
+                  {editingPost.photoUrl ? (
+                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  ) : (
+                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1529,16 +1533,16 @@ export default function AdminDashboardPage() {
       {showWorkspaceModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveWorkspace} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Adicionar foto do espaço</h3>
+            <h3 className="text-lg font-extrabold text-white">Adicionar ou editar foto do espaço</h3>
             
             <div className="space-y-1">
               <label>Título da foto *</label>
               <input type="text" required value={editingPhoto.title || ''} onChange={(e) => setEditingPhoto({ ...editingPhoto, title: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
-            {/* Upload por anexo do computador */}
+            {/* Upload por anexo do dispositivo */}
             <div className="space-y-1">
-              <label>Anexar imagem do seu computador *</label>
+              <label>Anexar foto do espaço *</label>
               <div className="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
                 <input
                   type="file"
@@ -1546,20 +1550,14 @@ export default function AdminDashboardPage() {
                   onChange={(e) => handleFileUpload(e, (url) => setEditingPhoto({ ...editingPhoto, url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                {editingPhoto.url ? (
-                  <div className="space-y-2">
-                    <div className="relative w-full h-32 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
-                      <Image src={editingPhoto.url} alt="Preview" fill className="object-cover" />
-                    </div>
-                    <span className="text-xs text-emerald-400 font-bold block">✓ Imagem carregada! Clique para trocar.</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-2 py-4">
-                    <Upload className="w-8 h-8 text-indigo-400" />
-                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu computador</span>
-                    <span className="text-[10px] text-slate-500">PNG, JPG ou JPEG</span>
-                  </div>
-                )}
+                <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                  <Upload className="w-6 h-6 text-indigo-400" />
+                  {editingPhoto.url ? (
+                    <span className="text-xs font-bold text-emerald-400">✓ Foto selecionada. Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  ) : (
+                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu dispositivo</span>
+                  )}
+                </div>
               </div>
             </div>
 
