@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { ShoppingBag, MessageCircle } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { ProductItem, SiteConfig } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils/formatters';
 
@@ -79,7 +80,7 @@ export function ProductsSection({ products, config }: ProductsSectionProps) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all"
                   >
-                    <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                    <WhatsAppIcon className="w-3.5 h-3.5 fill-white shrink-0" />
                     Comprar
                   </a>
                 </div>

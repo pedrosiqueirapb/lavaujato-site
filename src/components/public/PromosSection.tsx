@@ -1,6 +1,7 @@
 'use client';
 
-import { Sparkles, Tag, MessageCircle, Clock } from 'lucide-react';
+import { Tag, Clock } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { PromotionItem, SiteConfig } from '@/lib/types';
 
 interface PromosSectionProps {
@@ -72,7 +73,7 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
                     rel="noopener noreferrer"
                     className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition-all"
                   >
-                    <MessageCircle className="w-4 h-4 fill-current" />
+                    <WhatsAppIcon className="w-4 h-4 fill-white shrink-0" />
                     Garantir esta promoção no WhatsApp
                   </a>
                 </div>

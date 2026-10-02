@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { Clock, Sparkles, CheckCircle2, PhoneCall } from 'lucide-react';
+import { Clock, Sparkles, CheckCircle2 } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { ServiceItem, SiteConfig } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils/formatters';
 
@@ -98,7 +99,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition-all hover:scale-105"
                   >
-                    <PhoneCall className="w-4 h-4 fill-current stroke-[2.5]" />
+                    <WhatsAppIcon className="w-4 h-4 fill-white shrink-0" />
                     Agendar
                   </a>
                 </div>

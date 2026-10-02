@@ -1,6 +1,7 @@
 'use client';
 
-import { Check, Star, MessageCircle, Sparkles } from 'lucide-react';
+import { Check, Star, Sparkles } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { SubscriptionPlan, SiteConfig } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils/formatters';
 
@@ -105,7 +106,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
                         : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
                     }`}
                   >
-                    <MessageCircle className="w-4 h-4 fill-current" />
+                    <WhatsAppIcon className="w-4 h-4 fill-white shrink-0" />
                     {plan.buttonText || 'Contratar plano'}
                   </a>
                 </div>
