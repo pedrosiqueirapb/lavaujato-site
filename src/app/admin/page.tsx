@@ -967,20 +967,20 @@ export default function AdminDashboardPage() {
                   </div>
                   <h3 className="text-sm font-bold text-white">{photo.title}</h3>
                   <p className="text-xs text-slate-400">{photo.description}</p>
-                  <div className="pt-2 flex items-center justify-end gap-2">
+                  <div className="pt-2 flex justify-end gap-2">
                     <button
                       onClick={() => { setEditingPhoto(photo); setShowWorkspaceModal(true); }}
-                      className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white flex items-center gap-1 text-xs font-bold"
-                      title="Editar foto do espaço"
+                      className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white"
+                      title="Editar foto"
                     >
-                      <Edit3 className="w-3.5 h-3.5" /> Editar
+                      <Edit3 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeleteWorkspace(photo.id)}
-                      className="p-1.5 bg-rose-500/10 text-rose-400 rounded hover:bg-rose-500/20 flex items-center gap-1 text-xs font-bold"
+                      className="p-1.5 bg-rose-500/10 text-rose-400 rounded hover:bg-rose-500/20"
                       title="Excluir foto"
                     >
-                      <Trash2 className="w-3.5 h-3.5" /> Excluir
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
