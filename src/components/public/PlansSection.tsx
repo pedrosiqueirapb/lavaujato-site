@@ -1,6 +1,7 @@
 'use client';
 
-import { Check, Star, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Check, Star, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { SubscriptionPlan, SiteConfig } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils/formatters';
@@ -11,9 +12,22 @@ interface PlansSectionProps {
 }
 
 export function PlansSection({ plans, config }: PlansSectionProps) {
+  const [visibleCount, setVisibleCount] = useState(2);
   const whatsappClean = config.phone.replace(/\D/g, '');
 
   if (plans.length === 0) return null;
+
+  const displayedPlans = plans.slice(0, visibleCount);
+  const hasMore = plans.length > visibleCount;
+  const isExpanded = visibleCount > 2;
+
+  const handleVerMais = () => {
+    setVisibleCount(prev => prev + 2);
+  };
+
+  const handleVerMenos = () => {
+    setVisibleCount(2);
+  };
 
   return (
     <section id="planos" className="py-24 bg-brand-navy text-white relative overflow-hidden">
@@ -40,7 +54,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
 
         {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
-          {plans.map((plan) => {
+          {displayedPlans.map((plan) => {
             const planWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Tenho%20interesse%20em%20contratar%20o%20"${encodeURIComponent(plan.name)}"`;
 
             return (
@@ -115,6 +129,30 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
             );
           })}
         </div>
+
+        {/* Botões Ver mais / Ver menos */}
+        {(hasMore || isExpanded) && (
+          <div className="mt-12 flex items-center justify-center gap-4 relative z-10">
+            {hasMore && (
+              <button
+                onClick={handleVerMais}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-caramel hover:bg-amber-600 text-white font-extrabold text-sm shadow-lg transition-all hover:scale-105 active:scale-95"
+              >
+                <ChevronDown className="w-4 h-4" />
+                Ver mais planos
+              </button>
+            )}
+            {isExpanded && (
+              <button
+                onClick={handleVerMenos}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-extrabold text-sm transition-all hover:scale-105 active:scale-95"
+              >
+                <ChevronUp className="w-4 h-4" />
+                Ver menos
+              </button>
+            )}
+          </div>
+        )}
 
       </div>
     </section>

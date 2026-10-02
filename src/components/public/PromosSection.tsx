@@ -1,6 +1,7 @@
 'use client';
 
-import { Tag } from 'lucide-react';
+import { useState } from 'react';
+import { Tag, ChevronDown, ChevronUp } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { PromotionItem, SiteConfig } from '@/lib/types';
 
@@ -10,10 +11,23 @@ interface PromosSectionProps {
 }
 
 export function PromosSection({ promotions, config }: PromosSectionProps) {
+  const [visibleCount, setVisibleCount] = useState(2);
   const activePromos = promotions.filter(p => p.isActive);
   const whatsappClean = config.phone.replace(/\D/g, '');
 
   if (activePromos.length === 0) return null;
+
+  const displayedPromos = activePromos.slice(0, visibleCount);
+  const hasMore = activePromos.length > visibleCount;
+  const isExpanded = visibleCount > 2;
+
+  const handleVerMais = () => {
+    setVisibleCount(prev => prev + 2);
+  };
+
+  const handleVerMenos = () => {
+    setVisibleCount(2);
+  };
 
   return (
     <section id="promocoes" className="py-20 bg-gradient-to-r from-amber-500/10 via-brand-sky/30 to-amber-500/10 border-y border-amber-500/20 relative overflow-hidden">
@@ -35,7 +49,7 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
 
         {/* Promos Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {activePromos.map((promo) => {
+          {displayedPromos.map((promo) => {
             const promoWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Quero%20aproveitar%20a%20promoção%20"${encodeURIComponent(promo.title)}"`;
 
             return (
@@ -75,6 +89,30 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
             );
           })}
         </div>
+
+        {/* Botões Ver mais / Ver menos */}
+        {(hasMore || isExpanded) && (
+          <div className="mt-12 flex items-center justify-center gap-4">
+            {hasMore && (
+              <button
+                onClick={handleVerMais}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm shadow-md transition-all hover:scale-105 active:scale-95"
+              >
+                <ChevronDown className="w-4 h-4" />
+                Ver mais promoções
+              </button>
+            )}
+            {isExpanded && (
+              <button
+                onClick={handleVerMenos}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-200 hover:bg-slate-300 text-brand-navy font-extrabold text-sm transition-all hover:scale-105 active:scale-95"
+              >
+                <ChevronUp className="w-4 h-4" />
+                Ver menos
+              </button>
+            )}
+          </div>
+        )}
 
       </div>
     </section>

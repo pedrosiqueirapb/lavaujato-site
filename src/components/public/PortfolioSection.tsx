@@ -1,7 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
 import Image from 'next/image';
-import { Heart, Calendar, Sparkles } from 'lucide-react';
+import { Heart, Calendar, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PortfolioPost } from '@/lib/types';
 import { formatDate } from '@/lib/utils/formatters';
 
@@ -10,32 +11,69 @@ interface PortfolioSectionProps {
 }
 
 export function PortfolioSection({ posts }: PortfolioSectionProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   if (posts.length === 0) return null;
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -350, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 350, behavior: 'smooth' });
+    }
+  };
 
   return (
     <section id="portfolio" className="py-24 bg-[#FAF6F0] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/40 text-brand-navy text-xs font-bold uppercase tracking-wider">
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-            <span>Nossos Clientes Especiais</span>
+        {/* Header com Setas de Navegação */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/40 text-brand-navy text-xs font-bold uppercase tracking-wider">
+              <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+              <span>Nossos Clientes Especiais</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
+              Galeria de pets atendidos
+            </h2>
+            <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
+              Confira alguns dos bichinhos que passaram pelo Lav Au Jato e saíram ainda mais lindos!
+            </p>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
-            Galeria de pets atendidos
-          </h2>
-          <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
-            Confira alguns dos bichinhos que passaram pelo Lav Au Jato e saíram ainda mais lindos!
-          </p>
+
+          {/* Setas de navegação horizontal */}
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={scrollLeft}
+              aria-label="Pet anterior"
+              className="p-3.5 rounded-2xl bg-white border border-brand-sky/40 text-brand-navy hover:bg-brand-sky/30 hover:border-brand-sky shadow-md transition-all active:scale-95"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={scrollRight}
+              aria-label="Próximo pet"
+              className="p-3.5 rounded-2xl bg-white border border-brand-sky/40 text-brand-navy hover:bg-brand-sky/30 hover:border-brand-sky shadow-md transition-all active:scale-95"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* Posts Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Posts Horizontal Slider */}
+        <div
+          ref={scrollRef}
+          className="flex items-stretch gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-4 px-1"
+        >
           {posts.map((post) => (
             <div
               key={post.id}
-              className="glass-card rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col justify-between"
+              className="glass-card rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col justify-between w-[280px] sm:w-[350px] shrink-0"
             >
               <div className="space-y-4 p-5">
                 

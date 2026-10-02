@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
-import { Clock, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Clock, Sparkles, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { ServiceItem, SiteConfig } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils/formatters';
@@ -12,10 +13,23 @@ interface ServicesSectionProps {
 }
 
 export function ServicesSection({ services, config }: ServicesSectionProps) {
+  const [visibleCount, setVisibleCount] = useState(4);
   const activeServices = services.filter(s => s.isActive);
   const whatsappClean = config.phone.replace(/\D/g, '');
 
   if (activeServices.length === 0) return null;
+
+  const displayedServices = activeServices.slice(0, visibleCount);
+  const hasMore = activeServices.length > visibleCount;
+  const isExpanded = visibleCount > 4;
+
+  const handleVerMais = () => {
+    setVisibleCount(prev => prev + 4);
+  };
+
+  const handleVerMenos = () => {
+    setVisibleCount(4);
+  };
 
   return (
     <section id="servicos" className="py-24 bg-white relative overflow-hidden">
@@ -41,7 +55,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {activeServices.map((service) => {
+          {displayedServices.map((service) => {
             const serviceWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Gostaria%20de%20agendar%20o%20serviço%20"${encodeURIComponent(service.title)}"`;
 
             return (
@@ -108,6 +122,30 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
             );
           })}
         </div>
+
+        {/* Botões Ver mais / Ver menos */}
+        {(hasMore || isExpanded) && (
+          <div className="mt-12 flex items-center justify-center gap-4">
+            {hasMore && (
+              <button
+                onClick={handleVerMais}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-navy hover:bg-brand-navy/90 text-white font-extrabold text-sm shadow-md transition-all hover:scale-105 active:scale-95"
+              >
+                <ChevronDown className="w-4 h-4" />
+                Ver mais
+              </button>
+            )}
+            {isExpanded && (
+              <button
+                onClick={handleVerMenos}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-200 hover:bg-slate-300 text-brand-navy font-extrabold text-sm transition-all hover:scale-105 active:scale-95"
+              >
+                <ChevronUp className="w-4 h-4" />
+                Ver menos
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Custom Service Note */}
         <div className="mt-12 p-6 rounded-2xl bg-brand-sky/20 border border-brand-sky/40 text-center max-w-2xl mx-auto flex items-center justify-center gap-3">
