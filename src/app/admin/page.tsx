@@ -20,7 +20,6 @@ import {
   CheckCircle2, 
   ExternalLink, 
   Copy, 
-  AlertCircle,
   RefreshCw,
   Globe,
   Upload
@@ -436,7 +435,7 @@ export default function AdminDashboardPage() {
             <div>
               <h2 className="text-base font-extrabold text-white">LAVA AU JATO</h2>
               <span className="text-[10px] font-bold text-brand-sky uppercase tracking-widest block">
-                Painel Admin Camilly
+                Admin Painel
               </span>
             </div>
           </div>
@@ -552,14 +551,14 @@ export default function AdminDashboardPage() {
             target="_blank"
             className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 transition-all"
           >
-            <ExternalLink className="w-3.5 h-3.5" /> Ver Site Público
+            <ExternalLink className="w-3.5 h-3.5" /> Ir para o site
           </a>
 
           <button
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-bold transition-all"
           >
-            <LogOut className="w-3.5 h-3.5" /> Sair da Sessão
+            <LogOut className="w-3.5 h-3.5" /> Sair
           </button>
         </div>
       </aside>
@@ -830,7 +829,7 @@ export default function AdminDashboardPage() {
 
                   <div className="flex items-center justify-between text-xs pt-4 border-t border-slate-800">
                     <span className={`px-3 py-1 rounded-full font-bold ${service.isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}`}>
-                      {service.isActive ? 'Ativo no Site' : 'Inativo'}
+                      {service.isActive ? 'Ativo no site' : 'Inativo'}
                     </span>
 
                     <div className="flex gap-2">
@@ -882,7 +881,7 @@ export default function AdminDashboardPage() {
                   </ul>
 
                   <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                    <span className="text-xs text-slate-500">{plan.isPopular ? '⭐ Destaque Recomendado' : 'Plano Padrão'}</span>
+                    <span className="text-xs text-slate-500">{plan.isPopular ? '⭐ Destaque recomendado' : 'Plano padrão'}</span>
                     <div className="flex gap-2">
                       <button onClick={() => { setEditingPlan(plan); setShowPlanModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300">
                         <Edit3 className="w-4 h-4" />
@@ -904,13 +903,13 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Galeria de atendimentos</h1>
-                <p className="text-xs text-slate-400 font-medium">Poste fotos dos pets atendidos com nome, data e serviço feito.</p>
+                <p className="text-xs text-slate-400 font-medium">Poste e edite fotos dos pets atendidos com nome, data e serviço feito.</p>
               </div>
               <button
                 onClick={() => { setShowPortfolioModal(true); setEditingPost({ date: new Date().toISOString().split('T')[0] }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Publicar Atendimento de Pet
+                <Plus className="w-4 h-4" /> Publicar atendimento de pet
               </button>
             </div>
 
@@ -925,10 +924,10 @@ export default function AdminDashboardPage() {
                   <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-500">
                     <span>{formatDate(post.date)}</span>
                     <div className="flex gap-2">
-                      <button onClick={() => { setEditingPost(post); setShowPortfolioModal(true); }} className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white">
+                      <button onClick={() => { setEditingPost(post); setShowPortfolioModal(true); }} className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white" title="Editar atendimento">
                         <Edit3 className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleDeletePortfolio(post.id)} className="p-1.5 bg-rose-500/10 text-rose-400 rounded">
+                      <button onClick={() => handleDeletePortfolio(post.id)} className="p-1.5 bg-rose-500/10 text-rose-400 rounded" title="Excluir atendimento">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -1002,10 +1001,10 @@ export default function AdminDashboardPage() {
                       Promoção ativa no site
                     </span>
                     <div className="flex gap-2">
-                      <button onClick={() => { setEditingPromo(promo); setShowPromoModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white">
+                      <button onClick={() => { setEditingPromo(promo); setShowPromoModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white" title="Editar promoção">
                         <Edit3 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeletePromo(promo.id)} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg">
+                      <button onClick={() => handleDeletePromo(promo.id)} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg" title="Excluir promoção">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -1022,7 +1021,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Produtos da loja</h1>
-                <p className="text-xs text-slate-400 font-medium">Cadastre produtos para exibição no catálogo público.</p>
+                <p className="text-xs text-slate-400 font-medium">Cadastre e edite produtos para exibição no catálogo público.</p>
               </div>
               <button
                 onClick={() => { setShowProductModal(true); setEditingProduct({ isAvailable: true }); }}
@@ -1040,8 +1039,16 @@ export default function AdminDashboardPage() {
                   </div>
                   <h3 className="text-sm font-bold text-white">{prod.name}</h3>
                   <span className="text-lg font-black text-teal-400 block">{formatCurrency(prod.price)}</span>
-                  <div className="flex justify-end pt-2">
-                    <button onClick={() => handleDeleteProduct(prod.id)} className="text-xs text-rose-400 hover:underline font-bold">Excluir</button>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                    <span className="text-[11px] text-slate-500 font-medium">{prod.category || 'Geral'}</span>
+                    <div className="flex gap-2">
+                      <button onClick={() => { setEditingProduct(prod); setShowProductModal(true); }} className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white" title="Editar produto">
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => handleDeleteProduct(prod.id)} className="p-1.5 bg-rose-500/10 text-rose-400 rounded" title="Excluir produto">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1241,7 +1248,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* MODAL FORM SERVIÇO */}
+      {/* MODAL FORM SERVIÇO (Com Anexo de Imagem) */}
       {showServiceModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveService} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
@@ -1265,6 +1272,32 @@ export default function AdminDashboardPage() {
               <div className="space-y-1">
                 <label>Duração estimada</label>
                 <input type="text" placeholder="60 min" value={editingService.duration || ''} onChange={(e) => setEditingService({ ...editingService, duration: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+              </div>
+            </div>
+
+            {/* Upload Imagem do Computador */}
+            <div className="space-y-1">
+              <label>Anexar imagem do seu computador</label>
+              <div className="border-2 border-dashed border-slate-700 hover:border-purple-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, (url) => setEditingService({ ...editingService, image: url }))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                {editingService.image ? (
+                  <div className="space-y-2">
+                    <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
+                      <Image src={editingService.image} alt="Preview" fill className="object-cover" />
+                    </div>
+                    <span className="text-xs text-emerald-400 font-bold block">✓ Imagem anexada! Clique para alterar.</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                    <Upload className="w-6 h-6 text-purple-400" />
+                    <span className="text-xs font-bold text-slate-300">Clique para selecionar foto do computador</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1365,7 +1398,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* MODAL FORM PRODUTO */}
+      {/* MODAL FORM PRODUTO (Com Anexo de Imagem e Edição) */}
       {showProductModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveProduct} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
@@ -1392,6 +1425,32 @@ export default function AdminDashboardPage() {
               <textarea rows={2} value={editingProduct.description || ''} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
+            {/* Upload Imagem do Produto */}
+            <div className="space-y-1">
+              <label>Anexar imagem do produto</label>
+              <div className="border-2 border-dashed border-slate-700 hover:border-teal-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, (url) => setEditingProduct({ ...editingProduct, photoUrl: url }))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                {editingProduct.photoUrl ? (
+                  <div className="space-y-2">
+                    <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
+                      <Image src={editingProduct.photoUrl} alt="Preview" fill className="object-contain" />
+                    </div>
+                    <span className="text-xs text-emerald-400 font-bold block">✓ Foto anexada! Clique para trocar.</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                    <Upload className="w-6 h-6 text-teal-400" />
+                    <span className="text-xs font-bold text-slate-300">Clique para selecionar imagem do produto</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowProductModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
               <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-teal-600 text-white font-extrabold uppercase">Salvar produto</button>
@@ -1400,7 +1459,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* MODAL FORM PORTFÓLIO */}
+      {/* MODAL FORM PORTFÓLIO (Com Anexo de Imagem e Edição) */}
       {showPortfolioModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSavePortfolio} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
@@ -1427,6 +1486,32 @@ export default function AdminDashboardPage() {
               <textarea rows={2} value={editingPost.description || ''} onChange={(e) => setEditingPost({ ...editingPost, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
+            {/* Upload Imagem do Pet */}
+            <div className="space-y-1">
+              <label>Anexar foto do atendimento</label>
+              <div className="border-2 border-dashed border-slate-700 hover:border-rose-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, (url) => setEditingPost({ ...editingPost, photoUrl: url }))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                {editingPost.photoUrl ? (
+                  <div className="space-y-2">
+                    <div className="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
+                      <Image src={editingPost.photoUrl} alt="Preview" fill className="object-cover" />
+                    </div>
+                    <span className="text-xs text-emerald-400 font-bold block">✓ Foto anexada! Clique para trocar.</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-1.5 py-3">
+                    <Upload className="w-6 h-6 text-rose-400" />
+                    <span className="text-xs font-bold text-slate-300">Clique para anexar foto do pet do seu computador</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowPortfolioModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
               <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-rose-600 text-white font-extrabold uppercase">Publicar no mural</button>
@@ -1435,7 +1520,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* MODAL FORM ESPAÇO (Upload por Anexo do Computador) */}
+      {/* MODAL FORM ESPAÇO */}
       {showWorkspaceModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveWorkspace} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">

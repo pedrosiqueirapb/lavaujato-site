@@ -78,8 +78,7 @@ export function PortfolioSection({ posts }: PortfolioSectionProps) {
 
               {/* Bottom Tag */}
               <div className="bg-brand-sky/20 px-5 py-3 border-t border-brand-sky/30 flex items-center justify-between text-xs font-semibold text-brand-navy">
-                <span>Lava Au Jato Banho & Tosa</span>
-                <span className="text-rose-500 font-bold">❤ Atendido com carinho</span>
+                <span>Lava Au Jato Banho e Tosa</span>
               </div>
             </div>
           ))}

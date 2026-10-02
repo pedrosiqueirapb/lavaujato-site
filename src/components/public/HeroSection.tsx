@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { MessageCircle, Heart, Sparkles, Star, Award } from 'lucide-react';
+import { Heart, Sparkles, Star, Award, PhoneCall } from 'lucide-react';
 import { SiteConfig } from '@/lib/types';
 
 interface HeroSectionProps {
@@ -57,7 +57,7 @@ export function HeroSection({ config }: HeroSectionProps) {
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base shadow-xl shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all hover:-translate-y-1 active:translate-y-0"
               >
-                <MessageCircle className="w-5 h-5 fill-current" />
+                <PhoneCall className="w-5 h-5 fill-current stroke-[2.5]" />
                 Agendar horário para meu pet
               </a>
 
@@ -94,8 +94,8 @@ export function HeroSection({ config }: HeroSectionProps) {
             {/* Glowing Backdrop */}
             <div className="absolute -inset-4 bg-gradient-to-r from-brand-sky to-brand-caramel/30 rounded-3xl blur-2xl opacity-50 animate-pulse-glow" />
 
-            {/* Main Card Frame */}
-            <div className="relative w-full max-w-md aspect-square rounded-3xl p-6 glass-card border-2 border-white shadow-2xl flex flex-col items-center justify-center text-center">
+            {/* Main Card Frame - ONLY LOGO (Retângulo removido como solicitado) */}
+            <div className="relative w-full max-w-md aspect-square rounded-3xl p-6 glass-card border-2 border-white shadow-2xl flex items-center justify-center">
               
               <div className="relative w-64 h-64 sm:w-72 sm:h-72 transition-transform hover:scale-105 duration-300">
                 <Image
@@ -105,17 +105,6 @@ export function HeroSection({ config }: HeroSectionProps) {
                   className="object-contain drop-shadow-lg"
                   priority
                 />
-              </div>
-
-              {/* Floating Badge */}
-              <div className="absolute -bottom-5 bg-white border border-brand-sky/50 px-6 py-3 rounded-2xl shadow-xl flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-brand-sky/40 flex items-center justify-center text-brand-navy font-bold text-lg">
-                  🐾
-                </div>
-                <div className="text-left">
-                  <p className="text-xs font-bold text-brand-caramel uppercase">Atendimento com Amor</p>
-                  <p className="text-sm font-extrabold text-brand-navy">Agendamento Flexível</p>
-                </div>
               </div>
 
             </div>

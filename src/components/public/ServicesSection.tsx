@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { MessageCircle, Clock, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Clock, Sparkles, CheckCircle2, PhoneCall } from 'lucide-react';
 import { ServiceItem, SiteConfig } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils/formatters';
 
@@ -31,7 +31,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
             <span>Nossos Cuidados Especializados</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
-            Serviços de Banho, Tosa & Estética Pet
+            Serviços de banho e tosa
           </h2>
           <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
             Escolha o tratamento ideal para o bem-estar do seu pet. Cada serviço é feito com paciência e carinho.
@@ -98,7 +98,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition-all hover:scale-105"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <PhoneCall className="w-4 h-4 fill-current stroke-[2.5]" />
                     Agendar
                   </a>
                 </div>
