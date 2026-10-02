@@ -1,4 +1,4 @@
-export type PetSize = 'Pequeno' | 'Médio' | 'Grande' | 'Gigante';
+export type PetSize = 'Pequeno' | 'Médio' | 'Grande';
 
 export interface Client {
   id: string;
@@ -54,7 +54,7 @@ export interface SubscriptionPlan {
   id: string;
   name: string;
   price: number;
-  period: string; // ex: 'mensal', 'semanal'
+  period: 'semanal' | 'quinzenal' | 'mensal' | 'anual' | string;
   description: string;
   benefits: string[];
   isPopular?: boolean;

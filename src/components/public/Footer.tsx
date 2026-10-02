@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Instagram, MessageCircle, Heart, ShieldCheck } from 'lucide-react';
+import { Instagram, MessageCircle } from 'lucide-react';
 import { SiteConfig } from '@/lib/types';
 
 interface FooterProps {
@@ -33,14 +33,10 @@ export function Footer({ config }: FooterProps) {
               <div>
                 <span className="text-xl font-extrabold text-white block">LAVA AU JATO</span>
                 <span className="text-xs font-semibold text-brand-sky uppercase tracking-widest">
-                  Banho e Tosa por Camilly
+                  Banho e Tosa
                 </span>
               </div>
             </div>
-
-            <p className="text-sm text-white/70 font-medium max-w-sm leading-relaxed">
-              Estética canina com amor, dedicação e materiais de alta qualidade. O banho e tosa que o seu pet ama voltar!
-            </p>
 
             <div className="flex items-center gap-3 pt-2">
               <a
@@ -70,10 +66,10 @@ export function Footer({ config }: FooterProps) {
             <h3 className="text-sm font-extrabold text-brand-sky uppercase tracking-wider">Navegação</h3>
             <ul className="space-y-2 text-sm text-white/80 font-medium">
               <li><Link href="#servicos" className="hover:text-brand-caramel transition-colors">Serviços & Tosas</Link></li>
-              <li><Link href="#espaco" className="hover:text-brand-caramel transition-colors">Nosso Espaço</Link></li>
-              <li><Link href="#planos" className="hover:text-brand-caramel transition-colors">Planos Recorrentes</Link></li>
-              <li><Link href="#portfolio" className="hover:text-brand-caramel transition-colors">Galeria de Pets</Link></li>
-              <li><Link href="#localizacao" className="hover:text-brand-caramel transition-colors">Onde Estamos</Link></li>
+              <li><Link href="#espaco" className="hover:text-brand-caramel transition-colors">Nosso espaço</Link></li>
+              <li><Link href="#planos" className="hover:text-brand-caramel transition-colors">Planos</Link></li>
+              <li><Link href="#portfolio" className="hover:text-brand-caramel transition-colors">Galeria</Link></li>
+              <li><Link href="#localizacao" className="hover:text-brand-caramel transition-colors">Onde estamos</Link></li>
             </ul>
           </div>
 
@@ -86,22 +82,13 @@ export function Footer({ config }: FooterProps) {
             <p className="text-sm text-white/80 font-medium">
               📞 {config.phone}
             </p>
-            <div className="pt-2">
-              <Link
-                href="/admin"
-                className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                Área Restrita do Administrador (/admin)
-              </Link>
-            </div>
           </div>
 
         </div>
 
         {/* Bottom Bar with Autojade Credit (Requirement 13) */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50 font-medium">
-          <p>© {new Date().getFullYear()} Lava Au Jato | Banho e Tosa por Camilly. Todos os direitos reservados.</p>
+          <p>© 2026 Lava Au Jato Banho e Tosa. Todos os direitos reservados.</p>
           
           {/* Requirement 13: Texto bem pequeno e discreto "Desenvolvido por Autojade" com link */}
           <p className="text-[11px] text-white/40 hover:text-white/70 transition-colors">

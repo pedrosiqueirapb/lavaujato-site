@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MessageCircle, Menu, X, Sparkles, ShieldCheck } from 'lucide-react';
+import { MessageCircle, Menu, X, Sparkles } from 'lucide-react';
 import { SiteConfig } from '@/lib/types';
 
 interface NavbarProps {
@@ -25,7 +25,7 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
   }, []);
 
   const whatsappClean = config.phone.replace(/\D/g, '');
-  const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá%20Camilly!%20Gostaria%20de%20agendar%20um%20banho/tosa%20para%20o%20meu%20pet.`;
+  const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Gostaria%20de%20agendar%20um%20banho/tosa%20para%20o%20meu%20pet.`;
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -60,13 +60,13 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
             Serviços
           </Link>
           <Link href="#espaco" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Nosso Espaço
+            Nosso espaço
           </Link>
           <Link href="#planos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Planos VIP
+            Planos
           </Link>
           <Link href="#portfolio" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Galeria de Pets
+            Galeria
           </Link>
           {hasPromos && (
             <Link href="#promocoes" className="text-sm font-semibold text-brand-caramel flex items-center gap-1.5 animate-pulse">
@@ -84,7 +84,7 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
           </Link>
         </nav>
 
-        {/* CTA & Admin Link */}
+        {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
           <a
             href={whatsappUrl}
@@ -95,14 +95,6 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
             <MessageCircle className="w-4 h-4" />
             Agendar no WhatsApp
           </a>
-
-          <Link
-            href="/admin"
-            className="p-2 rounded-full text-brand-navy/60 hover:text-brand-navy hover:bg-brand-sky/20 transition-all"
-            title="Painel Administrativo"
-          >
-            <ShieldCheck className="w-5 h-5" />
-          </Link>
         </div>
 
         {/* Mobile Hamburger */}
@@ -130,21 +122,21 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
-            Nosso Espaço
+            Nosso espaço
           </Link>
           <Link
             href="#planos"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
-            Planos VIP
+            Planos
           </Link>
           <Link
             href="#portfolio"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
-            Galeria de Pets
+            Galeria
           </Link>
           {hasPromos && (
             <Link
@@ -181,13 +173,6 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
               <MessageCircle className="w-4 h-4" />
               Agendar no WhatsApp
             </a>
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-brand-navy/20 text-brand-navy font-semibold text-sm"
-            >
-              <ShieldCheck className="w-4 h-4" /> Painel Admin
-            </Link>
           </div>
         </div>
       )}

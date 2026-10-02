@@ -20,11 +20,10 @@ import {
   CheckCircle2, 
   ExternalLink, 
   Copy, 
-  Search, 
   AlertCircle,
   RefreshCw,
-  MessageCircle,
-  Globe
+  Globe,
+  Upload
 } from 'lucide-react';
 import { 
   Client, 
@@ -71,9 +70,6 @@ export default function AdminDashboardPage() {
   const [charges, setCharges] = useState<AsaasCharge[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
 
-  // Filtro de Busca
-  const [searchTerm, setSearchTerm] = useState('');
-
   // Modais Forms States
   const [showClientModal, setShowClientModal] = useState(false);
   const [editingClient, setEditingClient] = useState<Partial<Client>>({});
@@ -93,13 +89,13 @@ export default function AdminDashboardPage() {
   const [editingService, setEditingService] = useState<Partial<ServiceItem>>({});
 
   const [showPlanModal, setShowPlanModal] = useState(false);
-  const [editingPlan, setEditingPlan] = useState<Partial<SubscriptionPlan>>({ benefits: [''] });
+  const [editingPlan, setEditingPlan] = useState<Partial<SubscriptionPlan>>({ period: 'mensal', benefits: [''] });
 
   const [showPromoModal, setShowPromoModal] = useState(false);
-  const [editingPromo, setEditingPromo] = useState<Partial<PromotionItem>>({});
+  const [editingPromo, setEditingPromo] = useState<Partial<PromotionItem>>({ isActive: true });
 
   const [showProductModal, setShowProductModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Partial<ProductItem>>({});
+  const [editingProduct, setEditingProduct] = useState<Partial<ProductItem>>({ isAvailable: true });
 
   const [showPortfolioModal, setShowPortfolioModal] = useState(false);
   const [editingPost, setEditingPost] = useState<Partial<PortfolioPost>>({});
@@ -147,6 +143,20 @@ export default function AdminDashboardPage() {
     router.push('/admin/login');
   };
 
+  // UPLOAD DE FOTO DO COMPUTADOR (Base64 Data URL)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          callback(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // HANDLERS CRUD
   const handleSaveClient = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,7 +172,7 @@ export default function AdminDashboardPage() {
         }),
       });
       if (res.ok) {
-        showToast('Cliente salvo e sincronizado com Asaas com sucesso! 🐾');
+        showToast('Cliente salvo!');
         setShowClientModal(false);
         loadAdminData();
       }
@@ -200,7 +210,7 @@ export default function AdminDashboardPage() {
         }),
       });
       if (res.ok) {
-        showToast('Cobrança Asaas gerada com sucesso! 💳');
+        showToast('Cobrança Asaas gerada!');
         setShowChargeModal(false);
         loadAdminData();
       }
@@ -210,7 +220,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleDeleteCharge = async (id: string) => {
-    if (!confirm('Deseja excluir este registro de cobrança?')) return;
+    if (!confirm('Deseja excluir esta cobrança?')) return;
     await fetch('/api/admin/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -230,7 +240,7 @@ export default function AdminDashboardPage() {
     });
     setSaving(false);
     setShowServiceModal(false);
-    showToast('Serviço salvo com sucesso!');
+    showToast('Serviço salvo!');
     loadAdminData();
   };
 
@@ -255,7 +265,7 @@ export default function AdminDashboardPage() {
     });
     setSaving(false);
     setShowPlanModal(false);
-    showToast('Plano recorrente salvo!');
+    showToast('Plano salvo!');
     loadAdminData();
   };
 
@@ -276,11 +286,15 @@ export default function AdminDashboardPage() {
     await fetch('/api/admin/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'upsert', resource: 'promotion', data: editingPromo }),
+      body: JSON.stringify({
+        action: 'upsert',
+        resource: 'promotion',
+        data: { ...editingPromo, isActive: true },
+      }),
     });
     setSaving(false);
     setShowPromoModal(false);
-    showToast('Promoção atualizada! O site foi atualizado.');
+    showToast('Promoção salva!');
     loadAdminData();
   };
 
@@ -291,7 +305,7 @@ export default function AdminDashboardPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'delete', resource: 'promotion', id }),
     });
-    showToast('Promoção excluída. Seção oculta no site.');
+    showToast('Promoção excluída.');
     loadAdminData();
   };
 
@@ -305,7 +319,7 @@ export default function AdminDashboardPage() {
     });
     setSaving(false);
     setShowProductModal(false);
-    showToast('Produto salvo no catálogo!');
+    showToast('Produto salvo!');
     loadAdminData();
   };
 
@@ -330,7 +344,7 @@ export default function AdminDashboardPage() {
     });
     setSaving(false);
     setShowPortfolioModal(false);
-    showToast('Postagem de atendimento publicada no mural!');
+    showToast('Publicação salva!');
     loadAdminData();
   };
 
@@ -347,6 +361,10 @@ export default function AdminDashboardPage() {
 
   const handleSaveWorkspace = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!editingPhoto.url) {
+      alert('Por favor, anexe uma imagem do seu computador.');
+      return;
+    }
     setSaving(true);
     await fetch('/api/admin/data', {
       method: 'POST',
@@ -355,7 +373,7 @@ export default function AdminDashboardPage() {
     });
     setSaving(false);
     setShowWorkspaceModal(false);
-    showToast('Foto do espaço adicionada!');
+    showToast('Foto do espaço salva!');
     loadAdminData();
   };
 
@@ -442,7 +460,7 @@ export default function AdminDashboardPage() {
               }`}
             >
               <Users className="w-4 h-4 text-sky-400" />
-              <span>Clientes & Pets ({clients.length})</span>
+              <span>Clientes ({clients.length})</span>
             </button>
 
             <button
@@ -472,7 +490,7 @@ export default function AdminDashboardPage() {
               }`}
             >
               <Star className="w-4 h-4 text-amber-400" />
-              <span>Planos VIP ({plans.length})</span>
+              <span>Planos ({plans.length})</span>
             </button>
 
             <button
@@ -482,7 +500,7 @@ export default function AdminDashboardPage() {
               }`}
             >
               <Heart className="w-4 h-4 text-rose-400" />
-              <span>Mural de Pets ({posts.length})</span>
+              <span>Galeria ({posts.length})</span>
             </button>
 
             <button
@@ -492,7 +510,7 @@ export default function AdminDashboardPage() {
               }`}
             >
               <Camera className="w-4 h-4 text-indigo-400" />
-              <span>Fotos do Espaço ({photos.length})</span>
+              <span>Fotos do espaço ({photos.length})</span>
             </button>
 
             <button
@@ -512,7 +530,7 @@ export default function AdminDashboardPage() {
               }`}
             >
               <ShoppingBag className="w-4 h-4 text-teal-400" />
-              <span>Produtos Lojinha ({products.length})</span>
+              <span>Produtos da loja ({products.length})</span>
             </button>
 
             <button
@@ -555,7 +573,7 @@ export default function AdminDashboardPage() {
             <div>
               <h1 className="text-3xl font-extrabold text-white">Bem-vinda, Camilly! 👋</h1>
               <p className="text-sm text-slate-400 font-medium">
-                Gerencie seus clientes, cobranças Asaas e todo o conteúdo do site Lava Au Jato.
+                Gerencie seus clientes, cobranças e todo o conteúdo do site Lava Au Jato.
               </p>
             </div>
 
@@ -585,7 +603,7 @@ export default function AdminDashboardPage() {
                   <Star className="w-5 h-5" />
                 </div>
                 <span className="text-3xl font-extrabold text-white block">{stats?.activePlans || 0}</span>
-                <span className="text-[11px] text-slate-500">Assinaturas VIP</span>
+                <span className="text-[11px] text-slate-500">Assinaturas ativas</span>
               </div>
 
               <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-2">
@@ -632,10 +650,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Clientes & Pets Cadastrados</h1>
-                <p className="text-xs text-slate-400 font-medium">
-                  Integrado automaticamente com a API do Asaas. Dados pessoais criptografados (PII).
-                </p>
+                <h1 className="text-2xl font-extrabold text-white">Clientes cadastrados</h1>
               </div>
               <button
                 onClick={() => { setShowClientModal(true); setEditingClient({}); }}
@@ -668,7 +683,7 @@ export default function AdminDashboardPage() {
                         <td className="p-4 font-bold text-white">{client.name}</td>
                         <td className="p-4">{formatPhone(client.phone)}</td>
                         <td className="p-4">
-                          <span className="font-bold text-amber-400">🐶 {client.petName}</span>
+                          <span className="font-bold text-amber-400">{client.petName}</span>
                           <span className="text-slate-400"> - {client.petBreed || 'Sem Raça'} ({client.petSize || 'Médio'})</span>
                         </td>
                         <td className="p-4">
@@ -706,9 +721,9 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Gerador de Cobranças Asaas</h1>
+                <h1 className="text-2xl font-extrabold text-white">Gerador de cobranças Asaas</h1>
                 <p className="text-xs text-slate-400 font-medium">
-                  Cobranças recorrentes no cartão de crédito, PIX copia-e-cola ou boleto parcelado.
+                  Cartão de crédito recorrente, parcelado e pagamentos via PIX.
                 </p>
               </div>
               <button
@@ -756,7 +771,7 @@ export default function AdminDashboardPage() {
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-sky-600/20 text-sky-300 hover:bg-sky-600/30 text-xs font-bold transition-all"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" /> Link de Pagamento Asaas
+                          <ExternalLink className="w-3.5 h-3.5" /> Link de pagamento Asaas
                         </a>
                       )}
 
@@ -776,7 +791,7 @@ export default function AdminDashboardPage() {
                         onClick={() => handleDeleteCharge(charge.id)}
                         className="text-xs text-rose-400 hover:underline pt-1 text-center font-semibold"
                       >
-                        Excluir Cobrança
+                        Excluir cobrança
                       </button>
                     </div>
                   </div>
@@ -791,7 +806,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Serviços Prestados</h1>
+                <h1 className="text-2xl font-extrabold text-white">Serviços prestados</h1>
                 <p className="text-xs text-slate-400 font-medium">Adicione e edite os serviços visíveis no site.</p>
               </div>
               <button
@@ -838,11 +853,11 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Planos Recorrentes VIP</h1>
+                <h1 className="text-2xl font-extrabold text-white">Planos recorrentes</h1>
                 <p className="text-xs text-slate-400 font-medium">Configure os planos oferecidos aos clientes no site.</p>
               </div>
               <button
-                onClick={() => { setShowPlanModal(true); setEditingPlan({ benefits: [''] }); }}
+                onClick={() => { setShowPlanModal(true); setEditingPlan({ period: 'mensal', benefits: [''] }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
                 <Plus className="w-4 h-4" /> Novo Plano
@@ -883,19 +898,19 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* TAB 6: MURAL DE PETS */}
+        {/* TAB 6: GALERIA DE ATENDIMENTOS */}
         {activeTab === 'portfolio' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Mural de Atendimentos</h1>
+                <h1 className="text-2xl font-extrabold text-white">Galeria de atendimentos</h1>
                 <p className="text-xs text-slate-400 font-medium">Poste fotos dos pets atendidos com nome, data e serviço feito.</p>
               </div>
               <button
                 onClick={() => { setShowPortfolioModal(true); setEditingPost({ date: new Date().toISOString().split('T')[0] }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Publicar Foto de Pet
+                <Plus className="w-4 h-4" /> Publicar Atendimento de Pet
               </button>
             </div>
 
@@ -905,11 +920,18 @@ export default function AdminDashboardPage() {
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-800">
                     <Image src={post.photoUrl || '/images/logo-white-paws.png'} alt={post.petName} fill className="object-cover" />
                   </div>
-                  <h3 className="text-base font-bold text-white">🐶 {post.petName} <span className="text-xs text-slate-400 font-normal">({post.breed})</span></h3>
+                  <h3 className="text-base font-bold text-white">{post.petName} <span className="text-xs text-slate-400 font-normal">({post.breed})</span></h3>
                   <p className="text-xs text-slate-300">{post.description}</p>
                   <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-500">
                     <span>{formatDate(post.date)}</span>
-                    <button onClick={() => handleDeletePortfolio(post.id)} className="text-rose-400 hover:underline">Excluir</button>
+                    <div className="flex gap-2">
+                      <button onClick={() => { setEditingPost(post); setShowPortfolioModal(true); }} className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white">
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => handleDeletePortfolio(post.id)} className="p-1.5 bg-rose-500/10 text-rose-400 rounded">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -922,14 +944,14 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Fotos do Espaço de Trabalho</h1>
-                <p className="text-xs text-slate-400 font-medium">Adicione e remova imagens da seção "Nosso Espaço".</p>
+                <h1 className="text-2xl font-extrabold text-white">Fotos do espaço de trabalho</h1>
+                <p className="text-xs text-slate-400 font-medium">Adicione e remova imagens da seção "Nosso espaço".</p>
               </div>
               <button
                 onClick={() => { setShowWorkspaceModal(true); setEditingPhoto({ order: photos.length + 1 }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Adicionar Foto
+                <Plus className="w-4 h-4" /> Adicionar foto do espaço
               </button>
             </div>
 
@@ -942,7 +964,7 @@ export default function AdminDashboardPage() {
                   <h3 className="text-sm font-bold text-white">{photo.title}</h3>
                   <p className="text-xs text-slate-400">{photo.description}</p>
                   <div className="pt-2 flex justify-end">
-                    <button onClick={() => handleDeleteWorkspace(photo.id)} className="text-xs text-rose-400 hover:underline font-bold">Excluir Foto</button>
+                    <button onClick={() => handleDeleteWorkspace(photo.id)} className="text-xs text-rose-400 hover:underline font-bold">Excluir foto</button>
                   </div>
                 </div>
               ))}
@@ -955,14 +977,14 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Promoções de Preço</h1>
-                <p className="text-xs text-slate-400 font-medium">Ao desativar/excluir uma promoção, a seção sumirá automaticamente do site.</p>
+                <h1 className="text-2xl font-extrabold text-white">Promoções</h1>
+                <p className="text-xs text-slate-400 font-medium">Ao excluir uma promoção, a seção sumirá automaticamente do site.</p>
               </div>
               <button
                 onClick={() => { setShowPromoModal(true); setEditingPromo({ isActive: true }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Criar Promoção
+                <Plus className="w-4 h-4" /> Criar promoção
               </button>
             </div>
 
@@ -976,10 +998,17 @@ export default function AdminDashboardPage() {
                   <p className="text-xs text-slate-300">{promo.description}</p>
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${promo.isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-500'}`}>
-                      {promo.isActive ? 'Promoção Ativa no Site' : 'Inativa'}
+                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300">
+                      Promoção ativa no site
                     </span>
-                    <button onClick={() => handleDeletePromo(promo.id)} className="text-xs text-rose-400 hover:underline font-bold">Excluir</button>
+                    <div className="flex gap-2">
+                      <button onClick={() => { setEditingPromo(promo); setShowPromoModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white">
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDeletePromo(promo.id)} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -992,14 +1021,14 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Produtos da Lojinha</h1>
+                <h1 className="text-2xl font-extrabold text-white">Produtos da loja</h1>
                 <p className="text-xs text-slate-400 font-medium">Cadastre produtos para exibição no catálogo público.</p>
               </div>
               <button
                 onClick={() => { setShowProductModal(true); setEditingProduct({ isAvailable: true }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Cadastrar Produto
+                <Plus className="w-4 h-4" /> Cadastrar produto
               </button>
             </div>
 
@@ -1024,14 +1053,14 @@ export default function AdminDashboardPage() {
         {activeTab === 'config' && config && (
           <form onSubmit={handleSaveConfig} className="space-y-6 max-w-2xl animate-in fade-in duration-300">
             <div>
-              <h1 className="text-2xl font-extrabold text-white">Configurações Gerais do Site</h1>
-              <p className="text-xs text-slate-400 font-medium">Altere dados de contato, chave do Asaas e endereço protegido.</p>
+              <h1 className="text-2xl font-extrabold text-white">Configurações gerais do site</h1>
+              <p className="text-xs text-slate-400 font-medium">Altere dados de contato, endereço e chave do Asaas.</p>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 text-xs font-bold text-slate-300">
               
               <div className="space-y-1">
-                <label>Telefone / WhatsApp Comercial</label>
+                <label>Telefone / WhatsApp</label>
                 <input
                   type="text"
                   value={config.phone}
@@ -1041,7 +1070,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="space-y-1">
-                <label>Link do Instagram Oficial</label>
+                <label>Link do Instagram</label>
                 <input
                   type="text"
                   value={config.instagram}
@@ -1052,7 +1081,7 @@ export default function AdminDashboardPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label>Bairro (Proteção de Privacidade)</label>
+                  <label>Bairro</label>
                   <input
                     type="text"
                     value={config.addressNeighborhood}
@@ -1102,7 +1131,7 @@ export default function AdminDashboardPage() {
                 disabled={saving}
                 className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold uppercase tracking-wider text-xs shadow-lg transition-all"
               >
-                {saving ? 'Salvando...' : 'Salvar Alterações'}
+                {saving ? 'Salvando...' : 'Salvar alterações'}
               </button>
             </div>
           </form>
@@ -1114,10 +1143,10 @@ export default function AdminDashboardPage() {
       {showClientModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveClient} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar / Editar Cliente</h3>
+            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar cliente</h3>
             
             <div className="space-y-1">
-              <label>Nome do Tutor *</label>
+              <label>Nome do tutor *</label>
               <input type="text" required value={editingClient.name || ''} onChange={(e) => setEditingClient({ ...editingClient, name: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -1134,11 +1163,11 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <label>Nome do Pet *</label>
+                <label>Nome do pet *</label>
                 <input type="text" required value={editingClient.petName || ''} onChange={(e) => setEditingClient({ ...editingClient, petName: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
-                <label>Raça do Pet</label>
+                <label>Raça do pet</label>
                 <input type="text" value={editingClient.petBreed || ''} onChange={(e) => setEditingClient({ ...editingClient, petBreed: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
@@ -1147,14 +1176,13 @@ export default function AdminDashboardPage() {
                   <option value="Pequeno">Pequeno</option>
                   <option value="Médio">Médio</option>
                   <option value="Grande">Grande</option>
-                  <option value="Gigante">Gigante</option>
                 </select>
               </div>
             </div>
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowClientModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-sky-600 text-white font-extrabold uppercase">Salvar & Sincronizar</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-sky-600 text-white font-extrabold uppercase">Salvar cliente</button>
             </div>
           </form>
         </div>
@@ -1164,10 +1192,10 @@ export default function AdminDashboardPage() {
       {showChargeModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleCreateCharge} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Gerar Cobrança no Asaas</h3>
+            <h3 className="text-lg font-extrabold text-white">Gerar cobrança no Asaas</h3>
             
             <div className="space-y-1">
-              <label>Selecione o Cliente *</label>
+              <label>Selecione o cliente *</label>
               <select required value={newCharge.customerId} onChange={(e) => setNewCharge({ ...newCharge, customerId: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
                 <option value="">-- Escolha o Cliente --</option>
                 {clients.map(c => (
@@ -1182,9 +1210,9 @@ export default function AdminDashboardPage() {
                 <input type="number" step="0.01" required value={newCharge.value} onChange={(e) => setNewCharge({ ...newCharge, value: e.target.value })} placeholder="199.00" className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold" />
               </div>
               <div className="space-y-1">
-                <label>Forma de Pagamento *</label>
+                <label>Forma de pagamento *</label>
                 <select value={newCharge.billingType} onChange={(e) => setNewCharge({ ...newCharge, billingType: e.target.value as any })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
-                  <option value="CREDIT_CARD">Cartão de Crédito</option>
+                  <option value="CREDIT_CARD">Cartão de crédito</option>
                   <option value="PIX">PIX (QrCode / Copia e Cola)</option>
                   <option value="BOLETO">Boleto / Carnê</option>
                 </select>
@@ -1192,22 +1220,22 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Tipo de Recorrência *</label>
+              <label>Tipo de recorrência *</label>
               <select value={newCharge.cycle} onChange={(e) => setNewCharge({ ...newCharge, cycle: e.target.value as any })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
-                <option value="MONTHLY">Assinatura Mensal Recorrente</option>
-                <option value="WEEKLY">Assinatura Semanal Recorrente</option>
-                <option value="SINGLE">Cobrança Única</option>
+                <option value="MONTHLY">Assinatura mensal recorrente</option>
+                <option value="WEEKLY">Assinatura semanal recorrente</option>
+                <option value="SINGLE">Cobrança única</option>
               </select>
             </div>
 
             <div className="space-y-1">
-              <label>Descrição para a Fatura</label>
+              <label>Descrição para a fatura</label>
               <input type="text" value={newCharge.description} onChange={(e) => setNewCharge({ ...newCharge, description: e.target.value })} placeholder="Assinatura Mensal Banho e Tosa" className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowChargeModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-emerald-600 text-white font-extrabold uppercase">Gerar Link Asaas</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-emerald-600 text-white font-extrabold uppercase">Gerar link Asaas</button>
             </div>
           </form>
         </div>
@@ -1217,15 +1245,15 @@ export default function AdminDashboardPage() {
       {showServiceModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveService} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar / Editar Serviço</h3>
+            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar serviço</h3>
             
             <div className="space-y-1">
-              <label>Título do Serviço *</label>
+              <label>Título do serviço *</label>
               <input type="text" required value={editingService.title || ''} onChange={(e) => setEditingService({ ...editingService, title: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
-              <label>Descrição Detalhada</label>
+              <label>Descrição</label>
               <textarea rows={3} value={editingService.description || ''} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
@@ -1235,14 +1263,14 @@ export default function AdminDashboardPage() {
                 <input type="number" step="0.01" value={editingService.price || ''} onChange={(e) => setEditingService({ ...editingService, price: parseFloat(e.target.value) })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
-                <label>Duração Estimada</label>
+                <label>Duração estimada</label>
                 <input type="text" placeholder="60 min" value={editingService.duration || ''} onChange={(e) => setEditingService({ ...editingService, duration: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
             </div>
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowServiceModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-purple-600 text-white font-extrabold uppercase">Salvar Serviço</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-purple-600 text-white font-extrabold uppercase">Salvar serviço</button>
             </div>
           </form>
         </div>
@@ -1252,26 +1280,35 @@ export default function AdminDashboardPage() {
       {showPlanModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSavePlan} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar / Editar Plano Recorrente</h3>
+            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar plano</h3>
             
             <div className="space-y-1">
-              <label>Nome do Plano *</label>
+              <label>Nome do plano *</label>
               <input type="text" required value={editingPlan.name || ''} onChange={(e) => setEditingPlan({ ...editingPlan, name: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label>Valor Mensal (R$) *</label>
+                <label>Valor mensal (R$) *</label>
                 <input type="number" step="0.01" required value={editingPlan.price || ''} onChange={(e) => setEditingPlan({ ...editingPlan, price: parseFloat(e.target.value) })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
-                <label>Período</label>
-                <input type="text" value={editingPlan.period || 'mensal'} onChange={(e) => setEditingPlan({ ...editingPlan, period: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+                <label>Período *</label>
+                <select 
+                  value={editingPlan.period || 'mensal'} 
+                  onChange={(e) => setEditingPlan({ ...editingPlan, period: e.target.value })} 
+                  className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
+                >
+                  <option value="semanal">Semanal</option>
+                  <option value="quinzenal">Quinzenal</option>
+                  <option value="mensal">Mensal</option>
+                  <option value="anual">Anual</option>
+                </select>
               </div>
             </div>
 
             <div className="space-y-1">
-              <label>Descrição do Plano</label>
+              <label>Descrição do plano</label>
               <input type="text" value={editingPlan.description || ''} onChange={(e) => setEditingPlan({ ...editingPlan, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -1282,12 +1319,12 @@ export default function AdminDashboardPage() {
 
             <div className="flex items-center gap-2 pt-2">
               <input type="checkbox" checked={editingPlan.isPopular || false} onChange={(e) => setEditingPlan({ ...editingPlan, isPopular: e.target.checked })} className="w-4 h-4 accent-amber-500 rounded" />
-              <label>Marcar como Plano Recomendado (Destaque VIP)</label>
+              <label>Marcar como plano recomendado</label>
             </div>
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowPlanModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold uppercase">Salvar Plano</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold uppercase">Salvar plano</button>
             </div>
           </form>
         </div>
@@ -1297,10 +1334,10 @@ export default function AdminDashboardPage() {
       {showPromoModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSavePromo} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Criar / Editar Promoção</h3>
+            <h3 className="text-lg font-extrabold text-white">Criar ou editar promoção</h3>
             
             <div className="space-y-1">
-              <label>Título da Promoção *</label>
+              <label>Título da promoção *</label>
               <input type="text" required value={editingPromo.title || ''} onChange={(e) => setEditingPromo({ ...editingPromo, title: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -1311,23 +1348,18 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label>Texto do Desconto (ex: 15% OFF) *</label>
+                <label>Texto do desconto (ex: 15% OFF) *</label>
                 <input type="text" required value={editingPromo.discountText || ''} onChange={(e) => setEditingPromo({ ...editingPromo, discountText: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
-                <label>Válido Até</label>
+                <label>Válido até</label>
                 <input type="text" placeholder="30/10/2026" value={editingPromo.validUntil || ''} onChange={(e) => setEditingPromo({ ...editingPromo, validUntil: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
             </div>
 
-            <div className="flex items-center gap-2 pt-2">
-              <input type="checkbox" checked={editingPromo.isActive ?? true} onChange={(e) => setEditingPromo({ ...editingPromo, isActive: e.target.checked })} className="w-4 h-4 accent-amber-500 rounded" />
-              <label>Promoção Ativa (Exibir Seção no Site)</label>
-            </div>
-
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowPromoModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold uppercase">Salvar Promoção</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold uppercase">Salvar promoção</button>
             </div>
           </form>
         </div>
@@ -1337,10 +1369,10 @@ export default function AdminDashboardPage() {
       {showProductModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveProduct} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar / Editar Produto</h3>
+            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar produto</h3>
             
             <div className="space-y-1">
-              <label>Nome do Produto *</label>
+              <label>Nome do produto *</label>
               <input type="text" required value={editingProduct.name || ''} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -1362,7 +1394,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowProductModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-teal-600 text-white font-extrabold uppercase">Salvar Produto</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-teal-600 text-white font-extrabold uppercase">Salvar produto</button>
             </div>
           </form>
         </div>
@@ -1372,11 +1404,11 @@ export default function AdminDashboardPage() {
       {showPortfolioModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSavePortfolio} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Publicar Atendimento de Pet</h3>
+            <h3 className="text-lg font-extrabold text-white">Publicar atendimento de pet</h3>
             
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label>Nome do Pet *</label>
+                <label>Nome do pet *</label>
                 <input type="text" required value={editingPost.petName || ''} onChange={(e) => setEditingPost({ ...editingPost, petName: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
@@ -1386,47 +1418,69 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Serviço Realizado *</label>
+              <label>Serviço realizado *</label>
               <input type="text" required placeholder="Banho VIP + Tosa Tesoura" value={editingPost.serviceDone || ''} onChange={(e) => setEditingPost({ ...editingPost, serviceDone: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
-              <label>Descrição do Atendimento</label>
+              <label>Descrição do atendimento</label>
               <textarea rows={2} value={editingPost.description || ''} onChange={(e) => setEditingPost({ ...editingPost, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowPortfolioModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-rose-600 text-white font-extrabold uppercase">Publicar no Mural</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-rose-600 text-white font-extrabold uppercase">Publicar no mural</button>
             </div>
           </form>
         </div>
       )}
 
-      {/* MODAL FORM ESPAÇO */}
+      {/* MODAL FORM ESPAÇO (Upload por Anexo do Computador) */}
       {showWorkspaceModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveWorkspace} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Adicionar Foto do Espaço</h3>
+            <h3 className="text-lg font-extrabold text-white">Adicionar foto do espaço</h3>
             
             <div className="space-y-1">
-              <label>Título da Foto *</label>
+              <label>Título da foto *</label>
               <input type="text" required value={editingPhoto.title || ''} onChange={(e) => setEditingPhoto({ ...editingPhoto, title: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
+            {/* Upload por anexo do computador */}
             <div className="space-y-1">
-              <label>URL da Imagem ou Caminho *</label>
-              <input type="text" required placeholder="/images/logo-white-paws.png" value={editingPhoto.url || ''} onChange={(e) => setEditingPhoto({ ...editingPhoto, url: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono" />
+              <label>Anexar imagem do seu computador *</label>
+              <div className="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, (url) => setEditingPhoto({ ...editingPhoto, url }))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                {editingPhoto.url ? (
+                  <div className="space-y-2">
+                    <div className="relative w-full h-32 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mx-auto">
+                      <Image src={editingPhoto.url} alt="Preview" fill className="object-cover" />
+                    </div>
+                    <span className="text-xs text-emerald-400 font-bold block">✓ Imagem carregada! Clique para trocar.</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-2 py-4">
+                    <Upload className="w-8 h-8 text-indigo-400" />
+                    <span className="text-xs font-bold text-slate-300">Clique aqui para selecionar uma foto do seu computador</span>
+                    <span className="text-[10px] text-slate-500">PNG, JPG ou JPEG</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="space-y-1">
-              <label>Descrição Opcional</label>
+              <label>Descrição opcional</label>
               <input type="text" value={editingPhoto.description || ''} onChange={(e) => setEditingPhoto({ ...editingPhoto, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowWorkspaceModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-indigo-600 text-white font-extrabold uppercase">Salvar Foto</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-indigo-600 text-white font-extrabold uppercase">Salvar foto</button>
             </div>
           </form>
         </div>

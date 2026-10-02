@@ -12,7 +12,6 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
   const activePromos = promotions.filter(p => p.isActive);
   const whatsappClean = config.phone.replace(/\D/g, '');
 
-  // Se não houver nenhuma promoção ativa, a seção não é renderizada no site
   if (activePromos.length === 0) return null;
 
   return (
@@ -26,7 +25,7 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
             <span>Oportunidade Especial</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy">
-            Promoções de Preço em Destaque 🎁
+            Promoções em destaque 🎁
           </h2>
           <p className="text-brand-navy/80 font-semibold text-sm sm:text-base">
             Aproveite os descontos ativos por tempo limitado para o banho e tosa do seu pet!
@@ -36,7 +35,7 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
         {/* Promos Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {activePromos.map((promo) => {
-            const promoWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá%20Camilly!%20Quero%20aproveitar%20a%20promoção%20"${encodeURIComponent(promo.title)}"`;
+            const promoWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Quero%20aproveitar%20a%20promoção%20"${encodeURIComponent(promo.title)}"`;
 
             return (
               <div
@@ -74,7 +73,7 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
                     className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition-all"
                   >
                     <MessageCircle className="w-4 h-4 fill-current" />
-                    Garantir Esta Promoção no WhatsApp
+                    Garantir esta promoção no WhatsApp
                   </a>
                 </div>
               </div>

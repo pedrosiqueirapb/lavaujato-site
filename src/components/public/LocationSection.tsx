@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Phone, Instagram, ShieldCheck, Clock, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Instagram, ShieldCheck, MessageCircle } from 'lucide-react';
 import { SiteConfig } from '@/lib/types';
 
 interface LocationSectionProps {
@@ -21,11 +21,11 @@ export function LocationSection({ config }: LocationSectionProps) {
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/40 text-brand-navy text-xs font-bold uppercase tracking-wider">
               <MapPin className="w-3.5 h-3.5 text-brand-caramel" />
-              <span>Onde Estamos</span>
+              <span>Onde estamos</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy">
-              Atendimento com Hora Marcada
+              Atendimento com hora marcada
             </h2>
 
             <p className="text-brand-navy/80 text-base font-medium leading-relaxed">
@@ -34,13 +34,13 @@ export function LocationSection({ config }: LocationSectionProps) {
 
             <div className="space-y-4 pt-2">
               
-              {/* Location pill - Partial Address for Privacy */}
+              {/* Location pill */}
               <div className="flex items-start gap-4 p-4 rounded-2xl bg-white border border-brand-sky/30 shadow-sm">
                 <div className="w-10 h-10 rounded-xl bg-brand-sky/30 text-brand-navy flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5 text-brand-caramel" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-brand-caramel uppercase">Região de Atendimento</span>
+                  <span className="text-xs font-bold text-brand-caramel uppercase">Região de atendimento</span>
                   <p className="text-base font-extrabold text-brand-navy">
                     {config.addressNeighborhood} - {config.addressCity} / {config.addressState}
                   </p>
@@ -69,7 +69,7 @@ export function LocationSection({ config }: LocationSectionProps) {
                 >
                   <Instagram className="w-5 h-5 text-pink-600 shrink-0 group-hover:scale-110 transition-transform" />
                   <div>
-                    <span className="text-xs font-bold text-brand-navy/60 block">Instagram Oficial</span>
+                    <span className="text-xs font-bold text-brand-navy/60 block">Instagram</span>
                     <span className="text-sm font-extrabold text-brand-navy group-hover:text-brand-caramel transition-colors">
                       @lavaujato.banhoetosa
                     </span>
@@ -88,19 +88,19 @@ export function LocationSection({ config }: LocationSectionProps) {
             </div>
             
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-white">Horário de Funcionamento</h3>
+              <h3 className="text-2xl font-bold text-white">Horário de funcionamento</h3>
               <p className="text-sm text-brand-sky font-medium">Segunda a Sábado: 08h às 18h</p>
               <p className="text-xs text-white/60">Domingos e Feriados: Sob agendamento especial</p>
             </div>
 
             <a
-              href={`https://wa.me/${whatsappClean}?text=Olá%20Camilly,%20gostaria%20de%20solicitar%20o%20endereço%20para%20agendamento.`}
+              href={`https://wa.me/${whatsappClean}?text=Olá,%20gostaria%20de%20solicitar%20o%20endereço%20para%20agendamento.`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-105"
             >
               <MessageCircle className="w-5 h-5 fill-current" />
-              Solicitar Agendamento no WhatsApp
+              Solicitar agendamento no WhatsApp
             </a>
           </div>
 

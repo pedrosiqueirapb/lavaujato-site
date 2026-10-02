@@ -32,7 +32,6 @@ export const initialServices: ServiceItem[] = [
     image: '/images/default-hero.jpeg',
     price: 65,
     duration: '60 min',
-    badge: 'Mais Pedido 🐾',
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -44,7 +43,6 @@ export const initialServices: ServiceItem[] = [
     image: '/images/default-hero.jpeg',
     price: 45,
     duration: '45 min',
-    badge: 'Essencial',
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -56,7 +54,6 @@ export const initialServices: ServiceItem[] = [
     image: '/images/default-hero.jpeg',
     price: 95,
     duration: '90 min',
-    badge: 'Especializada ✨',
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -68,7 +65,6 @@ export const initialServices: ServiceItem[] = [
     image: '/images/default-hero.jpeg',
     price: 80,
     duration: '60 min',
-    badge: 'Cuidados Especiais',
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -90,7 +86,7 @@ export const initialPlans: SubscriptionPlan[] = [
       'Horário preferencial na agenda'
     ],
     isPopular: false,
-    buttonText: 'Contratar Plano Quinzenal',
+    buttonText: 'Contratar plano',
     createdAt: new Date().toISOString(),
   },
   {
@@ -98,7 +94,7 @@ export const initialPlans: SubscriptionPlan[] = [
     name: 'Plano Semanal (4 Banhos/mês)',
     price: 199,
     period: 'mensal',
-    description: 'O tratamento VIP completo para quem ama ver o pet impecável toda semana!',
+    description: 'O tratamento completo para quem ama ver o pet impecável toda semana!',
     benefits: [
       '4 Banhos com hidratação profunda',
       'Tosa higiênica quinzenal ilimitada',
@@ -107,7 +103,7 @@ export const initialPlans: SubscriptionPlan[] = [
       'Tele-busca grátis (sob consulta de região)'
     ],
     isPopular: true,
-    buttonText: 'Quero o Plano Semanal VIP ⭐',
+    buttonText: 'Contratar plano',
     createdAt: new Date().toISOString(),
   }
 ];
@@ -116,7 +112,7 @@ export const initialWorkspacePhotos: WorkspacePhoto[] = [
   {
     id: 'ws-1',
     url: '/images/logo-white-paws.png',
-    title: 'Espaço Limpo e Higienizado',
+    title: 'Espaço limpo e higienizado',
     description: 'Ambiente climatizado e desinfetado a cada atendimento.',
     order: 1,
     createdAt: new Date().toISOString(),
@@ -124,7 +120,7 @@ export const initialWorkspacePhotos: WorkspacePhoto[] = [
   {
     id: 'ws-2',
     url: '/images/logo-blue.png',
-    title: 'Banhadeiras & Secadores Silenciosos',
+    title: 'Banhadeiras e secadores silenciosos',
     description: 'Equipamentos modernos para diminuir o estresse do animal.',
     order: 2,
     createdAt: new Date().toISOString(),
@@ -157,7 +153,7 @@ export const initialPortfolioPosts: PortfolioPost[] = [
 export const initialPromotions: PromotionItem[] = [
   {
     id: 'promo-1',
-    title: 'Promoção de Boas-Vindas 🐶',
+    title: 'Promoção de boas-vindas',
     description: 'Ganha 15% de desconto no primeiro banho do seu pet agendando pelo WhatsApp!',
     discountText: '15% OFF no 1º Banho',
     badge: 'Especial 🎁',
@@ -169,7 +165,7 @@ export const initialPromotions: PromotionItem[] = [
 export const initialProducts: ProductItem[] = [
   {
     id: 'prod-1',
-    name: 'Shampoo Hipoalergênico Pet Glow 500ml',
+    name: 'Shampoo hipoalergênico pet glow 500ml',
     description: 'Shampoo com extrato de camomila e maciez extrema para peles sensíveis.',
     price: 39.90,
     category: 'Higiene',

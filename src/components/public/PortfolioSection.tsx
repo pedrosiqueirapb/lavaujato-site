@@ -23,10 +23,10 @@ export function PortfolioSection({ posts }: PortfolioSectionProps) {
             <span>Nossos Clientes Especiais</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
-            Galeria de Pets Atendidos
+            Galeria de pets atendidos
           </h2>
           <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
-            Confira alguns dos cãozinhos que passaram pelo Lava Au Jato e saíram ainda mais lindos!
+            Confira alguns dos bichinhos que passaram pelo Lava Au Jato e saíram ainda mais lindos!
           </p>
         </div>
 

@@ -14,7 +14,6 @@ export function ProductsSection({ products, config }: ProductsSectionProps) {
   const availableProducts = products.filter(p => p.isAvailable);
   const whatsappClean = config.phone.replace(/\D/g, '');
 
-  // Se não houver produtos cadastrados e disponíveis, a seção é ocultada
   if (availableProducts.length === 0) return null;
 
   return (
@@ -25,20 +24,20 @@ export function ProductsSection({ products, config }: ProductsSectionProps) {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/40 text-brand-navy text-xs font-bold uppercase tracking-wider">
             <ShoppingBag className="w-3.5 h-3.5 text-brand-caramel" />
-            <span>Nossa Lojinha Pet</span>
+            <span>Nossa loja</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
-            Produtos & Acessórios Recomendados
+            Produtos e acessórios recomendados
           </h2>
           <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
-            Shampoos, laços, roupinhas e perfumes selecionados com carinho pela Camilly.
+            Shampoos, laços, roupinhas e perfumes selecionados com carinho para seu pet.
           </p>
         </div>
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {availableProducts.map((product) => {
-            const productWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá%20Camilly!%20Tenho%20interesse%20em%20comprar%20o%20produto%20"${encodeURIComponent(product.name)}"`;
+            const productWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Tenho%20interesse%20em%20comprar%20o%20produto%20"${encodeURIComponent(product.name)}"`;
 
             return (
               <div

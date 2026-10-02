@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Camera, Shield, Sparkles } from 'lucide-react';
+import { Camera, Shield } from 'lucide-react';
 import { WorkspacePhoto } from '@/lib/types';
 
 interface WorkspaceSectionProps {
@@ -22,7 +22,7 @@ export function WorkspaceSection({ photos }: WorkspaceSectionProps) {
             <span>Ambiente Preparado & Seguro</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
-            Conheça Nosso Espaço de Trabalho
+            Conheça nosso espaço de trabalho
           </h2>
           <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
             Um ambiente feito sob medida para que seu pet se sinta acolhido, calmo e seguro durante todo o procedimento.

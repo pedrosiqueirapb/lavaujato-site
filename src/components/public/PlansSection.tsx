@@ -30,7 +30,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
             <span>Economia & Cuidado Contínuo</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Planos Recorrentes para Seu Pet
+            Planos recorrentes para seu pet
           </h2>
           <p className="text-white/80 text-base sm:text-lg font-medium">
             Mantenha seu pet limpo, hidratado e cheiroso o mês inteiro com vantagens exclusivas e facilidade no pagamento no cartão de crédito ou PIX.
@@ -40,7 +40,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
         {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
           {plans.map((plan) => {
-            const planWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá%20Camilly!%20Tenho%20interesse%20em%20contratar%20o%20"${encodeURIComponent(plan.name)}"`;
+            const planWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Tenho%20interesse%20em%20contratar%20o%20"${encodeURIComponent(plan.name)}"`;
 
             return (
               <div
@@ -106,7 +106,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
                     }`}
                   >
                     <MessageCircle className="w-4 h-4 fill-current" />
-                    {plan.buttonText || 'Contratar com a Camilly'}
+                    {plan.buttonText || 'Contratar plano'}
                   </a>
                 </div>
 

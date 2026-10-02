@@ -34,27 +34,20 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
             Serviços de Banho, Tosa & Estética Pet
           </h2>
           <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
-            Escolha o tratamento ideal para o bem-estar do seu cãozinho. Cada serviço é feito com paciência e carinho.
+            Escolha o tratamento ideal para o bem-estar do seu pet. Cada serviço é feito com paciência e carinho.
           </p>
         </div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {activeServices.map((service) => {
-            const serviceWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá%20Camilly!%20Gostaria%20de%20agendar%20o%20serviço%20"${encodeURIComponent(service.title)}"`;
+            const serviceWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Gostaria%20de%20agendar%20o%20serviço%20"${encodeURIComponent(service.title)}"`;
 
             return (
               <div
                 key={service.id}
                 className="glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group hover:border-brand-caramel/50 shadow-md hover:shadow-xl transition-all"
               >
-                {/* Badge if present */}
-                {service.badge && (
-                  <div className="absolute top-6 right-6 bg-brand-caramel text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                    {service.badge}
-                  </div>
-                )}
-
                 <div className="space-y-4">
                   
                   {/* Image & Title Header */}
