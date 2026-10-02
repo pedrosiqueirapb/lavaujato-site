@@ -28,10 +28,10 @@ export function HeroSection({ config }: HeroSectionProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Text Left Column */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
             
             {/* Top Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-sky/40 border border-brand-sky text-brand-navy text-xs sm:text-sm font-bold shadow-sm">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-sky/40 border border-brand-sky text-brand-navy text-xs sm:text-sm font-bold shadow-sm">
               <Sparkles className="w-4 h-4 text-brand-caramel animate-spin" />
               <span>Banho e tosa especializado com amabilidade e carinho</span>
             </div>
@@ -45,12 +45,12 @@ export function HeroSection({ config }: HeroSectionProps) {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-brand-navy/80 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              No <strong className="text-brand-navy">Lava Au Jato</strong>, cada banho, tosa e hidratação é feito com atenção individualizada, produtos hipoalergênicos e ambiente seguro e limpinho.
+            <p className="text-lg sm:text-xl text-brand-navy/80 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              No <strong className="text-brand-navy font-bold">Lava Au Jato</strong>, cada banho, tosa e hidratação é feito com atenção individualizada, produtos hipoalergênicos e ambiente seguro e limpinho.
             </p>
 
             {/* CTA Group */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -63,27 +63,11 @@ export function HeroSection({ config }: HeroSectionProps) {
 
               <a
                 href="#planos"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
               >
                 <Star className="w-5 h-5 text-brand-caramel" />
                 Conhecer nossos planos
               </a>
-            </div>
-
-            {/* Feature Pills */}
-            <div className="pt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-lg mx-auto lg:mx-0">
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/70 border border-brand-sky/30 shadow-sm text-xs font-bold text-brand-navy">
-                <Heart className="w-4 h-4 text-rose-500 shrink-0" />
-                <span>Atendimento Sem Estresse</span>
-              </div>
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/70 border border-brand-sky/30 shadow-sm text-xs font-bold text-brand-navy">
-                <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>Shampoo Hipoalergênico</span>
-              </div>
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/70 border border-brand-sky/30 shadow-sm text-xs font-bold text-brand-navy col-span-2 sm:col-span-1">
-                <Award className="w-4 h-4 text-brand-caramel shrink-0" />
-                <span>Tosa Tesoura VIP</span>
-              </div>
             </div>
 
           </div>

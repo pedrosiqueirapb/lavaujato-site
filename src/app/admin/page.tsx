@@ -112,7 +112,12 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch('/api/admin/data');
       if (res.status === 401) {
-        router.push('/admin/login');
+        window.location.href = '/admin/login';
+        return;
+      }
+      if (!res.ok) {
+        showToast('Erro ao carregar dados do painel.');
+        setLoading(false);
         return;
       }
       const data = await res.json();
@@ -406,7 +411,7 @@ export default function AdminDashboardPage() {
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <RefreshCw className="w-8 h-8 text-brand-sky animate-spin" />
-          <p className="text-sm font-bold tracking-wide">Carregando Painel Administrativo...</p>
+          <p className="text-sm font-bold tracking-wide">Carregando Admin Painel...</p>
         </div>
       </div>
     );
