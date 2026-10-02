@@ -40,13 +40,9 @@ export function LocationSection({ config }: LocationSectionProps) {
                   <MapPin className="w-5 h-5 text-brand-caramel" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-brand-caramel uppercase">Região de atendimento</span>
+                  <span className="text-xs font-bold text-brand-caramel uppercase">Local de atendimento</span>
                   <p className="text-base font-extrabold text-brand-navy">
                     {config.addressNeighborhood} - {config.addressCity} / {config.addressState}
-                  </p>
-                  <p className="text-xs text-brand-navy/60 font-medium mt-0.5 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline" />
-                    Endereço exato enviado no momento da confirmação do agendamento.
                   </p>
                 </div>
               </div>
@@ -90,7 +86,6 @@ export function LocationSection({ config }: LocationSectionProps) {
             <div className="space-y-2">
               <h3 className="text-2xl font-bold text-white">Horário de funcionamento</h3>
               <p className="text-sm text-brand-sky font-medium">Segunda a Sábado: 08h às 18h</p>
-              <p className="text-xs text-white/60">Domingos e Feriados: Sob agendamento especial</p>
             </div>
 
             <a

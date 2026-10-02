@@ -65,7 +65,7 @@ export function Footer({ config }: FooterProps) {
           <div className="md:col-span-3 space-y-3">
             <h3 className="text-sm font-extrabold text-brand-sky uppercase tracking-wider">Navegação</h3>
             <ul className="space-y-2 text-sm text-white/80 font-medium">
-              <li><Link href="#servicos" className="hover:text-brand-caramel transition-colors">Serviços & Tosas</Link></li>
+              <li><Link href="#servicos" className="hover:text-brand-caramel transition-colors">Serviços</Link></li>
               <li><Link href="#espaco" className="hover:text-brand-caramel transition-colors">Nosso espaço</Link></li>
               <li><Link href="#planos" className="hover:text-brand-caramel transition-colors">Planos</Link></li>
               <li><Link href="#portfolio" className="hover:text-brand-caramel transition-colors">Galeria</Link></li>
