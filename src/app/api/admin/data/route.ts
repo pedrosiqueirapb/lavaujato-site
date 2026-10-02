@@ -58,6 +58,15 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { action, resource, data, id } = body;
 
+    // REORDENAÇÃO GENÉRICA DE ELEMENTOS
+    if (action === 'reorder') {
+      const { ids } = data || {};
+      if (Array.isArray(ids)) {
+        StorageService.reorderItems(resource, ids);
+        return NextResponse.json({ success: true });
+      }
+    }
+
     // 1. CLIENTES (Com Sync Asaas)
     if (resource === 'client') {
       if (action === 'delete') {

@@ -22,7 +22,9 @@ import {
   Copy, 
   RefreshCw,
   Globe,
-  Upload
+  Upload,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { 
   Client, 
@@ -158,6 +160,47 @@ export default function AdminDashboardPage() {
         }
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  // HANDLER DE REORDENAÇÃO DE REGISTROS (SUBIR OU DESCER POSIÇÃO)
+  const handleMoveItem = async (
+    resource: 'service' | 'plan' | 'workspace' | 'portfolio' | 'promotion' | 'product',
+    index: number,
+    direction: 'up' | 'down'
+  ) => {
+    let list: any[] = [];
+    let setList: (items: any[]) => void = () => {};
+
+    if (resource === 'service') { list = [...services]; setList = setServices; }
+    else if (resource === 'plan') { list = [...plans]; setList = setPlans; }
+    else if (resource === 'workspace') { list = [...photos]; setList = setPhotos; }
+    else if (resource === 'portfolio') { list = [...posts]; setList = setPosts; }
+    else if (resource === 'promotion') { list = [...promos]; setList = setPromos; }
+    else if (resource === 'product') { list = [...products]; setList = setProducts; }
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= list.length) return;
+
+    const temp = list[index];
+    list[index] = list[targetIndex];
+    list[targetIndex] = temp;
+
+    setList(list);
+
+    try {
+      const ids = list.map(item => item.id);
+      await fetch('/api/admin/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'reorder',
+          resource,
+          data: { ids },
+        }),
+      });
+    } catch (err) {
+      console.error('Erro ao reordenar registros:', err);
     }
   };
 
@@ -822,7 +865,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {services.map((service) => (
+              {services.map((service, index) => (
                 <div key={service.id} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -832,12 +875,33 @@ export default function AdminDashboardPage() {
                     <span className="text-lg font-extrabold text-emerald-400 shrink-0">{formatCurrency(service.price)}</span>
                   </div>
 
-                  <div className="flex items-center justify-end text-xs pt-4 border-t border-slate-800">
+                  <div className="flex items-center justify-between text-xs pt-4 border-t border-slate-800">
+                    <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMoveItem('service', index, 'up')}
+                        className="p-1.5 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o início"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === services.length - 1}
+                        onClick={() => handleMoveItem('service', index, 'down')}
+                        className="p-1.5 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o final"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
                     <div className="flex gap-2">
-                      <button onClick={() => { setEditingService(service); setShowServiceModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white">
+                      <button onClick={() => { setEditingService(service); setShowServiceModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white" title="Editar serviço">
                         <Edit3 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeleteService(service.id)} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg">
+                      <button onClick={() => handleDeleteService(service.id)} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg" title="Excluir serviço">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -865,7 +929,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {plans.map((plan) => (
+              {plans.map((plan, index) => (
                 <div key={plan.id} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
                   <div className="flex items-start justify-between">
                     <div>
@@ -882,12 +946,32 @@ export default function AdminDashboardPage() {
                   </ul>
 
                   <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                    <span className="text-xs text-slate-500">{plan.isPopular ? '⭐ Destaque recomendado' : 'Plano padrão'}</span>
+                    <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMoveItem('plan', index, 'up')}
+                        className="p-1.5 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o início"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === plans.length - 1}
+                        onClick={() => handleMoveItem('plan', index, 'down')}
+                        className="p-1.5 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o final"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
                     <div className="flex gap-2">
-                      <button onClick={() => { setEditingPlan(plan); setShowPlanModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300">
+                      <button onClick={() => { setEditingPlan(plan); setShowPlanModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300" title="Editar plano">
                         <Edit3 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDeletePlan(plan.id)} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg">
+                      <button onClick={() => handleDeletePlan(plan.id)} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg" title="Excluir plano">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -915,7 +999,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {posts.map((post) => (
+              {posts.map((post, index) => (
                 <div key={post.id} className="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-800">
                     <Image src={post.photoUrl || '/images/logo-white-paws.png'} alt={post.petName} fill className="object-cover" />
@@ -923,7 +1007,27 @@ export default function AdminDashboardPage() {
                   <h3 className="text-base font-bold text-white">{post.petName} <span className="text-xs text-slate-400 font-normal">({post.breed})</span></h3>
                   <p className="text-xs text-slate-300">{post.description}</p>
                   <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-500">
-                    <span>{formatDate(post.date)}</span>
+                    <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMoveItem('portfolio', index, 'up')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o início"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === posts.length - 1}
+                        onClick={() => handleMoveItem('portfolio', index, 'down')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o final"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
                     <div className="flex gap-2">
                       <button onClick={() => { setEditingPost(post); setShowPortfolioModal(true); }} className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white" title="Editar atendimento">
                         <Edit3 className="w-3.5 h-3.5" />
@@ -956,28 +1060,51 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {photos.map((photo) => (
+              {photos.map((photo, index) => (
                 <div key={photo.id} className="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-800">
                     <Image src={photo.url} alt={photo.title} fill className="object-cover" />
                   </div>
                   <h3 className="text-sm font-bold text-white">{photo.title}</h3>
                   <p className="text-xs text-slate-400">{photo.description}</p>
-                  <div className="pt-2 flex justify-end gap-2">
-                    <button
-                      onClick={() => { setEditingPhoto(photo); setShowWorkspaceModal(true); }}
-                      className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white"
-                      title="Editar foto"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteWorkspace(photo.id)}
-                      className="p-1.5 bg-rose-500/10 text-rose-400 rounded hover:bg-rose-500/20"
-                      title="Excluir foto"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                  <div className="pt-2 flex items-center justify-between border-t border-slate-800">
+                    <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMoveItem('workspace', index, 'up')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o início"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === photos.length - 1}
+                        onClick={() => handleMoveItem('workspace', index, 'down')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o final"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => { setEditingPhoto(photo); setShowWorkspaceModal(true); }}
+                        className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white"
+                        title="Editar foto"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteWorkspace(photo.id)}
+                        className="p-1.5 bg-rose-500/10 text-rose-400 rounded hover:bg-rose-500/20"
+                        title="Excluir foto"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1002,7 +1129,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {promos.map((promo) => (
+              {promos.map((promo, index) => (
                 <div key={promo.id} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-3">
                   <div className="flex items-start justify-between">
                     <h3 className="text-lg font-bold text-white">{promo.title}</h3>
@@ -1011,9 +1138,27 @@ export default function AdminDashboardPage() {
                   <p className="text-xs text-slate-300">{promo.description}</p>
 
                   <div className="flex items-center justify-between pt-4 border-t border-slate-800">
-                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300">
-                      Promoção ativa no site
-                    </span>
+                    <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMoveItem('promotion', index, 'up')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o início"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === promos.length - 1}
+                        onClick={() => handleMoveItem('promotion', index, 'down')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o final"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
                     <div className="flex gap-2">
                       <button onClick={() => { setEditingPromo(promo); setShowPromoModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white" title="Editar promoção">
                         <Edit3 className="w-4 h-4" />
@@ -1046,7 +1191,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {products.map((prod) => (
+              {products.map((prod, index) => (
                 <div key={prod.id} className="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
                   <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-slate-800">
                     <Image src={prod.photoUrl || '/images/logo-transparent.png'} alt={prod.name} fill className="object-contain p-2" />
@@ -1054,7 +1199,27 @@ export default function AdminDashboardPage() {
                   <h3 className="text-sm font-bold text-white">{prod.name}</h3>
                   <span className="text-lg font-black text-teal-400 block">{formatCurrency(prod.price)}</span>
                   <div className="flex items-center justify-between pt-2 border-t border-slate-800">
-                    <span className="text-[11px] text-slate-500 font-medium">{prod.category || 'Geral'}</span>
+                    <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+                      <button
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMoveItem('product', index, 'up')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o início"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={index === products.length - 1}
+                        onClick={() => handleMoveItem('product', index, 'down')}
+                        className="p-1 text-slate-300 hover:text-white disabled:opacity-20 transition-colors"
+                        title="Mover para o final"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
                     <div className="flex gap-2">
                       <button onClick={() => { setEditingProduct(prod); setShowProductModal(true); }} className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white" title="Editar produto">
                         <Edit3 className="w-3.5 h-3.5" />

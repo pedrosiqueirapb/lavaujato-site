@@ -405,4 +405,44 @@ export class StorageService {
     }
     saveStore(store);
   }
+
+  // REORDENAÇÃO DE REGISTROS
+  static reorderItems(resource: string, ids: string[]): boolean {
+    const store = loadStore();
+
+    const sortByIds = <T extends { id: string }>(items: T[]): T[] => {
+      const map = new Map(items.map(item => [item.id, item]));
+      const reordered: T[] = [];
+      ids.forEach(id => {
+        const item = map.get(id);
+        if (item) reordered.push(item);
+      });
+      items.forEach(item => {
+        if (!ids.includes(item.id)) reordered.push(item);
+      });
+      return reordered;
+    };
+
+    if (resource === 'service') {
+      store.services = sortByIds(store.services);
+    } else if (resource === 'plan') {
+      store.plans = sortByIds(store.plans);
+    } else if (resource === 'portfolio') {
+      store.portfolioPosts = sortByIds(store.portfolioPosts);
+    } else if (resource === 'workspace') {
+      store.workspacePhotos = sortByIds(store.workspacePhotos).map((photo, idx) => ({
+        ...photo,
+        order: idx + 1,
+      }));
+    } else if (resource === 'promotion') {
+      store.promotions = sortByIds(store.promotions);
+    } else if (resource === 'product') {
+      store.products = sortByIds(store.products);
+    } else {
+      return false;
+    }
+
+    saveStore(store);
+    return true;
+  }
 }
