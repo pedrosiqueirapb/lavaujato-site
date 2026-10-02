@@ -832,11 +832,7 @@ export default function AdminDashboardPage() {
                     <span className="text-lg font-extrabold text-emerald-400 shrink-0">{formatCurrency(service.price)}</span>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs pt-4 border-t border-slate-800">
-                    <span className={`px-3 py-1 rounded-full font-bold ${service.isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}`}>
-                      {service.isActive ? 'Ativo no site' : 'Inativo'}
-                    </span>
-
+                  <div className="flex items-center justify-end text-xs pt-4 border-t border-slate-800">
                     <div className="flex gap-2">
                       <button onClick={() => { setEditingService(service); setShowServiceModal(true); }} className="p-2 bg-slate-800 rounded-lg text-slate-300 hover:text-white">
                         <Edit3 className="w-4 h-4" />
@@ -1365,6 +1361,11 @@ export default function AdminDashboardPage() {
             <div className="space-y-1">
               <label>Descrição do plano</label>
               <input type="text" value={editingPlan.description || ''} onChange={(e) => setEditingPlan({ ...editingPlan, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+            </div>
+
+            <div className="space-y-1">
+              <label>Texto do botão (CTA)</label>
+              <input type="text" value={editingPlan.buttonText || ''} onChange={(e) => setEditingPlan({ ...editingPlan, buttonText: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
