@@ -438,7 +438,7 @@ export default function AdminDashboardPage() {
               <Image src="/images/logo-white-paws.png" alt="Logo" fill className="object-contain" />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-white">LAVA AU JATO</h2>
+              <h2 className="text-base font-extrabold text-white">LAV AU JATO</h2>
               <span className="text-[10px] font-bold text-brand-sky uppercase tracking-widest block">
                 Admin Painel
               </span>
@@ -577,7 +577,7 @@ export default function AdminDashboardPage() {
             <div>
               <h1 className="text-3xl font-extrabold text-white">Bem-vinda, Camilly! 👋</h1>
               <p className="text-sm text-slate-400 font-medium">
-                Gerencie seus clientes, cobranças e todo o conteúdo do site Lava Au Jato.
+                Gerencie seus clientes, cobranças e todo o conteúdo do site Lav Au Jato.
               </p>
             </div>
 

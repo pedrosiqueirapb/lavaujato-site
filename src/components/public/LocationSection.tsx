@@ -1,6 +1,7 @@
 'use client';
 
-import { MapPin, Phone, Instagram, ShieldCheck, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Instagram } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { SiteConfig } from '@/lib/types';
 
 interface LocationSectionProps {
@@ -94,7 +95,7 @@ export function LocationSection({ config }: LocationSectionProps) {
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-105"
             >
-              <MessageCircle className="w-5 h-5 fill-current" />
+              <WhatsAppIcon className="w-5 h-5 fill-white" />
               Solicitar agendamento no WhatsApp
             </a>
           </div>

@@ -26,7 +26,7 @@ export function PortfolioSection({ posts }: PortfolioSectionProps) {
             Galeria de pets atendidos
           </h2>
           <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
-            Confira alguns dos bichinhos que passaram pelo Lava Au Jato e saíram ainda mais lindos!
+            Confira alguns dos bichinhos que passaram pelo Lav Au Jato e saíram ainda mais lindos!
           </p>
         </div>
 
@@ -78,7 +78,7 @@ export function PortfolioSection({ posts }: PortfolioSectionProps) {
 
               {/* Bottom Tag */}
               <div className="bg-brand-sky/20 px-5 py-3 border-t border-brand-sky/30 flex items-center justify-between text-xs font-semibold text-brand-navy">
-                <span>Lava Au Jato Banho e Tosa</span>
+                <span>Lav Au Jato Banho e Tosa</span>
               </div>
             </div>
           ))}

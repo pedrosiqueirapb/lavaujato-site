@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { Heart, Sparkles, Star, Award, PhoneCall } from 'lucide-react';
+import { Sparkles, Star } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { SiteConfig } from '@/lib/types';
 
 interface HeroSectionProps {
@@ -46,7 +47,7 @@ export function HeroSection({ config }: HeroSectionProps) {
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl text-brand-navy/80 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              No <strong className="text-brand-navy font-bold">Lava Au Jato</strong>, cada banho, tosa e hidratação é feito com atenção individualizada, produtos hipoalergênicos e ambiente seguro e limpinho.
+              No <strong className="text-brand-navy font-bold">Lav Au Jato</strong>, cada banho, tosa e hidratação é feito com atenção individualizada, produtos hipoalergênicos e ambiente seguro e limpinho.
             </p>
 
             {/* CTA Group */}
@@ -57,7 +58,7 @@ export function HeroSection({ config }: HeroSectionProps) {
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base shadow-xl shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all hover:-translate-y-1 active:translate-y-0"
               >
-                <PhoneCall className="w-5 h-5 fill-current stroke-[2.5]" />
+                <WhatsAppIcon className="w-6 h-6 fill-white" />
                 Agendar horário para meu pet
               </a>
 
@@ -84,7 +85,7 @@ export function HeroSection({ config }: HeroSectionProps) {
               <div className="relative w-64 h-64 sm:w-72 sm:h-72 transition-transform hover:scale-105 duration-300">
                 <Image
                   src="/images/logo-white-paws.png"
-                  alt="Lava Au Jato Logo"
+                  alt="Lav Au Jato Logo"
                   fill
                   className="object-contain drop-shadow-lg"
                   priority

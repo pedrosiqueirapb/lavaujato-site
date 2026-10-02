@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Instagram, MessageCircle } from 'lucide-react';
+import { Instagram } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { SiteConfig } from '@/lib/types';
 
 interface FooterProps {
@@ -25,13 +26,13 @@ export function Footer({ config }: FooterProps) {
               <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-brand-sky bg-white p-1">
                 <Image
                   src="/images/logo-white-paws.png"
-                  alt="Lava Au Jato Logo"
+                  alt="Lav Au Jato Logo"
                   fill
                   className="object-contain"
                 />
               </div>
               <div>
-                <span className="text-xl font-extrabold text-white block">LAVA AU JATO</span>
+                <span className="text-xl font-extrabold text-white block">LAV AU JATO</span>
                 <span className="text-xs font-semibold text-brand-sky uppercase tracking-widest">
                   Banho e Tosa
                 </span>
@@ -44,7 +45,7 @@ export function Footer({ config }: FooterProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 hover:bg-pink-600 flex items-center justify-center text-white transition-all hover:scale-110"
-                aria-label="Instagram Lava Au Jato"
+                aria-label="Instagram Lav Au Jato"
               >
                 <Instagram className="w-5 h-5" />
               </a>
@@ -54,9 +55,9 @@ export function Footer({ config }: FooterProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 hover:bg-emerald-600 flex items-center justify-center text-white transition-all hover:scale-110"
-                aria-label="WhatsApp Lava Au Jato"
+                aria-label="WhatsApp Lav Au Jato"
               >
-                <MessageCircle className="w-5 h-5" />
+                <WhatsAppIcon className="w-5 h-5 fill-white" />
               </a>
             </div>
           </div>
@@ -88,7 +89,7 @@ export function Footer({ config }: FooterProps) {
 
         {/* Bottom Bar with Autojade Credit (Requirement 13) */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50 font-medium">
-          <p>© 2026 Lava Au Jato Banho e Tosa. Todos os direitos reservados.</p>
+          <p>© 2026 Lav Au Jato Banho e Tosa. Todos os direitos reservados.</p>
           
           {/* Requirement 13: Texto bem pequeno e discreto "Desenvolvido por Autojade" com link */}
           <p className="text-[11px] text-white/40 hover:text-white/70 transition-colors">

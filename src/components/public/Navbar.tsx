@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MessageCircle, Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { SiteConfig } from '@/lib/types';
 
 interface NavbarProps {
@@ -38,7 +39,7 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
           <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-brand-sky bg-white p-1 shadow-sm transition-transform duration-300 group-hover:scale-105">
             <Image
               src="/images/logo-transparent.png"
-              alt="Lava Au Jato Banho e Tosa"
+              alt="Lav Au Jato Banho e Tosa"
               fill
               className="object-contain"
               priority
@@ -92,7 +93,7 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30 transition-all hover:scale-105 active:scale-95"
           >
-            <MessageCircle className="w-4 h-4" />
+            <WhatsAppIcon className="w-4 h-4 fill-white" />
             Agendar no WhatsApp
           </a>
         </div>
@@ -170,7 +171,7 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md"
             >
-              <MessageCircle className="w-4 h-4" />
+              <WhatsAppIcon className="w-4 h-4 fill-white" />
               Agendar no WhatsApp
             </a>
           </div>

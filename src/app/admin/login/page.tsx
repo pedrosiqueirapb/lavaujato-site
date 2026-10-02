@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
             <div className="relative w-20 h-20 mx-auto rounded-full bg-white/10 border-2 border-brand-sky p-2 flex items-center justify-center">
               <Image
                 src="/images/logo-white-paws.png"
-                alt="Lava Au Jato Admin"
+                alt="Lav Au Jato Admin"
                 fill
                 className="object-contain p-1"
               />
@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
               Painel Administrativo
             </h1>
             <p className="text-xs font-semibold text-brand-sky uppercase tracking-widest">
-              Lava Au Jato | Camilly
+              Lav Au Jato | Camilly
             </p>
           </div>
 
