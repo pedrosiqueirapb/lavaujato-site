@@ -1364,7 +1364,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Texto do botão (CTA)</label>
+              <label>Texto do botão</label>
               <input type="text" value={editingPlan.buttonText || ''} onChange={(e) => setEditingPlan({ ...editingPlan, buttonText: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
