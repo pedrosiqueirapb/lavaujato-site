@@ -32,3 +32,12 @@ next-env.d.ts
 
 # local data cache
 .data-store.json
+
+# non-project files & desktop clutter
+/Pessoal/
+/Anotações
+/Executar projeto
+/openvpn
+*.AppImage
+*.deb
+

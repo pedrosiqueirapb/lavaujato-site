@@ -808,7 +808,7 @@ export default function AdminDashboardPage() {
                         {charge.billingType === 'CREDIT_CARD' ? '💳 Cartão de Crédito' : charge.billingType === 'PIX' ? '⚡ PIX' : '📄 Boleto'}
                       </span>
                       <span className="bg-slate-800 text-amber-400 px-3 py-1 rounded-full uppercase">
-                        {charge.cycle === 'SINGLE' ? 'Única' : `Recorrente (${charge.cycle})`}
+                        {charge.cycle === 'SINGLE' ? 'Única' : 'Recorrente'}
                       </span>
                     </div>
 
@@ -1317,7 +1317,7 @@ export default function AdminDashboardPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold uppercase tracking-wider text-xs shadow-lg transition-all"
+                className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold tracking-wider text-xs shadow-lg transition-all"
               >
                 {saving ? 'Salvando...' : 'Salvar alterações'}
               </button>
@@ -1370,7 +1370,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowClientModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-sky-600 text-white font-extrabold uppercase">Salvar cliente</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-sky-600 text-white font-extrabold">Salvar</button>
             </div>
           </form>
         </div>
@@ -1402,7 +1402,6 @@ export default function AdminDashboardPage() {
                 <select value={newCharge.billingType} onChange={(e) => setNewCharge({ ...newCharge, billingType: e.target.value as any })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
                   <option value="CREDIT_CARD">Cartão de crédito</option>
                   <option value="PIX">PIX (QrCode / Copia e Cola)</option>
-                  <option value="BOLETO">Boleto / Carnê</option>
                 </select>
               </div>
             </div>
@@ -1411,7 +1410,6 @@ export default function AdminDashboardPage() {
               <label>Tipo de recorrência *</label>
               <select value={newCharge.cycle} onChange={(e) => setNewCharge({ ...newCharge, cycle: e.target.value as any })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
                 <option value="MONTHLY">Assinatura mensal recorrente</option>
-                <option value="WEEKLY">Assinatura semanal recorrente</option>
                 <option value="SINGLE">Cobrança única</option>
               </select>
             </div>
@@ -1489,7 +1487,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowServiceModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-purple-600 text-white font-extrabold uppercase">Salvar serviço</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-purple-600 text-white font-extrabold">Salvar</button>
             </div>
           </form>
         </div>
@@ -1548,7 +1546,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowPlanModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold uppercase">Salvar plano</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold">Salvar</button>
             </div>
           </form>
         </div>
@@ -1577,7 +1575,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowPromoModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold uppercase">Salvar promoção</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-amber-600 text-white font-extrabold">Salvar</button>
             </div>
           </form>
         </div>
@@ -1643,7 +1641,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowProductModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-teal-600 text-white font-extrabold uppercase">Salvar produto</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-teal-600 text-white font-extrabold">Salvar</button>
             </div>
           </form>
         </div>
@@ -1715,7 +1713,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowPortfolioModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-rose-600 text-white font-extrabold uppercase">Publicar no mural</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-rose-600 text-white font-extrabold">Publicar</button>
             </div>
           </form>
         </div>
@@ -1770,7 +1768,7 @@ export default function AdminDashboardPage() {
 
             <div className="pt-4 flex gap-3">
               <button type="button" onClick={() => setShowWorkspaceModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-indigo-600 text-white font-extrabold uppercase">Salvar foto</button>
+              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-indigo-600 text-white font-extrabold">Salvar</button>
             </div>
           </form>
         </div>
