@@ -36,6 +36,7 @@ import {
   SubscriptionPlan, 
   PromotionItem, 
   ProductItem, 
+  PRODUCT_CATEGORIES,
   AsaasCharge, 
   SiteConfig,
   DashboardStats 
@@ -1859,7 +1860,17 @@ export default function AdminDashboardPage() {
               </div>
               <div className="space-y-1">
                 <label>Categoria</label>
-                <input type="text" value={editingProduct.category || ''} onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+                <select 
+                  value={editingProduct.category || 'Acessórios'} 
+                  onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })} 
+                  className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium cursor-pointer"
+                >
+                  {PRODUCT_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

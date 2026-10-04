@@ -83,12 +83,28 @@ export interface PromotionItem {
   createdAt: string;
 }
 
+export const PRODUCT_CATEGORIES = [
+  'Ração',
+  'Petiscos',
+  'Brinquedos',
+  'Acessórios',
+  'Higiene',
+  'Medicamentos',
+  'Roupas',
+  'Camas',
+  'Alimentação',
+  'Limpeza',
+  'Outros',
+] as const;
+
+export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
+
 export interface ProductItem {
   id: string;
   name: string;
   description: string;
   price?: number;
-  category?: string;
+  category?: ProductCategory | string;
   photoUrl: string;
   isAvailable: boolean;
   createdAt: string;
