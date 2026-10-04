@@ -76,7 +76,7 @@ export function PortfolioSection({ posts }: PortfolioSectionProps) {
               Galeria de pets atendidos
             </h2>
             <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
-              Confira alguns dos bichinhos que passaram pelo Lav Au Jato e saíram ainda mais lindos!
+              Conheça alguns dos pets que já passaram por aqui.
             </p>
           </div>
 

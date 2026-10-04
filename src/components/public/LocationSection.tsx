@@ -30,7 +30,7 @@ export function LocationSection({ config }: LocationSectionProps) {
             </h2>
 
             <p className="text-brand-navy/80 text-base font-medium leading-relaxed">
-              Para proporcionar máxima atenção, carinho e tranquilidade a cada pet, os banhos e tosas são realizados exclusivamente com agendamento prévio.
+              Os atendimentos são realizados com agendamento prévio para garantir a organização da agenda e o horário reservado para cada pet.
             </p>
 
             <div className="space-y-4 pt-2">

@@ -43,7 +43,7 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
             Promoções em destaque 🎁
           </h2>
           <p className="text-brand-navy/80 font-semibold text-sm sm:text-base">
-            Aproveite os descontos ativos por tempo limitado para o banho e tosa do seu pet!
+            Confira nossas promoções e condições especiais!
           </p>
         </div>
 

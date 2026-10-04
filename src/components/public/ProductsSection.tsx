@@ -42,7 +42,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
               </h2>
 
               <p className="text-brand-navy/80 text-base font-medium leading-relaxed">
-                Selecionamos shampoos hipoalergênicos, roupinhas, laços, coleiras e perfumes com carinho para o seu melhor amigo sair ainda mais cheiroso e estiloso!
+                Produtos para pets, selecionados de acordo com as necessidades do dia a dia.
               </p>
 
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">

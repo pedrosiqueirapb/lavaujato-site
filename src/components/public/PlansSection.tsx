@@ -48,7 +48,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
             Planos recorrentes para seu pet
           </h2>
           <p className="text-white/80 text-base sm:text-lg font-medium">
-            Mantenha seu pet limpo, hidratado e cheiroso o mês inteiro com vantagens exclusivas e facilidade no pagamento no cartão de crédito ou PIX.
+            Mantenha seu pet sempre limpo e cheiroso com nossas opções de banho e tosa, além de facilidade no pagamento via cartão ou PIX.
           </p>
         </div>
 

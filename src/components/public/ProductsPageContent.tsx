@@ -73,7 +73,7 @@ export function ProductsPageContent({ products, config }: ProductsPageContentPro
             Produtos e acessórios recomendados
           </h1>
           <p className="text-brand-navy/80 text-base sm:text-lg font-medium leading-relaxed">
-            Navegue por nossa linha de shampoos, condicionadores, laços, roupinhas e perfumes escolhidos especialmente para deixar seu pet impecável.
+            Produtos para pets, selecionados de acordo com as necessidades do dia a dia.
           </p>
         </div>
 

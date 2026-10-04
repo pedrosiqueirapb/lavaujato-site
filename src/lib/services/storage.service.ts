@@ -23,6 +23,7 @@ import {
   initialCharges 
 } from './initial-data';
 import { encryptPII, decryptPII } from '@/lib/security/pii-crypto';
+import { prisma, isDatabaseConfigured } from '@/lib/db/prisma';
 
 interface StorageSchema {
   siteConfig: SiteConfig;

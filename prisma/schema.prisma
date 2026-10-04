@@ -1,0 +1,130 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model SiteConfig {
+  id                  String   @id @default("default-config")
+  phone               String
+  instagram           String
+  addressNeighborhood String
+  addressCity         String
+  addressState        String
+  isSandbox           Boolean  @default(true)
+  asaasApiKey         String?
+  is2FAEnabled        Boolean  @default(true)
+  admin2FASecret      String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Client {
+  id              String   @id @default(cuid())
+  name            String
+  phone           String
+  email           String?
+  cpfCnpj         String?
+  address         String?
+  notes           String?
+  asaasCustomerId String?
+  isDeleted       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  pets            Pet[]
+}
+
+model Pet {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name      String
+  breed     String?
+  size      String   @default("Médio")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServiceItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String?
+  price       Float?
+  duration    String?
+  badge       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SubscriptionPlan {
+  id          String   @id @default(cuid())
+  name        String
+  price       Float
+  period      String   @default("mensal")
+  description String
+  benefits    String[]
+  isPopular   Boolean  @default(false)
+  buttonText  String?
+  createdAt   DateTime @default(now())
+}
+
+model PromotionItem {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  discountText String
+  badge        String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+}
+
+model ProductItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  category    String?
+  photoUrl    String?
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model PortfolioPost {
+  id          String   @id @default(cuid())
+  petName     String
+  breed       String?
+  serviceDone String
+  description String
+  photoUrl    String?
+  date        String?
+  createdAt   DateTime @default(now())
+}
+
+model WorkspacePhoto {
+  id          String   @id @default(cuid())
+  url         String
+  title       String
+  description String?
+  order       Int      @default(1)
+  createdAt   DateTime @default(now())
+}
+
+model AsaasCharge {
+  id           String   @id @default(cuid())
+  customerId   String
+  customerName String
+  value        Float
+  description  String
+  billingType  String
+  cycle        String?
+  status       String
+  invoiceUrl   String?
+  createdAt    DateTime @default(now())
+}

@@ -43,13 +43,13 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/30 border border-brand-sky text-brand-navy text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-brand-caramel" />
-            <span>Nossos Cuidados Especializados</span>
+            <span>Nossos cuidados especializados</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
-            Serviços de banho e tosa
+            Nossos serviços
           </h2>
           <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
-            Escolha o tratamento ideal para o bem-estar do seu pet. Cada serviço é feito com paciência e carinho.
+            Escolha o serviço ideal para o seu pet. Trabalhamos com cuidado e atenção em cada atendimento.
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
         <div className="mt-12 p-6 rounded-2xl bg-brand-sky/20 border border-brand-sky/40 text-center max-w-2xl mx-auto flex items-center justify-center gap-3">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           <p className="text-sm font-semibold text-brand-navy">
-            Precisa de um banho medicinal com receita ou tosa específica? Agende diretamente pelo WhatsApp!
+            Tem alguma necessidade específica ou dúvida sobre o serviço? Fale com a gente pelo WhatsApp.
           </p>
         </div>
 

@@ -35,7 +35,7 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
             {/* Top Pill */}
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-sky/40 border border-brand-sky text-brand-navy text-xs sm:text-sm font-bold shadow-sm">
               <Sparkles className="w-4 h-4 text-brand-caramel animate-spin" />
-              <span>Banho e tosa especializado com amabilidade e carinho</span>
+              <span>Banho e tosa com cuidado em cada detalhe</span>
             </div>
 
             {/* Main Headline */}
@@ -48,7 +48,7 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl text-brand-navy/80 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              No <strong className="text-brand-navy font-bold">Lav Au Jato</strong>, cada banho, tosa e hidratação é feito com atenção individualizada, produtos hipoalergênicos e ambiente seguro e limpinho.
+              No <strong className="text-brand-navy font-bold">Lav Au Jato</strong>, seu pet recebe banho e tosa com produtos hipoalergênicos, cuidado e um ambiente seguro e higienizado.
             </p>
 
             {/* CTA Group */}
@@ -63,21 +63,13 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
                 Agendar horário para meu pet
               </a>
 
-              {hasPlans ? (
+              {hasPlans && (
                 <a
                   href="#planos"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
                 >
                   <Star className="w-5 h-5 text-brand-caramel" />
                   Conhecer nossos planos
-                </a>
-              ) : (
-                <a
-                  href="#servicos"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
-                >
-                  <Star className="w-5 h-5 text-brand-caramel" />
-                  Ver nossos serviços
                 </a>
               )}
             </div>

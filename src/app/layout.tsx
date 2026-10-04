@@ -87,7 +87,7 @@ const jsonLd = {
     addressRegion: 'PB',
     addressCountry: 'BR',
   },
-  description: 'Banho e tosa especializado com amabilidade e carinho. Atendimento individualizado, produtos hipoalergênicos e ambiente limpinho.',
+  description: 'Banho e tosa com cuidado em cada detalhe. Atendimento individualizado, produtos hipoalergênicos e ambiente seguro e higienizado.',
   openingHoursSpecification: {
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: [
