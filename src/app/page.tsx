@@ -26,11 +26,12 @@ export default function HomePage() {
     <main className="min-h-screen bg-[#FAF6F0] selection:bg-brand-sky selection:text-brand-navy">
       <Navbar
         config={config}
+        hasPlans={plans.length > 0}
         hasPromos={promotions.length > 0}
         hasProducts={products.length > 0}
       />
 
-      <HeroSection config={config} />
+      <HeroSection config={config} hasPlans={plans.length > 0} />
 
       <ServicesSection services={services} config={config} />
 

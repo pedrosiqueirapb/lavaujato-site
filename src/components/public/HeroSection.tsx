@@ -7,9 +7,10 @@ import { SiteConfig } from '@/lib/types';
 
 interface HeroSectionProps {
   config: SiteConfig;
+  hasPlans?: boolean;
 }
 
-export function HeroSection({ config }: HeroSectionProps) {
+export function HeroSection({ config, hasPlans }: HeroSectionProps) {
   const whatsappClean = config.phone.replace(/\D/g, '');
   const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20serviços.`;
 
@@ -62,13 +63,23 @@ export function HeroSection({ config }: HeroSectionProps) {
                 Agendar horário para meu pet
               </a>
 
-              <a
-                href="#planos"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
-              >
-                <Star className="w-5 h-5 text-brand-caramel" />
-                Conhecer nossos planos
-              </a>
+              {hasPlans ? (
+                <a
+                  href="#planos"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
+                >
+                  <Star className="w-5 h-5 text-brand-caramel" />
+                  Conhecer nossos planos
+                </a>
+              ) : (
+                <a
+                  href="#servicos"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
+                >
+                  <Star className="w-5 h-5 text-brand-caramel" />
+                  Ver nossos serviços
+                </a>
+              )}
             </div>
 
           </div>

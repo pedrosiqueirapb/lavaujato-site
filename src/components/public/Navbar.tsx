@@ -9,11 +9,12 @@ import { SiteConfig } from '@/lib/types';
 
 interface NavbarProps {
   config: SiteConfig;
+  hasPlans?: boolean;
   hasPromos?: boolean;
   hasProducts?: boolean;
 }
 
-export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
+export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -63,9 +64,11 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
           <Link href="#espaco" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Nosso espaço
           </Link>
-          <Link href="#planos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Planos
-          </Link>
+          {hasPlans && (
+            <Link href="#planos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+              Planos
+            </Link>
+          )}
           <Link href="#portfolio" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Galeria
           </Link>
@@ -125,13 +128,15 @@ export function Navbar({ config, hasPromos, hasProducts }: NavbarProps) {
           >
             Nosso espaço
           </Link>
-          <Link
-            href="#planos"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-          >
-            Planos
-          </Link>
+          {hasPlans && (
+            <Link
+              href="#planos"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
+            >
+              Planos
+            </Link>
+          )}
           <Link
             href="#portfolio"
             onClick={() => setMobileMenuOpen(false)}
