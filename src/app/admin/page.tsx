@@ -1682,8 +1682,8 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Descrição</label>
-              <textarea rows={3} value={editingService.description || ''} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
+              <label>Descrição *</label>
+              <textarea rows={3} required value={editingService.description || ''} onChange={(e) => setEditingService({ ...editingService, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -1780,18 +1780,18 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Descrição do plano</label>
-              <input type="text" value={editingPlan.description || ''} onChange={(e) => setEditingPlan({ ...editingPlan, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+              <label>Descrição do plano *</label>
+              <input type="text" required value={editingPlan.description || ''} onChange={(e) => setEditingPlan({ ...editingPlan, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
-              <label>Texto do botão</label>
-              <input type="text" value={editingPlan.buttonText || ''} onChange={(e) => setEditingPlan({ ...editingPlan, buttonText: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+              <label>Texto do botão *</label>
+              <input type="text" required value={editingPlan.buttonText || ''} onChange={(e) => setEditingPlan({ ...editingPlan, buttonText: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
-              <label>Benefícios (um por linha)</label>
-              <textarea rows={4} value={(editingPlan.benefits || []).join('\n')} onChange={(e) => setEditingPlan({ ...editingPlan, benefits: e.target.value.split('\n') })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
+              <label>Benefícios (um por linha) *</label>
+              <textarea rows={4} required value={(editingPlan.benefits || []).join('\n')} onChange={(e) => setEditingPlan({ ...editingPlan, benefits: e.target.value.split('\n') })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             <div className="flex items-center gap-2 pt-2">
@@ -1819,8 +1819,8 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Descrição</label>
-              <input type="text" value={editingPromo.description || ''} onChange={(e) => setEditingPromo({ ...editingPromo, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+              <label>Descrição *</label>
+              <input type="text" required value={editingPromo.description || ''} onChange={(e) => setEditingPromo({ ...editingPromo, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
@@ -1859,8 +1859,9 @@ export default function AdminDashboardPage() {
                 />
               </div>
               <div className="space-y-1">
-                <label>Categoria</label>
+                <label>Categoria *</label>
                 <select 
+                  required
                   value={editingProduct.category || 'Acessórios'} 
                   onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })} 
                   className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium cursor-pointer"
@@ -1875,8 +1876,8 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Descrição</label>
-              <textarea rows={2} value={editingProduct.description || ''} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
+              <label>Descrição *</label>
+              <textarea rows={2} required value={editingProduct.description || ''} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             {/* Upload Imagem do Produto */}
@@ -1930,8 +1931,8 @@ export default function AdminDashboardPage() {
                 <input type="text" required value={editingPost.petName || ''} onChange={(e) => setEditingPost({ ...editingPost, petName: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
               <div className="space-y-1">
-                <label>Raça</label>
-                <input type="text" value={editingPost.breed || ''} onChange={(e) => setEditingPost({ ...editingPost, breed: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+                <label>Raça *</label>
+                <input type="text" required value={editingPost.breed || ''} onChange={(e) => setEditingPost({ ...editingPost, breed: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
             </div>
 
