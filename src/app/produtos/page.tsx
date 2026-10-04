@@ -35,7 +35,12 @@ export default function ProductsPage() {
 
       <ProductsPageContent products={products} config={config} />
 
-      <Footer config={config} />
+      <Footer
+        config={config}
+        hasPlans={plans.length > 0}
+        hasPromos={promotions.length > 0}
+        hasProducts={true}
+      />
     </main>
   );
 }

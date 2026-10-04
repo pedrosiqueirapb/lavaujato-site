@@ -73,10 +73,10 @@ export default function AdminLoginPage() {
             </div>
 
             <h1 className="text-2xl font-extrabold text-white tracking-tight">
-              Painel Administrativo
+              Painel do administrador
             </h1>
             <p className="text-xs font-semibold text-brand-sky uppercase tracking-widest">
-              Lav Au Jato | Camilly
+              Lav Au Jato Banho e Tosa
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export default function AdminLoginPage() {
             {/* Password Step */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-brand-sky uppercase tracking-wider block">
-                Senha Administrativa
+                Senha
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/40">
@@ -147,12 +147,12 @@ export default function AdminLoginPage() {
                 <span>Autenticando...</span>
               ) : require2FA ? (
                 <>
-                  <span>Confirmar Código 2FA</span>
+                  <span>Confirmar</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               ) : (
                 <>
-                  <span>Acessar Painel /admin</span>
+                  <span>Acessar painel</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

@@ -73,14 +73,12 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
             Galeria
           </Link>
           {hasPromos && (
-            <Link href="/#promocoes" className="text-sm font-semibold text-brand-caramel flex items-center gap-1.5 animate-pulse">
-              <Sparkles className="w-4 h-4 text-brand-caramel" />
+            <Link href="/#promocoes" className="text-sm font-semibold text-brand-caramel hover:text-brand-navy transition-colors">
               Promoções
             </Link>
           )}
           {hasProducts && (
-            <Link href="/produtos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors flex items-center gap-1.5">
-              <ShoppingBag className="w-4 h-4 text-brand-caramel" />
+            <Link href="/produtos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
               Produtos
             </Link>
           )}
@@ -149,18 +147,18 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
             <Link
               href="/#promocoes"
               onClick={() => setMobileMenuOpen(false)}
-              className="block text-base font-bold text-brand-caramel py-2 flex items-center gap-2"
+              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
             >
-              <Sparkles className="w-4 h-4" /> Promoções Ativas
+              Promoções
             </Link>
           )}
           {hasProducts && (
             <Link
               href="/produtos"
               onClick={() => setMobileMenuOpen(false)}
-              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2 flex items-center gap-2"
+              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
             >
-              <ShoppingBag className="w-4 h-4 text-brand-caramel" /> Produtos
+              Produtos
             </Link>
           )}
           <Link

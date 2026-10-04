@@ -34,7 +34,7 @@ export function ProductsSection({ products }: ProductsSectionProps) {
             <div className="lg:col-span-5 space-y-5 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/40 text-brand-navy text-xs font-bold uppercase tracking-wider">
                 <ShoppingBag className="w-3.5 h-3.5 text-brand-caramel" />
-                <span>Nossa Loja de Produtos</span>
+                <span>Nossa loja</span>
               </div>
 
               <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight leading-tight">

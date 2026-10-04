@@ -4,8 +4,10 @@ import { AsaasCharge, BillingType, ChargeCycle } from '@/lib/types';
 export class AsaasService {
   private static getApiConfig() {
     const config = StorageService.getSiteConfig();
-    const isSandbox = config.isSandbox ?? true;
-    const apiKey = config.asaasApiKey || process.env.ASAAS_API_KEY || '';
+    const isSandbox = process.env.ASAAS_IS_SANDBOX !== undefined 
+      ? process.env.ASAAS_IS_SANDBOX === 'true' 
+      : (config.isSandbox ?? true);
+    const apiKey = process.env.ASAAS_API_KEY || config.asaasApiKey || '';
     const baseUrl = isSandbox 
       ? 'https://sandbox.asaas.com/api/v3'
       : 'https://www.asaas.com/api/v3';

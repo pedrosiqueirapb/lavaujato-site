@@ -488,7 +488,7 @@ export default function AdminDashboardPage() {
             <div>
               <h2 className="text-base font-extrabold text-white">LAV AU JATO</h2>
               <span className="text-[10px] font-bold text-brand-sky uppercase tracking-widest block">
-                Admin Painel
+                Painel do administrador
               </span>
             </div>
           </div>
@@ -1326,30 +1326,7 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-sm font-bold text-white block">Ambiente Asaas Sandbox</span>
-                    <span className="text-[11px] text-slate-400">Ative para testes sem cobrança real.</span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={config.isSandbox}
-                    onChange={(e) => setConfig({ ...config, isSandbox: e.target.checked })}
-                    className="w-5 h-5 accent-sky-500 rounded"
-                  />
-                </div>
 
-                <div className="space-y-1">
-                  <label>Chave de API do Asaas ($aact_...)</label>
-                  <input
-                    type="password"
-                    value={config.asaasApiKey}
-                    onChange={(e) => setConfig({ ...config, asaasApiKey: e.target.value })}
-                    className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
-                  />
-                </div>
-              </div>
 
               <button
                 type="submit"

@@ -48,27 +48,51 @@ export function verifySessionToken(token: string | undefined | null): SessionDat
   }
 }
 
+function base32Decode(base32: string): Buffer {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const sanitized = base32.toUpperCase().replace(/=+$/, '').replace(/[^A-Z2-7]/g, '');
+  let bits = 0;
+  let value = 0;
+  const output: number[] = [];
+
+  for (let i = 0; i < sanitized.length; i++) {
+    value = (value << 5) | alphabet.indexOf(sanitized[i]);
+    bits += 5;
+
+    if (bits >= 8) {
+      output.push((value >>> (bits - 8)) & 255);
+      bits -= 8;
+    }
+  }
+
+  return Buffer.from(output);
+}
+
 /**
- * Utilitário simples para validação de 2FA TOTP / código mestre de emergência
+ * Utilitário padrão RFC 4648 para validação de 2FA TOTP (Google Authenticator / Authy)
  */
 export function verify2FACode(userInputCode: string, secret?: string): boolean {
   const sanitized = userInputCode.trim();
   
-  // Algoritmo TOTP simples baseado em tempo (Janela de 30s)
   if (secret) {
-    const epoch = Math.floor(Date.now() / 1000 / 30);
-    const hmac = crypto.createHmac('sha1', Buffer.from(secret, 'ascii'));
-    const timeBuffer = Buffer.alloc(8);
-    timeBuffer.writeUInt32BE(epoch, 4);
-    hmac.update(timeBuffer);
-    const hash = hmac.digest();
-    const offset = hash[hash.length - 1] & 0xf;
-    const binary = ((hash[offset] & 0x7f) << 24) |
-      ((hash[offset + 1] & 0xff) << 16) |
-      ((hash[offset + 2] & 0xff) << 8) |
-      (hash[offset + 3] & 0xff);
-    const otp = (binary % 1000000).toString().padStart(6, '0');
-    if (sanitized === otp) return true;
+    const keyBuffer = base32Decode(secret);
+    const currentEpoch = Math.floor(Date.now() / 1000 / 30);
+
+    for (let delta = -1; delta <= 1; delta++) {
+      const epoch = currentEpoch + delta;
+      const hmac = crypto.createHmac('sha1', keyBuffer);
+      const timeBuffer = Buffer.alloc(8);
+      timeBuffer.writeUInt32BE(epoch, 4);
+      hmac.update(timeBuffer);
+      const hash = hmac.digest();
+      const offset = hash[hash.length - 1] & 0xf;
+      const binary = ((hash[offset] & 0x7f) << 24) |
+        ((hash[offset + 1] & 0xff) << 16) |
+        ((hash[offset + 2] & 0xff) << 8) |
+        (hash[offset + 3] & 0xff);
+      const otp = (binary % 1000000).toString().padStart(6, '0');
+      if (sanitized === otp) return true;
+    }
   }
   
   return false;

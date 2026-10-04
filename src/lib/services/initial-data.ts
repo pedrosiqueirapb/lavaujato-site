@@ -19,7 +19,7 @@ export const initialSiteConfig: SiteConfig = {
   isSandbox: true,
   asaasApiKey: '',
   is2FAEnabled: true,
-  admin2FASecret: 'LAVAUJATO2026SECRET',
+  admin2FASecret: undefined,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };

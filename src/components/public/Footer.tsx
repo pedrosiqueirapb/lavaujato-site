@@ -8,9 +8,12 @@ import { SiteConfig } from '@/lib/types';
 
 interface FooterProps {
   config: SiteConfig;
+  hasPlans?: boolean;
+  hasPromos?: boolean;
+  hasProducts?: boolean;
 }
 
-export function Footer({ config }: FooterProps) {
+export function Footer({ config, hasPlans = true, hasPromos = true, hasProducts = true }: FooterProps) {
   const whatsappClean = config.phone.replace(/\D/g, '');
 
   return (
@@ -66,11 +69,19 @@ export function Footer({ config }: FooterProps) {
           <div className="md:col-span-3 space-y-3">
             <h3 className="text-sm font-extrabold text-brand-sky uppercase tracking-wider">Navegação</h3>
             <ul className="space-y-2 text-sm text-white/80 font-medium">
-              <li><Link href="#servicos" className="hover:text-brand-caramel transition-colors">Serviços</Link></li>
-              <li><Link href="#espaco" className="hover:text-brand-caramel transition-colors">Nosso espaço</Link></li>
-              <li><Link href="#planos" className="hover:text-brand-caramel transition-colors">Planos</Link></li>
-              <li><Link href="#portfolio" className="hover:text-brand-caramel transition-colors">Galeria</Link></li>
-              <li><Link href="#localizacao" className="hover:text-brand-caramel transition-colors">Onde estamos</Link></li>
+              <li><Link href="/#servicos" className="hover:text-brand-caramel transition-colors">Serviços</Link></li>
+              <li><Link href="/#espaco" className="hover:text-brand-caramel transition-colors">Nosso espaço</Link></li>
+              {hasPlans && (
+                <li><Link href="/#planos" className="hover:text-brand-caramel transition-colors">Planos</Link></li>
+              )}
+              <li><Link href="/#portfolio" className="hover:text-brand-caramel transition-colors">Galeria</Link></li>
+              {hasPromos && (
+                <li><Link href="/#promocoes" className="hover:text-brand-caramel transition-colors">Promoções</Link></li>
+              )}
+              {hasProducts && (
+                <li><Link href="/produtos" className="hover:text-brand-caramel transition-colors">Produtos</Link></li>
+              )}
+              <li><Link href="/#localizacao" className="hover:text-brand-caramel transition-colors">Onde estamos</Link></li>
             </ul>
           </div>
 

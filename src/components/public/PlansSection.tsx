@@ -42,10 +42,10 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-brand-sky text-xs font-bold uppercase tracking-wider">
             <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span>Economia & Cuidado Contínuo</span>
+            <span>Economia e cuidado contínuo</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Planos recorrentes para seu pet
+            Planos para seu pet
           </h2>
           <p className="text-white/80 text-base sm:text-lg font-medium">
             Mantenha seu pet sempre limpo e cheiroso com nossas opções de banho e tosa, além de facilidade no pagamento via cartão ou PIX.

@@ -69,7 +69,7 @@ export function WorkspaceSection({ photos }: WorkspaceSectionProps) {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/40 text-brand-navy text-xs font-bold uppercase tracking-wider">
               <Camera className="w-3.5 h-3.5 text-brand-caramel" />
-              <span>Ambiente Preparado & Seguro</span>
+              <span>Ambiente preparado e seguro</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
               Conheça nosso espaço de trabalho

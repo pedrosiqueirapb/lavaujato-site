@@ -45,7 +45,8 @@ export async function POST(request: Request) {
         );
       }
 
-      const isValid2FA = verify2FACode(twoFactorCode, config.admin2FASecret);
+      const secret = process.env.ADMIN_2FA_SECRET || config.admin2FASecret;
+      const isValid2FA = verify2FACode(twoFactorCode, secret);
       if (!isValid2FA) {
         const failed = recordFailedAttempt(ip);
         return NextResponse.json(
