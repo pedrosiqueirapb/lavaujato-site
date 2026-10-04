@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Heart, Calendar, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PortfolioPost } from '@/lib/types';
@@ -12,18 +12,52 @@ interface PortfolioSectionProps {
 
 export function PortfolioSection({ posts }: PortfolioSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScroll, setCanScroll] = useState(false);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const checkScrollability = () => {
+      setCanScroll(container.scrollWidth - container.clientWidth > 5);
+    };
+
+    checkScrollability();
+
+    const observer = new ResizeObserver(() => {
+      checkScrollability();
+    });
+
+    observer.observe(container);
+    window.addEventListener('resize', checkScrollability);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', checkScrollability);
+    };
+  }, [posts]);
 
   if (posts.length === 0) return null;
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -350, behavior: 'smooth' });
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      if (scrollLeft <= 15) {
+        scrollRef.current.scrollTo({ left: scrollWidth - clientWidth, behavior: 'smooth' });
+      } else {
+        scrollRef.current.scrollBy({ left: -350, behavior: 'smooth' });
+      }
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 350, behavior: 'smooth' });
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 20) {
+        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        scrollRef.current.scrollBy({ left: 350, behavior: 'smooth' });
+      }
     }
   };
 
@@ -46,23 +80,25 @@ export function PortfolioSection({ posts }: PortfolioSectionProps) {
             </p>
           </div>
 
-          {/* Setas de navegação horizontal */}
-          <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={scrollLeft}
-              aria-label="Pet anterior"
-              className="p-3.5 rounded-2xl bg-white border border-brand-sky/40 text-brand-navy hover:bg-brand-sky/30 hover:border-brand-sky shadow-md transition-all active:scale-95"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={scrollRight}
-              aria-label="Próximo pet"
-              className="p-3.5 rounded-2xl bg-white border border-brand-sky/40 text-brand-navy hover:bg-brand-sky/30 hover:border-brand-sky shadow-md transition-all active:scale-95"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+          {/* Setas de navegação horizontal (visíveis apenas se houver overflow) */}
+          {canScroll && (
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={scrollLeft}
+                aria-label="Pet anterior"
+                className="p-3.5 rounded-2xl bg-white border border-brand-sky/40 text-brand-navy hover:bg-brand-sky/30 hover:border-brand-sky shadow-md transition-all active:scale-95"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={scrollRight}
+                aria-label="Próximo pet"
+                className="p-3.5 rounded-2xl bg-white border border-brand-sky/40 text-brand-navy hover:bg-brand-sky/30 hover:border-brand-sky shadow-md transition-all active:scale-95"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Posts Horizontal Slider */}
