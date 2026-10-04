@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, ShoppingBag } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { SiteConfig } from '@/lib/types';
 
@@ -36,7 +36,7 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         
         {/* Logo */}
-        <Link href="#" className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-brand-sky bg-white p-1 shadow-sm transition-transform duration-300 group-hover:scale-105">
             <Image
               src="/images/logo-transparent.png"
@@ -58,32 +58,33 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="#servicos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+          <Link href="/#servicos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Serviços
           </Link>
-          <Link href="#espaco" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+          <Link href="/#espaco" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Nosso espaço
           </Link>
           {hasPlans && (
-            <Link href="#planos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+            <Link href="/#planos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
               Planos
             </Link>
           )}
-          <Link href="#portfolio" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+          <Link href="/#portfolio" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Galeria
           </Link>
           {hasPromos && (
-            <Link href="#promocoes" className="text-sm font-semibold text-brand-caramel flex items-center gap-1.5 animate-pulse">
+            <Link href="/#promocoes" className="text-sm font-semibold text-brand-caramel flex items-center gap-1.5 animate-pulse">
               <Sparkles className="w-4 h-4 text-brand-caramel" />
               Promoções
             </Link>
           )}
           {hasProducts && (
-            <Link href="#produtos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+            <Link href="/produtos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors flex items-center gap-1.5">
+              <ShoppingBag className="w-4 h-4 text-brand-caramel" />
               Produtos
             </Link>
           )}
-          <Link href="#localizacao" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+          <Link href="/#localizacao" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Localização
           </Link>
         </nav>
@@ -115,14 +116,14 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
       {mobileMenuOpen && (
         <div className="md:hidden glass-panel border-t border-brand-sky/30 px-4 pt-4 pb-6 mt-2 space-y-3 animate-in slide-in-from-top duration-200">
           <Link
-            href="#servicos"
+            href="/#servicos"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
             Serviços
           </Link>
           <Link
-            href="#espaco"
+            href="/#espaco"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
@@ -130,7 +131,7 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
           </Link>
           {hasPlans && (
             <Link
-              href="#planos"
+              href="/#planos"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
             >
@@ -138,7 +139,7 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
             </Link>
           )}
           <Link
-            href="#portfolio"
+            href="/#portfolio"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
@@ -146,7 +147,7 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
           </Link>
           {hasPromos && (
             <Link
-              href="#promocoes"
+              href="/#promocoes"
               onClick={() => setMobileMenuOpen(false)}
               className="block text-base font-bold text-brand-caramel py-2 flex items-center gap-2"
             >
@@ -155,15 +156,15 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
           )}
           {hasProducts && (
             <Link
-              href="#produtos"
+              href="/produtos"
               onClick={() => setMobileMenuOpen(false)}
-              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
+              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2 flex items-center gap-2"
             >
-              Produtos
+              <ShoppingBag className="w-4 h-4 text-brand-caramel" /> Produtos
             </Link>
           )}
           <Link
-            href="#localizacao"
+            href="/#localizacao"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
