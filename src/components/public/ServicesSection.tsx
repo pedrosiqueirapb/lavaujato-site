@@ -97,13 +97,16 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
                 {/* Footer Price & Action */}
                 <div className="pt-6 mt-6 border-t border-brand-sky/30 flex items-center justify-between gap-4">
                   <div>
-                    {service.price ? (
+                    {service.price && service.price > 0 ? (
                       <div>
                         <span className="text-xs font-semibold text-brand-navy/60 block">A partir de</span>
                         <span className="text-2xl font-extrabold text-brand-navy">{formatCurrency(service.price)}</span>
                       </div>
                     ) : (
-                      <span className="text-sm font-bold text-brand-caramel">Consultar Valor</span>
+                      <div>
+                        <span className="text-xs font-semibold text-brand-navy/60 block">Valor</span>
+                        <span className="text-sm sm:text-base font-extrabold text-brand-caramel">Consultar Valor</span>
+                      </div>
                     )}
                   </div>
 

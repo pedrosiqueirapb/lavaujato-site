@@ -79,7 +79,9 @@ export function ProductsSection({ products }: ProductsSectionProps) {
                       </div>
                     </div>
                     <div className="pt-2 mt-2 border-t border-brand-sky/20 flex items-center justify-between">
-                      <span className="text-sm font-black text-brand-navy">{formatCurrency(product.price)}</span>
+                      <span className="text-xs font-black text-brand-navy">
+                        {product.price && product.price > 0 ? formatCurrency(product.price) : 'Sob consulta'}
+                      </span>
                       <Sparkles className="w-3.5 h-3.5 text-brand-caramel" />
                     </div>
                   </div>

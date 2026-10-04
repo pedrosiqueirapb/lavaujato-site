@@ -83,12 +83,20 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
                   </div>
 
                   <div className="flex items-baseline gap-2 pb-6 border-b border-white/10">
-                    <span className="text-4xl sm:text-5xl font-extrabold text-white">
-                      {formatCurrency(plan.price)}
-                    </span>
-                    <span className="text-sm font-semibold text-brand-sky uppercase">
-                      / {plan.period}
-                    </span>
+                    {plan.price && plan.price > 0 ? (
+                      <>
+                        <span className="text-4xl sm:text-5xl font-extrabold text-white">
+                          {formatCurrency(plan.price)}
+                        </span>
+                        <span className="text-sm font-semibold text-brand-sky uppercase">
+                          / {plan.period}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-2xl sm:text-3xl font-extrabold text-brand-sky">
+                        Consulte valores
+                      </span>
+                    )}
                   </div>
 
                   {/* Benefits */}

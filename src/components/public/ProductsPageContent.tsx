@@ -135,9 +135,15 @@ export function ProductsPageContent({ products, config }: ProductsPageContentPro
 
                 {/* Price & Action */}
                 <div className="pt-6 mt-4 border-t border-brand-sky/30 flex items-center justify-between">
-                  <span className="text-2xl font-black text-brand-navy">
-                    {formatCurrency(product.price)}
-                  </span>
+                  {product.price && product.price > 0 ? (
+                    <span className="text-2xl font-black text-brand-navy">
+                      {formatCurrency(product.price)}
+                    </span>
+                  ) : (
+                    <span className="text-base font-bold text-brand-caramel">
+                      Sob consulta
+                    </span>
+                  )}
 
                   <a
                     href={productWhatsappUrl}

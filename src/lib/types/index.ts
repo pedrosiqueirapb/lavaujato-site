@@ -62,7 +62,7 @@ export interface PortfolioPost {
 export interface SubscriptionPlan {
   id: string;
   name: string;
-  price: number;
+  price?: number;
   period: 'semanal' | 'quinzenal' | 'mensal' | 'anual' | string;
   description: string;
   benefits: string[];
@@ -87,7 +87,7 @@ export interface ProductItem {
   id: string;
   name: string;
   description: string;
-  price: number;
+  price?: number;
   category?: string;
   photoUrl: string;
   isAvailable: boolean;
