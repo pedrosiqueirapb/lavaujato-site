@@ -1688,7 +1688,7 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label>Valor (R$) (Opcional)</label>
+                <label>Valor (R$)</label>
                 <input 
                   type="number" 
                   step="0.01" 
@@ -1755,7 +1755,7 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label>Valor mensal (R$) (Opcional)</label>
+                <label>Valor mensal (R$)</label>
                 <input 
                   type="number" 
                   step="0.01" 
@@ -1849,7 +1849,7 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label>Preço (R$) (Opcional)</label>
+                <label>Preço (R$)</label>
                 <input 
                   type="number" 
                   step="0.01" 
