@@ -14,7 +14,7 @@ export function generateMetadata() {
 }
 
 export default function ProductsPage() {
-  const config = StorageService.getSiteConfig();
+  const config = StorageService.getPublicSiteConfig();
   const products = StorageService.getProducts(true); // Apenas disponíveis
   const plans = StorageService.getPlans();
   const promotions = StorageService.getPromotions(true);

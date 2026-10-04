@@ -5,7 +5,8 @@ import { StorageService } from '@/lib/services/storage.service';
 
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rawIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+    const ip = rawIp.split(',')[0].trim();
     
     // 1. Checa Rate Limit (OWASP Protection)
     const limitCheck = checkRateLimit(ip);

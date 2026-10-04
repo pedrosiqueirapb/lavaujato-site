@@ -181,9 +181,22 @@ export const initialClients: Client[] = [
     name: 'Mariana Silva',
     phone: '(31) 99887-6655',
     email: 'mariana.silva@gmail.com',
-    petName: 'Thor',
-    petBreed: 'Golden Retriever',
-    petSize: 'Grande',
+    pets: [
+      {
+        id: 'pet-1',
+        name: 'Thor',
+        breed: 'Golden Retriever',
+        size: 'Grande',
+        notes: 'Alergia a perfume forte.',
+      },
+      {
+        id: 'pet-2',
+        name: 'Belinha',
+        breed: 'Poodle',
+        size: 'Pequeno',
+        notes: 'Gosta de laço rosa.',
+      }
+    ],
     notes: 'Alergia a perfume forte.',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

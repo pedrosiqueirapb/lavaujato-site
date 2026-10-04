@@ -14,7 +14,7 @@ import { Footer } from '@/components/public/Footer';
 export const revalidate = 0;
 
 export default function HomePage() {
-  const config = StorageService.getSiteConfig();
+  const config = StorageService.getPublicSiteConfig();
   const services = StorageService.getServices();
   const workspacePhotos = StorageService.getWorkspacePhotos();
   const plans = StorageService.getPlans();

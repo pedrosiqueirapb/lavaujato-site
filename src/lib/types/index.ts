@@ -1,5 +1,13 @@
 export type PetSize = 'Pequeno' | 'Médio' | 'Grande';
 
+export interface Pet {
+  id: string;
+  name: string;
+  breed?: string;
+  size?: PetSize;
+  notes?: string;
+}
+
 export interface Client {
   id: string;
   name: string;
@@ -7,7 +15,8 @@ export interface Client {
   email?: string;
   cpfCnpj?: string;
   address?: string;
-  petName: string;
+  pets: Pet[];
+  petName?: string;
   petBreed?: string;
   petSize?: PetSize;
   notes?: string;

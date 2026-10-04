@@ -97,6 +97,19 @@ export class StorageService {
     return store.siteConfig;
   }
 
+  /**
+   * Retorna a configuração sanitizada para consumo em páginas e componentes públicos
+   * (Omitindo asaasApiKey e admin2FASecret para prevenir vazamento no RSC Payload / HTML)
+   */
+  static getPublicSiteConfig(): SiteConfig {
+    const config = this.getSiteConfig();
+    return {
+      ...config,
+      asaasApiKey: '',
+      admin2FASecret: undefined,
+    };
+  }
+
   static updateSiteConfig(updates: Partial<SiteConfig>): SiteConfig {
     const store = loadStore();
     store.siteConfig = {
@@ -108,18 +121,33 @@ export class StorageService {
     return store.siteConfig;
   }
 
-  // CLIENTES (Com Criptografia PII & Soft Delete)
+  // CLIENTES (Com Criptografia PII & Soft Delete & Múltiplos Pets)
   static getClients(): Client[] {
     const store = loadStore();
     return store.clients
       .filter(c => !c.isDeleted)
-      .map(c => ({
-        ...c,
-        name: decryptPII(c.name),
-        phone: decryptPII(c.phone),
-        email: decryptPII(c.email),
-        address: decryptPII(c.address),
-      }))
+      .map(c => {
+        // Migração graciosa de registros legados com petName individual para o array pets
+        let pets = Array.isArray(c.pets) ? [...c.pets] : [];
+        if (pets.length === 0 && c.petName) {
+          pets.push({
+            id: `pet-legacy-${c.id}`,
+            name: c.petName,
+            breed: c.petBreed || '',
+            size: c.petSize || 'Médio',
+            notes: c.notes || '',
+          });
+        }
+
+        return {
+          ...c,
+          name: decryptPII(c.name),
+          phone: decryptPII(c.phone),
+          email: decryptPII(c.email),
+          address: decryptPII(c.address),
+          pets,
+        };
+      })
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
   }
 
@@ -128,10 +156,17 @@ export class StorageService {
     return clients.find(c => c.id === id) || null;
   }
 
-  static upsertClient(clientData: Partial<Client> & { name: string; phone: string; petName: string }): Client {
+  static upsertClient(clientData: Partial<Client> & { name: string; phone: string; pets?: any[]; petName?: string }): Client {
     const store = loadStore();
     const now = new Date().toISOString();
     const id = clientData.id || `cli-${Date.now()}`;
+
+    // Garante que a lista de pets seja um array válido
+    const pets = clientData.pets && clientData.pets.length > 0 
+      ? clientData.pets 
+      : clientData.petName 
+        ? [{ id: `pet-${Date.now()}`, name: clientData.petName, breed: clientData.petBreed || '', size: clientData.petSize || 'Médio', notes: clientData.notes || '' }] 
+        : [];
 
     // Criptografar PII antes de gravar
     const encryptedClient: Client = {
@@ -141,9 +176,7 @@ export class StorageService {
       email: clientData.email ? encryptPII(clientData.email) : undefined,
       cpfCnpj: clientData.cpfCnpj ? encryptPII(clientData.cpfCnpj) : undefined,
       address: clientData.address ? encryptPII(clientData.address) : undefined,
-      petName: clientData.petName,
-      petBreed: clientData.petBreed || '',
-      petSize: clientData.petSize || 'Médio',
+      pets,
       notes: clientData.notes || '',
       asaasCustomerId: clientData.asaasCustomerId || '',
       createdAt: clientData.createdAt || now,
@@ -167,6 +200,7 @@ export class StorageService {
       phone: clientData.phone,
       email: clientData.email,
       address: clientData.address,
+      pets,
     };
   }
 

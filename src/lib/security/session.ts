@@ -52,11 +52,7 @@ export function verifySessionToken(token: string | undefined | null): SessionDat
  * Utilitário simples para validação de 2FA TOTP / código mestre de emergência
  */
 export function verify2FACode(userInputCode: string, secret?: string): boolean {
-  // Código mestre padrão ou TOTP de 6 dígitos
   const sanitized = userInputCode.trim();
-  if (sanitized === '123456' || sanitized === '733350') {
-    return true;
-  }
   
   // Algoritmo TOTP simples baseado em tempo (Janela de 30s)
   if (secret) {

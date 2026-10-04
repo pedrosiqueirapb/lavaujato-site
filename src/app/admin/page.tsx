@@ -27,7 +27,9 @@ import {
   ArrowDown
 } from 'lucide-react';
 import { 
-  Client, 
+  Client,
+  Pet,
+  PetSize,
   ServiceItem, 
   WorkspacePhoto, 
   PortfolioPost, 
@@ -703,7 +705,15 @@ export default function AdminDashboardPage() {
                 <h1 className="text-2xl font-extrabold text-white">Clientes cadastrados</h1>
               </div>
               <button
-                onClick={() => { setShowClientModal(true); setEditingClient({}); }}
+                onClick={() => {
+                  setEditingClient({
+                    name: '',
+                    phone: '',
+                    email: '',
+                    pets: [{ id: `pet-${Date.now()}`, name: '', breed: '', size: 'Médio', notes: '' }]
+                  });
+                  setShowClientModal(true);
+                }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
                 <Plus className="w-4 h-4" /> Novo Cliente
@@ -717,7 +727,7 @@ export default function AdminDashboardPage() {
                   <tr>
                     <th className="p-4">Tutor</th>
                     <th className="p-4">Telefone</th>
-                    <th className="p-4">Pet (Nome / Raça / Porte)</th>
+                    <th className="p-4">Pets (Nome / Raça / Porte)</th>
                     <th className="p-4">ID Asaas</th>
                     <th className="p-4 text-right">Ações</th>
                   </tr>
@@ -733,8 +743,23 @@ export default function AdminDashboardPage() {
                         <td className="p-4 font-bold text-white">{client.name}</td>
                         <td className="p-4">{formatPhone(client.phone)}</td>
                         <td className="p-4">
-                          <span className="font-bold text-amber-400">{client.petName}</span>
-                          <span className="text-slate-400"> - {client.petBreed || 'Sem Raça'} ({client.petSize || 'Médio'})</span>
+                          {client.pets && client.pets.length > 0 ? (
+                            <div className="flex flex-col gap-1.5">
+                              {client.pets.map((p, idx) => (
+                                <div key={p.id || idx} className="inline-flex items-center gap-1.5 text-xs">
+                                  <span className="font-bold text-amber-400">🐾 {p.name}</span>
+                                  <span className="text-slate-400">
+                                    {p.breed ? `(${p.breed}` : ''}{p.size ? ` - ${p.size})` : p.breed ? ')' : ''}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div>
+                              <span className="font-bold text-amber-400">{client.petName || 'Sem pet'}</span>
+                              {client.petBreed && <span className="text-slate-400"> - {client.petBreed} ({client.petSize || 'Médio'})</span>}
+                            </div>
+                          )}
                         </td>
                         <td className="p-4">
                           <span className="font-mono text-[11px] bg-slate-800 text-sky-400 px-2.5 py-1 rounded-md border border-slate-700">
@@ -743,7 +768,19 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="p-4 text-right space-x-2">
                           <button
-                            onClick={() => { setEditingClient(client); setShowClientModal(true); }}
+                            onClick={() => {
+                              const clientPets: Pet[] = client.pets && client.pets.length > 0
+                                ? client.pets
+                                : client.petName
+                                  ? [{ id: `pet-1`, name: client.petName, breed: client.petBreed || '', size: (client.petSize || 'Médio') as PetSize, notes: client.notes || '' }]
+                                  : [{ id: `pet-${Date.now()}`, name: '', breed: '', size: 'Médio' as PetSize, notes: '' }];
+                              
+                              setEditingClient({
+                                ...client,
+                                pets: clientPets,
+                              });
+                              setShowClientModal(true);
+                            }}
                             className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
                             title="Editar"
                           >
@@ -1327,10 +1364,10 @@ export default function AdminDashboardPage() {
 
       </main>
 
-      {/* MODAL FORM CLIENTE */}
+      {/* MODAL FORM CLIENTE (Com suporte a múltiplos Pets) */}
       {showClientModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleSaveClient} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
+          <form onSubmit={handleSaveClient} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-xl w-full space-y-4 text-xs font-bold text-slate-300 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar cliente</h3>
             
             <div className="space-y-1">
@@ -1349,23 +1386,92 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <div className="space-y-1">
-                <label>Nome do pet *</label>
-                <input type="text" required value={editingClient.petName || ''} onChange={(e) => setEditingClient({ ...editingClient, petName: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
+            {/* Pets do Tutor (1 para N) */}
+            <div className="pt-2 border-t border-slate-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-extrabold text-amber-400 uppercase tracking-wider">🐾 Pets Cadastrados ({(editingClient.pets || []).length})</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentPets = editingClient.pets || [];
+                    setEditingClient({
+                      ...editingClient,
+                      pets: [...currentPets, { id: `pet-${Date.now()}-${Math.random()}`, name: '', breed: '', size: 'Médio', notes: '' }]
+                    });
+                  }}
+                  className="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1"
+                >
+                  + Adicionar outro pet
+                </button>
               </div>
-              <div className="space-y-1">
-                <label>Raça do pet</label>
-                <input type="text" value={editingClient.petBreed || ''} onChange={(e) => setEditingClient({ ...editingClient, petBreed: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
-              </div>
-              <div className="space-y-1">
-                <label>Porte</label>
-                <select value={editingClient.petSize || 'Médio'} onChange={(e) => setEditingClient({ ...editingClient, petSize: e.target.value as any })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
-                  <option value="Pequeno">Pequeno</option>
-                  <option value="Médio">Médio</option>
-                  <option value="Grande">Grande</option>
-                </select>
-              </div>
+
+              {(editingClient.pets || []).map((pet, pIdx) => (
+                <div key={pet.id || pIdx} className="bg-slate-800/60 border border-slate-700/80 p-3.5 rounded-2xl space-y-2 relative">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[11px] font-extrabold text-slate-400">PET #{pIdx + 1}</span>
+                    {(editingClient.pets || []).length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updatedPets = (editingClient.pets || []).filter((_, idx) => idx !== pIdx);
+                          setEditingClient({ ...editingClient, pets: updatedPets });
+                        }}
+                        className="text-rose-400 hover:text-rose-300 text-[11px] font-bold"
+                      >
+                        Remover pet
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-[10px]">Nome do pet *</label>
+                      <input
+                        type="text"
+                        required
+                        value={pet.name || ''}
+                        onChange={(e) => {
+                          const updatedPets = [...(editingClient.pets || [])];
+                          updatedPets[pIdx] = { ...updatedPets[pIdx], name: e.target.value };
+                          setEditingClient({ ...editingClient, pets: updatedPets });
+                        }}
+                        className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px]">Raça</label>
+                      <input
+                        type="text"
+                        value={pet.breed || ''}
+                        onChange={(e) => {
+                          const updatedPets = [...(editingClient.pets || [])];
+                          updatedPets[pIdx] = { ...updatedPets[pIdx], breed: e.target.value };
+                          setEditingClient({ ...editingClient, pets: updatedPets });
+                        }}
+                        className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px]">Porte</label>
+                      <select
+                        value={pet.size || 'Médio'}
+                        onChange={(e) => {
+                          const updatedPets = [...(editingClient.pets || [])];
+                          updatedPets[pIdx] = { ...updatedPets[pIdx], size: e.target.value as any };
+                          setEditingClient({ ...editingClient, pets: updatedPets });
+                        }}
+                        className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
+                      >
+                        <option value="Pequeno">Pequeno</option>
+                        <option value="Médio">Médio</option>
+                        <option value="Grande">Grande</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="pt-4 flex gap-3">
@@ -1386,9 +1492,14 @@ export default function AdminDashboardPage() {
               <label>Selecione o cliente *</label>
               <select required value={newCharge.customerId} onChange={(e) => setNewCharge({ ...newCharge, customerId: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
                 <option value="">-- Escolha o Cliente --</option>
-                {clients.map(c => (
-                  <option key={c.id} value={c.id}>{c.name} (Pet: {c.petName})</option>
-                ))}
+                {clients.map(c => {
+                  const petSummary = c.pets && c.pets.length > 0
+                    ? c.pets.map(p => p.name).join(', ')
+                    : c.petName || 'Sem pet';
+                  return (
+                    <option key={c.id} value={c.id}>{c.name} (Pet(s): {petSummary})</option>
+                  );
+                })}
               </select>
             </div>
 
