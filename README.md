@@ -1,11 +1,58 @@
-# Site Lavaujato Banho e Tosa
+# Site Lav Au Jato
 
-`EMPRESA` Lavaujato Banho e Tosa
+`EMPRESA` Lav Au Jato Banho e Tosa
 
-`STACK` 
+`STACK` Next.js • React • TypeScript • Tailwind CSS
 
-`URL` 
+`URL` [lavaujato.com.br](https://lavaujato.com.br)
 
-
+Site institucional e comercial do **Lav Au Jato Banho e Tosa**, desenvolvido em Next.js para apresentação dos serviços de estética pet, catálogo de produtos, divulgação de planos recorrentes e gestão administrativa de clientes e cobranças.
 
 ---
+
+## 🚀 Como executar localmente
+
+### Pré-requisitos
+- Node.js (versão 18 ou superior)
+- Gerenciador de pacotes (`npm`, `yarn`, `pnpm` ou `bun`)
+
+### Passo a passo
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/pedrosiqueirapb/lavaujato.git
+```
+
+2. Instale as dependências:
+```bash
+npm install
+```
+
+3. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+```
+
+4. Acesse no navegador:
+```bash
+http://localhost:3000
+```
+
+---
+
+## 🛠️ Tecnologias utilizadas
+
+- **Framework:** [Next.js](https://nextjs.org/)
+- **Linguagem:** TypeScript
+- **Estilização:** Tailwind CSS
+- **Integrador de pagamentos:** API Asaas 
+- **Banco de dados:** Supabase / PostgreSQL
+- **Hospedagem:** Produção no domínio
+
+---
+
+## 📌 Principais recursos
+
+- **Apresentação de serviços e planos:** Exibição dos banhos, tosas e modalidades de planos recorrentes com agendamento direto via WhatsApp.
+- **Catálogo de produtos:** Vitrine de produtos e acessórios para pets com navegação por categorias.
+- **Painel de administrador:** Gestão interna de clientes e pets, emissão de cobranças via Asaas e controle dos conteúdos exibidos no site.
