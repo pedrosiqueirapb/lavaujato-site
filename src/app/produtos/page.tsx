@@ -8,7 +8,7 @@ export const revalidate = 0;
 
 export function generateMetadata() {
   return {
-    title: 'Produtos & Acessórios | Lav Au Jato',
+    title: 'Produtos e acessórios recomendados',
     description: 'Confira nossa linha de produtos, shampoos hipoalergênicos e acessórios para seu pet.',
   };
 }

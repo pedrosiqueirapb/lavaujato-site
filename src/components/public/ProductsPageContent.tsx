@@ -13,7 +13,7 @@ interface ProductsPageContentProps {
   config: SiteConfig;
 }
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 15;
 
 export function ProductsPageContent({ products, config }: ProductsPageContentProps) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,7 +70,7 @@ export function ProductsPageContent({ products, config }: ProductsPageContentPro
             <span>Catálogo Completo</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-brand-navy tracking-tight">
-            Produtos e Acessórios Recomendados
+            Produtos e acessórios recomendados
           </h1>
           <p className="text-brand-navy/80 text-base sm:text-lg font-medium leading-relaxed">
             Navegue por nossa linha de shampoos, condicionadores, laços, roupinhas e perfumes escolhidos especialmente para deixar seu pet impecável.
