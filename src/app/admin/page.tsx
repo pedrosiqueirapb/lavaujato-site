@@ -1173,7 +1173,7 @@ export default function AdminDashboardPage() {
                 onClick={() => { setShowPortfolioModal(true); setEditingPost({ date: new Date().toISOString().split('T')[0] }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Publicar atendimento de pet
+                <Plus className="w-4 h-4" /> Publicar atendimento
               </button>
             </div>
 
@@ -1250,7 +1250,7 @@ export default function AdminDashboardPage() {
                 onClick={() => { setShowWorkspaceModal(true); setEditingPhoto({ order: photos.length + 1 }); }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Adicionar foto do espaço
+                <Plus className="w-4 h-4" /> Adicionar foto
               </button>
             </div>
 
@@ -1570,12 +1570,12 @@ export default function AdminDashboardPage() {
 
             <div className="space-y-1">
               <label>Endereço do tutor *</label>
-              <input type="text" required value={editingClient.address || ''} onChange={(e) => setEditingClient({ ...editingClient, address: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" placeholder="Rua, número, bairro..." />
+              <input type="text" required value={editingClient.address || ''} onChange={(e) => setEditingClient({ ...editingClient, address: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
               <label>Observações do tutor</label>
-              <textarea rows={2} value={editingClient.notes || ''} onChange={(e) => setEditingClient({ ...editingClient, notes: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" placeholder="Ex: Preferência de atendimento de manhã, observações..." />
+              <textarea rows={2} value={editingClient.notes || ''} onChange={(e) => setEditingClient({ ...editingClient, notes: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             {/* Pets do Tutor (1 para N) */}
@@ -1617,7 +1617,7 @@ export default function AdminDashboardPage() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div className="space-y-1">
-                      <label className="text-[10px]">Nome do pet *</label>
+                      <label className="text-[10px]">Nome *</label>
                       <input
                         type="text"
                         required
@@ -1648,9 +1648,10 @@ export default function AdminDashboardPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px]">Raça</label>
+                      <label className="text-[10px]">Raça *</label>
                       <input
                         type="text"
+                        required
                         value={pet.breed || ''}
                         onChange={(e) => {
                           const updatedPets = [...(editingClient.pets || [])];
@@ -1662,8 +1663,9 @@ export default function AdminDashboardPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px]">Porte</label>
+                      <label className="text-[10px]">Porte *</label>
                       <select
+                        required
                         value={pet.size || 'Médio'}
                         onChange={(e) => {
                           const updatedPets = [...(editingClient.pets || [])];
@@ -1681,9 +1683,10 @@ export default function AdminDashboardPage() {
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <label className="text-[10px]">Cor da pelagem</label>
+                      <label className="text-[10px]">Cor da pelagem *</label>
                       <input
                         type="text"
+                        required
                         value={pet.coatColor || ''}
                         onChange={(e) => {
                           const updatedPets = [...(editingClient.pets || [])];
@@ -1691,12 +1694,11 @@ export default function AdminDashboardPage() {
                           setEditingClient({ ...editingClient, pets: updatedPets });
                         }}
                         className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
-                        placeholder="Ex: Marrom e branco"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px]">Idade do PET</label>
+                      <label className="text-[10px]">Idade</label>
                       <input
                         type="text"
                         value={pet.age || ''}
@@ -1706,14 +1708,13 @@ export default function AdminDashboardPage() {
                           setEditingClient({ ...editingClient, pets: updatedPets });
                         }}
                         className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
-                        placeholder="Ex: mais ou menos 10 anos"
                       />
                     </div>
                   </div>
 
                   {/* Upload Foto do PET */}
                   <div className="space-y-1 pt-1">
-                    <label className="text-[10px]">Foto do PET</label>
+                    <label className="text-[10px]">Foto</label>
                     <div className="flex items-center gap-3">
                       {pet.photoUrl && (
                         <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-amber-500/50 shrink-0">
@@ -1732,7 +1733,7 @@ export default function AdminDashboardPage() {
                           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         />
                         <span className="text-[11px] font-bold text-slate-300">
-                          {pet.photoUrl ? '✓ Alterar foto do pet' : '+ Selecionar foto do pet'}
+                          {pet.photoUrl ? '✓ Alterar imagem' : '+ Selecionar imagem'}
                         </span>
                       </div>
                     </div>
@@ -1884,7 +1885,7 @@ export default function AdminDashboardPage() {
             <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar plano</h3>
             
             <div className="space-y-1">
-              <label>Nome do plano *</label>
+              <label>Nome *</label>
               <input type="text" required value={editingPlan.name || ''} onChange={(e) => setEditingPlan({ ...editingPlan, name: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -1919,54 +1920,40 @@ export default function AdminDashboardPage() {
               <label className="text-xs font-bold text-amber-400 uppercase tracking-wider block">Valores por porte do PET</label>
               <div className="grid grid-cols-3 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px]">Porte Pequeno (R$)</label>
+                  <label className="text-[10px]">Porte pequeno (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={editingPlan.priceSmall !== undefined && editingPlan.priceSmall !== null && !isNaN(editingPlan.priceSmall) ? editingPlan.priceSmall : ''}
                     onChange={(e) => setEditingPlan({ ...editingPlan, priceSmall: e.target.value !== '' ? parseFloat(e.target.value) : undefined })}
                     className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
-                    placeholder="Ex: 120"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px]">Porte Médio (R$)</label>
+                  <label className="text-[10px]">Porte médio (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={editingPlan.priceMedium !== undefined && editingPlan.priceMedium !== null && !isNaN(editingPlan.priceMedium) ? editingPlan.priceMedium : ''}
                     onChange={(e) => setEditingPlan({ ...editingPlan, priceMedium: e.target.value !== '' ? parseFloat(e.target.value) : undefined })}
                     className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
-                    placeholder="Ex: 150"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px]">Porte Grande (R$)</label>
+                  <label className="text-[10px]">Porte grande (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={editingPlan.priceLarge !== undefined && editingPlan.priceLarge !== null && !isNaN(editingPlan.priceLarge) ? editingPlan.priceLarge : ''}
                     onChange={(e) => setEditingPlan({ ...editingPlan, priceLarge: e.target.value !== '' ? parseFloat(e.target.value) : undefined })}
                     className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
-                    placeholder="Ex: 180"
                   />
                 </div>
               </div>
             </div>
 
             <div className="space-y-1">
-              <label>Bônus / Benefício especial</label>
-              <input
-                type="text"
-                value={editingPlan.bonus || ''}
-                onChange={(e) => setEditingPlan({ ...editingPlan, bonus: e.target.value })}
-                className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"
-                placeholder="Ex: 1 Hidratação mensal grátis ✨"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label>Descrição do plano *</label>
+              <label>Descrição *</label>
               <input type="text" required value={editingPlan.description || ''} onChange={(e) => setEditingPlan({ ...editingPlan, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -1977,7 +1964,17 @@ export default function AdminDashboardPage() {
 
             <div className="space-y-1">
               <label>Benefícios (um por linha) *</label>
-              <textarea rows={4} required value={(editingPlan.benefits || []).join('\n')} onChange={(e) => setEditingPlan({ ...editingPlan, benefits: e.target.value.split('\n') })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
+              <textarea rows={7} required value={(editingPlan.benefits || []).join('\n')} onChange={(e) => setEditingPlan({ ...editingPlan, benefits: e.target.value.split('\n') })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
+            </div>
+
+            <div className="space-y-1">
+              <label>Bônus</label>
+              <input
+                type="text"
+                value={editingPlan.bonus || ''}
+                onChange={(e) => setEditingPlan({ ...editingPlan, bonus: e.target.value })}
+                className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"
+              />
             </div>
 
             <div className="flex items-center gap-2 pt-2">

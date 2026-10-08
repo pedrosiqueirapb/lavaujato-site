@@ -39,22 +39,19 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
           <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
             
             {/* Top Pill Badge */}
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-pill-sky text-brand-navy text-xs sm:text-sm font-extrabold shadow-sm transition-transform hover:scale-105">
-              <Sparkles className="w-4 h-4 text-brand-caramel animate-bounce" />
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/90 border border-brand-navy/20 text-brand-navy text-xs sm:text-sm font-extrabold shadow-md">
+              <Sparkles className="w-4 h-4 text-brand-caramel" />
               <span>Banho e tosa com cuidado em cada detalhe</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-brand-navy leading-[1.15] tracking-tight">
-              O carinho e o cuidado que o seu{' '}
-              <span className="relative inline-block px-3 py-1 bg-brand-navy text-white rounded-2xl shadow-lg border-2 border-brand-sky transform -rotate-1 hover:rotate-0 transition-transform">
-                pet merece 🐾
-              </span>
+              O carinho e o cuidado que o seu pet merece 🐾
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl text-brand-navy/85 font-semibold max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              No <strong className="text-brand-navy font-black underline decoration-brand-caramel decoration-2 underline-offset-4">Lav Au Jato</strong>, seu pet recebe banho e tosa com produtos hipoalergênicos, carinho dedicado e um ambiente seguro e higienizado.
+              No <strong className="text-brand-navy font-black">Lav Au Jato</strong>, seu pet recebe banho e tosa com produtos hipoalergênicos, carinho dedicado e um ambiente seguro e higienizado.
             </p>
 
             {/* CTA Group */}
@@ -91,18 +88,6 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
             {/* Main Card Frame with Logo */}
             <div className="relative w-full max-w-md aspect-square rounded-3xl p-6 bg-white/75 backdrop-blur-md border-2 border-white/90 shadow-2xl flex items-center justify-center">
               
-              {/* Floating Feature Badge Top-Right */}
-              <div className="absolute -top-5 -right-3 bg-white/95 border-2 border-[#BCDAE6] text-brand-navy px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-black animate-float">
-                <span className="text-base">🐾</span>
-                <span>100% Hipoalergênico</span>
-              </div>
-
-              {/* Floating Feature Badge Bottom-Left */}
-              <div className="absolute -bottom-4 -left-3 bg-brand-navy border-2 border-brand-sky text-white px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-black animate-float-slow">
-                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                <span>Atendimento Nota 5.0</span>
-              </div>
-
               <div className="relative w-64 h-64 sm:w-72 sm:h-72 transition-transform hover:scale-105 duration-300">
                 <Image
                   src="/images/logo-white-paws.png"

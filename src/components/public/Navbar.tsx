@@ -73,7 +73,7 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
             Galeria
           </Link>
           {hasPromos && (
-            <Link href="/#promocoes" className="text-sm font-semibold text-brand-caramel hover:text-brand-navy transition-colors">
+            <Link href="/#promocoes" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
               Promoções
             </Link>
           )}
