@@ -752,9 +752,9 @@ export default function AdminDashboardPage() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-800 text-slate-400 font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="p-4">Tutor / Endereço</th>
+                    <th className="p-4">Tutor</th>
                     <th className="p-4">Telefone</th>
-                    <th className="p-4">Pets (Foto, Sexo, Idade, Cor)</th>
+                    <th className="p-4">Pets</th>
                     <th className="p-4">ID Asaas</th>
                     <th className="p-4 text-right">Ações</th>
                   </tr>
@@ -870,7 +870,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizeClients}
               onPageChange={setPageClients}
               onPageSizeChange={setPageSizeClients}
-              pageSizeOptions={[5, 10, 20, 50]}
+              pageSizeOptions={[5, 10, 15, 20]}
               itemLabel="clientes"
             />
           </div>
@@ -968,7 +968,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizeCharges}
               onPageChange={setPageCharges}
               onPageSizeChange={setPageSizeCharges}
-              pageSizeOptions={[6, 12, 24, 48]}
+              pageSizeOptions={[4, 6, 8, 10]}
               itemLabel="cobranças"
             />
           </div>
@@ -1050,7 +1050,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizeServices}
               onPageChange={setPageServices}
               onPageSizeChange={setPageSizeServices}
-              pageSizeOptions={[6, 12, 24, 48]}
+              pageSizeOptions={[4, 6, 8, 10]}
               itemLabel="serviços"
             />
           </div>
@@ -1155,7 +1155,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizePlans}
               onPageChange={setPagePlans}
               onPageSizeChange={setPageSizePlans}
-              pageSizeOptions={[6, 12, 24, 48]}
+              pageSizeOptions={[4, 6, 8, 10]}
               itemLabel="planos"
             />
           </div>
@@ -1232,7 +1232,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizePortfolio}
               onPageChange={setPagePortfolio}
               onPageSizeChange={setPageSizePortfolio}
-              pageSizeOptions={[6, 12, 24, 48]}
+              pageSizeOptions={[4, 6, 8, 10]}
               itemLabel="atendimentos"
             />
           </div>
@@ -1262,10 +1262,8 @@ export default function AdminDashboardPage() {
                   return (
                     <div key={photo.id} className="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
                       <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-800">
-                        <Image src={photo.url} alt={photo.title} fill className="object-cover" />
+                        <Image src={photo.url} alt="Foto do espaço" fill className="object-cover" />
                       </div>
-                      <h3 className="text-sm font-bold text-white">{photo.title}</h3>
-                      <p className="text-xs text-slate-400">{photo.description}</p>
                       <div className="pt-2 flex items-center justify-between border-t border-slate-800">
                         <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
                           <button
@@ -1288,22 +1286,13 @@ export default function AdminDashboardPage() {
                           </button>
                         </div>
 
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => { setEditingPhoto(photo); setShowWorkspaceModal(true); }}
-                            className="p-1.5 bg-slate-800 rounded text-slate-300 hover:text-white"
-                            title="Editar foto"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteWorkspace(photo.id)}
-                            className="p-1.5 bg-rose-500/10 text-rose-400 rounded hover:bg-rose-500/20"
-                            title="Excluir foto"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => handleDeleteWorkspace(photo.id)}
+                          className="p-1.5 bg-rose-500/10 text-rose-400 rounded hover:bg-rose-500/20"
+                          title="Excluir foto"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
                   );
@@ -1317,7 +1306,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizeWorkspace}
               onPageChange={setPageWorkspace}
               onPageSizeChange={setPageSizeWorkspace}
-              pageSizeOptions={[6, 12, 24, 48]}
+              pageSizeOptions={[4, 6, 8, 10]}
               itemLabel="fotos"
             />
           </div>
@@ -1395,7 +1384,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizePromos}
               onPageChange={setPagePromos}
               onPageSizeChange={setPageSizePromos}
-              pageSizeOptions={[6, 12, 24, 48]}
+              pageSizeOptions={[4, 6, 8, 10]}
               itemLabel="promoções"
             />
           </div>
@@ -1474,7 +1463,7 @@ export default function AdminDashboardPage() {
               pageSize={pageSizeProducts}
               onPageChange={setPageProducts}
               onPageSizeChange={setPageSizeProducts}
-              pageSizeOptions={[8, 16, 32, 64]}
+              pageSizeOptions={[5, 10, 15, 20]}
               itemLabel="produtos"
             />
           </div>
@@ -1485,7 +1474,7 @@ export default function AdminDashboardPage() {
           <form onSubmit={handleSaveConfig} className="space-y-6 max-w-2xl animate-in fade-in duration-300">
             <div>
               <h1 className="text-2xl font-extrabold text-white">Configurações gerais do site</h1>
-              <p className="text-xs text-slate-400 font-medium">Altere dados de contato, endereço e chave do Asaas.</p>
+              <p className="text-xs text-slate-400 font-medium">Altere dados de contato e endereço.</p>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 text-xs font-bold text-slate-300">
@@ -1550,7 +1539,7 @@ export default function AdminDashboardPage() {
       {showClientModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveClient} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-xl w-full space-y-4 text-xs font-bold text-slate-300 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar cliente</h3>
+            <h3 className="text-lg font-extrabold text-white">{editingClient.id ? 'Editar cliente' : 'Cadastrar cliente'}</h3>
             
             <div className="space-y-1">
               <label>Nome do tutor *</label>
@@ -1574,7 +1563,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Observações do tutor</label>
+              <label>Observações</label>
               <textarea rows={2} value={editingClient.notes || ''} onChange={(e) => setEditingClient({ ...editingClient, notes: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
@@ -1615,7 +1604,7 @@ export default function AdminDashboardPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <label className="text-[10px]">Nome *</label>
                       <input
@@ -1642,8 +1631,8 @@ export default function AdminDashboardPage() {
                         }}
                         className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
                       >
-                        <option value="Macho">Macho ♂</option>
-                        <option value="Fêmea">Fêmea ♀</option>
+                        <option value="Macho">Macho</option>
+                        <option value="Fêmea">Fêmea</option>
                       </select>
                     </div>
 
@@ -1679,9 +1668,7 @@ export default function AdminDashboardPage() {
                         <option value="Grande">Grande</option>
                       </select>
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
                       <label className="text-[10px]">Cor da pelagem *</label>
                       <input
@@ -1810,10 +1797,10 @@ export default function AdminDashboardPage() {
       {showServiceModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveService} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar serviço</h3>
+            <h3 className="text-lg font-extrabold text-white">{editingService.id ? 'Editar serviço' : 'Cadastrar serviço'}</h3>
             
             <div className="space-y-1">
-              <label>Título do serviço *</label>
+              <label>Título *</label>
               <input type="text" required value={editingService.title || ''} onChange={(e) => setEditingService({ ...editingService, title: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -1841,7 +1828,7 @@ export default function AdminDashboardPage() {
 
             {/* Upload Imagem do Serviço */}
             <div className="space-y-1">
-              <label>Anexar imagem do serviço</label>
+              <label>Imagem</label>
               <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
                 editingService.image ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-purple-500'
               }`}>
@@ -1882,37 +1869,11 @@ export default function AdminDashboardPage() {
       {showPlanModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSavePlan} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar plano</h3>
+            <h3 className="text-lg font-extrabold text-white">{editingPlan.id ? 'Editar plano' : 'Cadastrar plano'}</h3>
             
             <div className="space-y-1">
               <label>Nome *</label>
               <input type="text" required value={editingPlan.name || ''} onChange={(e) => setEditingPlan({ ...editingPlan, name: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label>Valor mensal base (R$)</label>
-                <input 
-                  type="number" 
-                  step="0.01" 
-                  value={editingPlan.price !== undefined && editingPlan.price !== null && !isNaN(editingPlan.price) ? editingPlan.price : ''} 
-                  onChange={(e) => setEditingPlan({ ...editingPlan, price: e.target.value !== '' ? parseFloat(e.target.value) : undefined })} 
-                  className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" 
-                />
-              </div>
-              <div className="space-y-1">
-                <label>Período *</label>
-                <select 
-                  value={editingPlan.period || 'mensal'} 
-                  onChange={(e) => setEditingPlan({ ...editingPlan, period: e.target.value })} 
-                  className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
-                >
-                  <option value="semanal">Semanal</option>
-                  <option value="quinzenal">Quinzenal</option>
-                  <option value="mensal">Mensal</option>
-                  <option value="anual">Anual</option>
-                </select>
-              </div>
             </div>
 
             {/* Valores por porte do PET */}
@@ -1994,7 +1955,7 @@ export default function AdminDashboardPage() {
       {showPromoModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSavePromo} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Criar ou editar promoção</h3>
+            <h3 className="text-lg font-extrabold text-white">{editingPromo.id ? 'Editar promoção' : 'Criar promoção'}</h3>
             
             <div className="space-y-1">
               <label>Título da promoção *</label>
@@ -2023,7 +1984,7 @@ export default function AdminDashboardPage() {
       {showProductModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveProduct} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Cadastrar ou editar produto</h3>
+            <h3 className="text-lg font-extrabold text-white">{editingProduct.id ? 'Editar produto' : 'Cadastrar produto'}</h3>
             
             <div className="space-y-1">
               <label>Nome do produto *</label>
@@ -2106,7 +2067,7 @@ export default function AdminDashboardPage() {
       {showPortfolioModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSavePortfolio} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Publicar atendimento de pet</h3>
+            <h3 className="text-lg font-extrabold text-white">{editingPost.id ? 'Editar atendimento' : 'Publicar atendimento'}</h3>
             
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
@@ -2131,13 +2092,13 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="space-y-1">
-              <label>Descrição do atendimento</label>
-              <textarea rows={2} value={editingPost.description || ''} onChange={(e) => setEditingPost({ ...editingPost, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
+              <label>Descrição *</label>
+              <textarea rows={2} required value={editingPost.description || ''} onChange={(e) => setEditingPost({ ...editingPost, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             {/* Upload Imagem do Pet */}
             <div className="space-y-1">
-              <label>Anexar foto do atendimento</label>
+              <label>Imagem</label>
               <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
                 editingPost.photoUrl ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-rose-500'
               }`}>
@@ -2178,16 +2139,11 @@ export default function AdminDashboardPage() {
       {showWorkspaceModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveWorkspace} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Adicionar ou editar foto do espaço</h3>
-            
-            <div className="space-y-1">
-              <label>Título da foto *</label>
-              <input type="text" required value={editingPhoto.title || ''} onChange={(e) => setEditingPhoto({ ...editingPhoto, title: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
-            </div>
+            <h3 className="text-lg font-extrabold text-white">Adicionar foto do espaço</h3>
 
             {/* Upload por anexo do dispositivo */}
             <div className="space-y-1">
-              <label>Anexar foto do espaço *</label>
+              <label>Foto *</label>
               <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
                 editingPhoto.url ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-indigo-500'
               }`}>
@@ -2214,11 +2170,6 @@ export default function AdminDashboardPage() {
                   )}
                 </div>
               </div>
-            </div>
-
-            <div className="space-y-1">
-              <label>Descrição opcional</label>
-              <input type="text" value={editingPhoto.description || ''} onChange={(e) => setEditingPhoto({ ...editingPhoto, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" />
             </div>
 
             <div className="pt-4 flex gap-3">

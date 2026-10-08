@@ -112,22 +112,10 @@ export function WorkspaceSection({ photos }: WorkspaceSectionProps) {
             >
               <Image
                 src={photo.url}
-                alt={photo.title}
+                alt="Foto do espaço"
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
-              
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white space-y-1">
-                <div className="flex items-center gap-2 text-brand-sky text-xs font-bold uppercase tracking-wider">
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>Espaço Lav Au Jato</span>
-                </div>
-                <h3 className="text-xl font-bold text-white">{photo.title}</h3>
-                {photo.description && (
-                  <p className="text-xs text-white/80 font-medium line-clamp-2">{photo.description}</p>
-                )}
-              </div>
             </div>
           ))}
         </div>

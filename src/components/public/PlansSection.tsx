@@ -83,44 +83,29 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
                   </div>
 
                   <div className="pb-6 border-b border-white/10 space-y-3">
-                    {plan.priceSmall !== undefined || plan.priceMedium !== undefined || plan.priceLarge !== undefined ? (
-                      <div className="space-y-1.5">
-                        <span className="text-xs font-extrabold text-brand-sky uppercase tracking-wider block">Valores por porte ({plan.period}):</span>
-                        <div className="grid grid-cols-3 gap-2 bg-white/5 p-3 rounded-2xl border border-white/10 text-center">
-                          <div>
-                            <span className="text-[10px] text-white/60 font-semibold uppercase block">Pequeno</span>
-                            <span className="text-base font-extrabold text-white">
-                              {plan.priceSmall ? formatCurrency(plan.priceSmall) : '-'}
-                            </span>
-                          </div>
-                          <div className="border-x border-white/10 px-1">
-                            <span className="text-[10px] text-white/60 font-semibold uppercase block">Médio</span>
-                            <span className="text-base font-extrabold text-white">
-                              {plan.priceMedium ? formatCurrency(plan.priceMedium) : '-'}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-[10px] text-white/60 font-semibold uppercase block">Grande</span>
-                            <span className="text-base font-extrabold text-white">
-                              {plan.priceLarge ? formatCurrency(plan.priceLarge) : '-'}
-                            </span>
-                          </div>
+                    <div className="space-y-1.5">
+                      <span className="text-xs font-extrabold text-brand-sky uppercase tracking-wider block">Valores por porte:</span>
+                      <div className="grid grid-cols-3 gap-2 bg-white/5 p-3 rounded-2xl border border-white/10 text-center">
+                        <div>
+                          <span className="text-[10px] text-white/60 font-semibold uppercase block">Pequeno</span>
+                          <span className="text-base font-extrabold text-white">
+                            {plan.priceSmall ? formatCurrency(plan.priceSmall) : '-'}
+                          </span>
+                        </div>
+                        <div className="border-x border-white/10 px-1">
+                          <span className="text-[10px] text-white/60 font-semibold uppercase block">Médio</span>
+                          <span className="text-base font-extrabold text-white">
+                            {plan.priceMedium ? formatCurrency(plan.priceMedium) : '-'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-white/60 font-semibold uppercase block">Grande</span>
+                          <span className="text-base font-extrabold text-white">
+                            {plan.priceLarge ? formatCurrency(plan.priceLarge) : '-'}
+                          </span>
                         </div>
                       </div>
-                    ) : plan.price && plan.price > 0 ? (
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-4xl sm:text-5xl font-extrabold text-white">
-                          {formatCurrency(plan.price)}
-                        </span>
-                        <span className="text-sm font-semibold text-brand-sky uppercase">
-                          / {plan.period}
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-2xl sm:text-3xl font-extrabold text-brand-sky">
-                        Consulte valores
-                      </span>
-                    )}
+                    </div>
                   </div>
 
                   {/* Bonus Badge */}
