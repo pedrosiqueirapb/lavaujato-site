@@ -652,7 +652,7 @@ export default function AdminDashboardPage() {
             <div>
               <h1 className="text-3xl font-extrabold text-white">Bem-vinda, Camilly! 👋</h1>
               <p className="text-sm text-slate-400 font-medium">
-                Gerencie seus clientes, cobranças e todo o conteúdo do site Lav Au Jato.
+                Gerencie seus clientes, cobranças e todo o conteúdo do site
               </p>
             </div>
 
