@@ -15,15 +15,21 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
   const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20serviços.`;
 
   return (
-    <section className="relative min-h-[90vh] pt-32 pb-20 flex items-center justify-center overflow-hidden bg-gradient-to-b from-brand-sky-light via-[#FAF6F0] to-white">
+    <section className="relative min-h-[92vh] pt-32 pb-24 flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#BCDAE6] via-[#CFE6F0] to-[#E9F3F7]">
       
+      {/* Background Decorative Glow Orbs */}
+      <div className="absolute top-10 left-[-5%] w-[450px] h-[450px] glow-orb-sky rounded-full blur-3xl pointer-events-none opacity-90 animate-pulse-glow" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] glow-orb-caramel rounded-full blur-3xl pointer-events-none opacity-60" />
+      <div className="absolute top-1/2 left-1/3 w-[350px] h-[350px] bg-white/40 rounded-full blur-3xl pointer-events-none" />
+
       {/* Dynamic Bubble Animations */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="bubble w-16 h-16 top-1/4 left-[10%] animate-float" />
-        <div className="bubble w-24 h-24 top-1/3 right-[12%] animate-float-slow" />
-        <div className="bubble w-12 h-12 bottom-1/4 left-[20%] animate-float" />
-        <div className="bubble w-20 h-20 bottom-1/3 right-[25%] animate-float-slow" />
-        <div className="bubble w-10 h-10 top-1/2 left-[45%] animate-float" />
+        <div className="bubble w-16 h-16 top-1/4 left-[8%] animate-float" />
+        <div className="bubble w-28 h-28 top-1/3 right-[10%] animate-float-slow" />
+        <div className="bubble w-14 h-14 bottom-1/4 left-[18%] animate-float" />
+        <div className="bubble w-20 h-20 bottom-1/3 right-[22%] animate-float-slow" />
+        <div className="bubble w-10 h-10 top-1/2 left-[42%] animate-float" />
+        <div className="bubble w-16 h-16 top-16 right-[35%] animate-float-slow" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -32,23 +38,23 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
           {/* Text Left Column */}
           <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
             
-            {/* Top Pill */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-sky/40 border border-brand-sky text-brand-navy text-xs sm:text-sm font-bold shadow-sm">
-              <Sparkles className="w-4 h-4 text-brand-caramel animate-spin" />
+            {/* Top Pill Badge */}
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full glass-pill-sky text-brand-navy text-xs sm:text-sm font-extrabold shadow-sm transition-transform hover:scale-105">
+              <Sparkles className="w-4 h-4 text-brand-caramel animate-bounce" />
               <span>Banho e tosa com cuidado em cada detalhe</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brand-navy leading-tight tracking-tight">
-              O carinho e o cuidado que o seu <span className="text-brand-caramel relative inline-block">
-                pet merece
-                <span className="absolute bottom-1 left-0 right-0 h-3 bg-brand-sky/50 -z-10 rounded-full" />
-              </span> 🐾
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-brand-navy leading-[1.15] tracking-tight">
+              O carinho e o cuidado que o seu{' '}
+              <span className="relative inline-block px-3 py-1 bg-brand-navy text-white rounded-2xl shadow-lg border-2 border-brand-sky transform -rotate-1 hover:rotate-0 transition-transform">
+                pet merece 🐾
+              </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-brand-navy/80 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              No <strong className="text-brand-navy font-bold">Lav Au Jato</strong>, seu pet recebe banho e tosa com produtos hipoalergênicos, cuidado e um ambiente seguro e higienizado.
+            <p className="text-lg sm:text-xl text-brand-navy/85 font-semibold max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              No <strong className="text-brand-navy font-black underline decoration-brand-caramel decoration-2 underline-offset-4">Lav Au Jato</strong>, seu pet recebe banho e tosa com produtos hipoalergênicos, carinho dedicado e um ambiente seguro e higienizado.
             </p>
 
             {/* CTA Group */}
@@ -57,7 +63,7 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base shadow-xl shadow-emerald-600/25 hover:shadow-emerald-600/35 transition-all hover:-translate-y-1 active:translate-y-0"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base shadow-2xl shadow-emerald-600/30 hover:shadow-emerald-600/45 transition-all hover:-translate-y-1 active:translate-y-0"
               >
                 <WhatsAppIcon className="w-6 h-6 fill-white" />
                 Agendar horário para meu pet
@@ -66,9 +72,9 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
               {hasPlans && (
                 <a
                   href="#planos"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-brand-navy/20 hover:border-brand-caramel text-brand-navy hover:text-brand-caramel font-bold text-base transition-all glass-card"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-white/60 hover:bg-white/90 border-2 border-brand-navy/30 text-brand-navy font-extrabold text-base transition-all shadow-md hover:shadow-lg"
                 >
-                  <Star className="w-5 h-5 text-brand-caramel" />
+                  <Star className="w-5 h-5 text-brand-caramel fill-brand-caramel" />
                   Conhecer nossos planos
                 </a>
               )}
@@ -80,17 +86,29 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
           <div className="lg:col-span-5 relative flex justify-center">
             
             {/* Glowing Backdrop */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-brand-sky to-brand-caramel/30 rounded-3xl blur-2xl opacity-50 animate-pulse-glow" />
+            <div className="absolute -inset-6 bg-gradient-to-r from-brand-sky via-brand-caramel/40 to-brand-sky rounded-full blur-3xl opacity-70 animate-pulse-glow" />
 
-            {/* Main Card Frame - ONLY LOGO (Retângulo removido como solicitado) */}
-            <div className="relative w-full max-w-md aspect-square rounded-3xl p-6 glass-card border-2 border-white shadow-2xl flex items-center justify-center">
+            {/* Main Card Frame with Logo */}
+            <div className="relative w-full max-w-md aspect-square rounded-3xl p-6 bg-white/75 backdrop-blur-md border-2 border-white/90 shadow-2xl flex items-center justify-center">
               
+              {/* Floating Feature Badge Top-Right */}
+              <div className="absolute -top-5 -right-3 bg-white/95 border-2 border-[#BCDAE6] text-brand-navy px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-black animate-float">
+                <span className="text-base">🐾</span>
+                <span>100% Hipoalergênico</span>
+              </div>
+
+              {/* Floating Feature Badge Bottom-Left */}
+              <div className="absolute -bottom-4 -left-3 bg-brand-navy border-2 border-brand-sky text-white px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-black animate-float-slow">
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span>Atendimento Nota 5.0</span>
+              </div>
+
               <div className="relative w-64 h-64 sm:w-72 sm:h-72 transition-transform hover:scale-105 duration-300">
                 <Image
                   src="/images/logo-white-paws.png"
                   alt="Lav Au Jato Logo"
                   fill
-                  className="object-contain drop-shadow-lg"
+                  className="object-contain drop-shadow-xl"
                   priority
                 />
               </div>

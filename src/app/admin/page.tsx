@@ -752,9 +752,9 @@ export default function AdminDashboardPage() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-800 text-slate-400 font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="p-4">Tutor</th>
+                    <th className="p-4">Tutor / Endereço</th>
                     <th className="p-4">Telefone</th>
-                    <th className="p-4">Pets (Nome / Raça / Porte)</th>
+                    <th className="p-4">Pets (Foto, Sexo, Idade, Cor)</th>
                     <th className="p-4">ID Asaas</th>
                     <th className="p-4 text-right">Ações</th>
                   </tr>
@@ -769,17 +769,50 @@ export default function AdminDashboardPage() {
                       .slice((pageClients - 1) * pageSizeClients, pageClients * pageSizeClients)
                       .map((client) => (
                       <tr key={client.id} className="hover:bg-slate-800/50">
-                        <td className="p-4 font-bold text-white">{client.name}</td>
+                        <td className="p-4 font-bold text-white">
+                          <div className="text-sm">{client.name}</div>
+                          {client.address && (
+                            <div className="text-[11px] font-medium text-slate-400 mt-0.5">📍 {client.address}</div>
+                          )}
+                          {client.notes && (
+                            <div className="text-[10px] font-normal text-slate-500 italic mt-0.5">Obs: {client.notes}</div>
+                          )}
+                        </td>
                         <td className="p-4">{formatPhone(client.phone)}</td>
                         <td className="p-4">
                           {client.pets && client.pets.length > 0 ? (
-                            <div className="flex flex-col gap-1.5">
+                            <div className="flex flex-col gap-2">
                               {client.pets.map((p, idx) => (
-                                <div key={p.id || idx} className="inline-flex items-center gap-1.5 text-xs">
-                                  <span className="font-bold text-amber-400">🐾 {p.name}</span>
-                                  <span className="text-slate-400">
-                                    {p.breed ? `(${p.breed}` : ''}{p.size ? ` - ${p.size})` : p.breed ? ')' : ''}
-                                  </span>
+                                <div key={p.id || idx} className="flex items-center gap-2.5 bg-slate-800/40 p-2 rounded-xl border border-slate-800">
+                                  {p.photoUrl ? (
+                                    <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-slate-800 border border-amber-500/40 shrink-0">
+                                      <Image src={p.photoUrl} alt={p.name} fill className="object-cover" />
+                                    </div>
+                                  ) : (
+                                    <div className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-amber-400 font-bold shrink-0 text-sm border border-slate-700">
+                                      🐾
+                                    </div>
+                                  )}
+                                  <div className="flex flex-col text-xs">
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <span className="font-extrabold text-amber-400">{p.name}</span>
+                                      <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
+                                        p.gender === 'Fêmea' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
+                                      }`}>
+                                        {p.gender === 'Fêmea' ? '♀ Fêmea' : '♂ Macho'}
+                                      </span>
+                                      {p.size && (
+                                        <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded border border-slate-700">
+                                          {p.size}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="text-[11px] text-slate-400 flex items-center gap-2 flex-wrap mt-0.5">
+                                      {p.breed && <span>Raça: {p.breed}</span>}
+                                      {p.coatColor && <span>• Pelagem: {p.coatColor}</span>}
+                                      {p.age && <span>• Idade: {p.age}</span>}
+                                    </div>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1051,10 +1084,27 @@ export default function AdminDashboardPage() {
                           <h3 className="text-xl font-bold text-white">{plan.name}</h3>
                           <p className="text-xs text-slate-400">{plan.description}</p>
                         </div>
-                        <span className="text-2xl font-black text-amber-400">
-                          {plan.price && plan.price > 0 ? formatCurrency(plan.price) : 'Sob consulta'}
-                        </span>
+                        <div className="text-right">
+                          {plan.priceSmall || plan.priceMedium || plan.priceLarge ? (
+                            <div className="flex flex-col text-xs text-amber-400 font-bold space-y-0.5">
+                              {plan.priceSmall !== undefined && <span>Pequeno: {formatCurrency(plan.priceSmall)}</span>}
+                              {plan.priceMedium !== undefined && <span>Médio: {formatCurrency(plan.priceMedium)}</span>}
+                              {plan.priceLarge !== undefined && <span>Grande: {formatCurrency(plan.priceLarge)}</span>}
+                            </div>
+                          ) : (
+                            <span className="text-2xl font-black text-amber-400">
+                              {plan.price && plan.price > 0 ? formatCurrency(plan.price) : 'Sob consulta'}
+                            </span>
+                          )}
+                        </div>
                       </div>
+
+                      {plan.bonus && (
+                        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-bold">
+                          <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 shrink-0" />
+                          <span>Bônus: {plan.bonus}</span>
+                        </div>
+                      )}
 
                       <ul className="space-y-1 text-xs text-slate-300">
                         {plan.benefits.map((b, i) => (
@@ -1518,6 +1568,16 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
+            <div className="space-y-1">
+              <label>Endereço do tutor *</label>
+              <input type="text" required value={editingClient.address || ''} onChange={(e) => setEditingClient({ ...editingClient, address: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" placeholder="Rua, número, bairro..." />
+            </div>
+
+            <div className="space-y-1">
+              <label>Observações do tutor</label>
+              <textarea rows={2} value={editingClient.notes || ''} onChange={(e) => setEditingClient({ ...editingClient, notes: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium" placeholder="Ex: Preferência de atendimento de manhã, observações..." />
+            </div>
+
             {/* Pets do Tutor (1 para N) */}
             <div className="pt-2 border-t border-slate-800 space-y-3">
               <div className="flex items-center justify-between">
@@ -1528,7 +1588,7 @@ export default function AdminDashboardPage() {
                     const currentPets = editingClient.pets || [];
                     setEditingClient({
                       ...editingClient,
-                      pets: [...currentPets, { id: `pet-${Date.now()}-${Math.random()}`, name: '', breed: '', size: 'Médio', notes: '' }]
+                      pets: [...currentPets, { id: `pet-${Date.now()}-${Math.random()}`, name: '', breed: '', size: 'Médio', gender: 'Macho', age: '', coatColor: '', photoUrl: '', notes: '' }]
                     });
                   }}
                   className="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1"
@@ -1538,9 +1598,9 @@ export default function AdminDashboardPage() {
               </div>
 
               {(editingClient.pets || []).map((pet, pIdx) => (
-                <div key={pet.id || pIdx} className="bg-slate-800/60 border border-slate-700/80 p-3.5 rounded-2xl space-y-2 relative">
+                <div key={pet.id || pIdx} className="bg-slate-800/60 border border-slate-700/80 p-4 rounded-2xl space-y-3 relative">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] font-extrabold text-slate-400">PET #{pIdx + 1}</span>
+                    <span className="text-[11px] font-extrabold text-slate-400 uppercase">PET #{pIdx + 1}</span>
                     {(editingClient.pets || []).length > 1 && (
                       <button
                         type="button"
@@ -1555,7 +1615,7 @@ export default function AdminDashboardPage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div className="space-y-1">
                       <label className="text-[10px]">Nome do pet *</label>
                       <input
@@ -1569,6 +1629,22 @@ export default function AdminDashboardPage() {
                         }}
                         className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
                       />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px]">Sexo *</label>
+                      <select
+                        value={pet.gender || 'Macho'}
+                        onChange={(e) => {
+                          const updatedPets = [...(editingClient.pets || [])];
+                          updatedPets[pIdx] = { ...updatedPets[pIdx], gender: e.target.value as any };
+                          setEditingClient({ ...editingClient, pets: updatedPets });
+                        }}
+                        className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
+                      >
+                        <option value="Macho">Macho ♂</option>
+                        <option value="Fêmea">Fêmea ♀</option>
+                      </select>
                     </div>
 
                     <div className="space-y-1">
@@ -1600,6 +1676,65 @@ export default function AdminDashboardPage() {
                         <option value="Médio">Médio</option>
                         <option value="Grande">Grande</option>
                       </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <label className="text-[10px]">Cor da pelagem</label>
+                      <input
+                        type="text"
+                        value={pet.coatColor || ''}
+                        onChange={(e) => {
+                          const updatedPets = [...(editingClient.pets || [])];
+                          updatedPets[pIdx] = { ...updatedPets[pIdx], coatColor: e.target.value };
+                          setEditingClient({ ...editingClient, pets: updatedPets });
+                        }}
+                        className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
+                        placeholder="Ex: Marrom e branco"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px]">Idade do PET</label>
+                      <input
+                        type="text"
+                        value={pet.age || ''}
+                        onChange={(e) => {
+                          const updatedPets = [...(editingClient.pets || [])];
+                          updatedPets[pIdx] = { ...updatedPets[pIdx], age: e.target.value };
+                          setEditingClient({ ...editingClient, pets: updatedPets });
+                        }}
+                        className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-medium"
+                        placeholder="Ex: mais ou menos 10 anos"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Upload Foto do PET */}
+                  <div className="space-y-1 pt-1">
+                    <label className="text-[10px]">Foto do PET</label>
+                    <div className="flex items-center gap-3">
+                      {pet.photoUrl && (
+                        <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-amber-500/50 shrink-0">
+                          <Image src={pet.photoUrl} alt={pet.name || 'Pet'} fill className="object-cover" />
+                        </div>
+                      )}
+                      <div className="relative flex-1 border border-dashed border-slate-700 hover:border-amber-500 rounded-xl p-2 text-center bg-slate-900/60 cursor-pointer transition-colors">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileUpload(e, (url) => {
+                            const updatedPets = [...(editingClient.pets || [])];
+                            updatedPets[pIdx] = { ...updatedPets[pIdx], photoUrl: url };
+                            setEditingClient({ ...editingClient, pets: updatedPets });
+                          })}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <span className="text-[11px] font-bold text-slate-300">
+                          {pet.photoUrl ? '✓ Alterar foto do pet' : '+ Selecionar foto do pet'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1755,7 +1890,7 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label>Valor mensal (R$)</label>
+                <label>Valor mensal base (R$)</label>
                 <input 
                   type="number" 
                   step="0.01" 
@@ -1777,6 +1912,57 @@ export default function AdminDashboardPage() {
                   <option value="anual">Anual</option>
                 </select>
               </div>
+            </div>
+
+            {/* Valores por porte do PET */}
+            <div className="space-y-2 pt-2 border-t border-slate-800">
+              <label className="text-xs font-bold text-amber-400 uppercase tracking-wider block">Valores por porte do PET</label>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-1">
+                  <label className="text-[10px]">Porte Pequeno (R$)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editingPlan.priceSmall !== undefined && editingPlan.priceSmall !== null && !isNaN(editingPlan.priceSmall) ? editingPlan.priceSmall : ''}
+                    onChange={(e) => setEditingPlan({ ...editingPlan, priceSmall: e.target.value !== '' ? parseFloat(e.target.value) : undefined })}
+                    className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
+                    placeholder="Ex: 120"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px]">Porte Médio (R$)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editingPlan.priceMedium !== undefined && editingPlan.priceMedium !== null && !isNaN(editingPlan.priceMedium) ? editingPlan.priceMedium : ''}
+                    onChange={(e) => setEditingPlan({ ...editingPlan, priceMedium: e.target.value !== '' ? parseFloat(e.target.value) : undefined })}
+                    className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
+                    placeholder="Ex: 150"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px]">Porte Grande (R$)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editingPlan.priceLarge !== undefined && editingPlan.priceLarge !== null && !isNaN(editingPlan.priceLarge) ? editingPlan.priceLarge : ''}
+                    onChange={(e) => setEditingPlan({ ...editingPlan, priceLarge: e.target.value !== '' ? parseFloat(e.target.value) : undefined })}
+                    className="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
+                    placeholder="Ex: 180"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label>Bônus / Benefício especial</label>
+              <input
+                type="text"
+                value={editingPlan.bonus || ''}
+                onChange={(e) => setEditingPlan({ ...editingPlan, bonus: e.target.value })}
+                className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"
+                placeholder="Ex: 1 Hidratação mensal grátis ✨"
+              />
             </div>
 
             <div className="space-y-1">

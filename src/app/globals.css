@@ -72,7 +72,28 @@ body {
 .bubble {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(188, 218, 230, 0.4));
-  box-shadow: inset -2px -2px 6px rgba(6, 47, 84, 0.1), 0 4px 10px rgba(188, 218, 230, 0.3);
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(188, 218, 230, 0.6));
+  box-shadow: inset -2px -2px 6px rgba(6, 47, 84, 0.15), 0 6px 14px rgba(188, 218, 230, 0.45);
   pointer-events: none;
+}
+
+/* Vibrancy & Hero Utilities */
+.hero-vibrant-bg {
+  background: radial-gradient(circle at 20% 20%, rgba(188, 218, 230, 0.85) 0%, rgba(218, 238, 246, 0.75) 45%, rgba(250, 246, 240, 0.9) 80%, rgba(255, 255, 255, 1) 100%);
+}
+
+.glass-pill-sky {
+  background: rgba(188, 218, 230, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(188, 218, 230, 0.9);
+  box-shadow: 0 4px 20px -4px rgba(6, 47, 84, 0.15);
+}
+
+.glow-orb-sky {
+  background: radial-gradient(circle, rgba(188, 218, 230, 0.85) 0%, rgba(188, 218, 230, 0) 70%);
+}
+
+.glow-orb-caramel {
+  background: radial-gradient(circle, rgba(172, 110, 59, 0.35) 0%, rgba(172, 110, 59, 0) 70%);
 }

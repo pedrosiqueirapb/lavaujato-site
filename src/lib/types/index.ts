@@ -1,10 +1,15 @@
 export type PetSize = 'Pequeno' | 'Médio' | 'Grande';
+export type PetGender = 'Macho' | 'Fêmea';
 
 export interface Pet {
   id: string;
   name: string;
   breed?: string;
   size?: PetSize;
+  gender?: PetGender;
+  age?: string;
+  coatColor?: string;
+  photoUrl?: string;
   notes?: string;
 }
 
@@ -14,7 +19,7 @@ export interface Client {
   phone: string;
   email?: string;
   cpfCnpj?: string;
-  address?: string;
+  address: string;
   pets: Pet[];
   petName?: string;
   petBreed?: string;
@@ -63,6 +68,10 @@ export interface SubscriptionPlan {
   id: string;
   name: string;
   price?: number;
+  priceSmall?: number;
+  priceMedium?: number;
+  priceLarge?: number;
+  bonus?: string;
   period: 'semanal' | 'quinzenal' | 'mensal' | 'anual' | string;
   description: string;
   benefits: string[];

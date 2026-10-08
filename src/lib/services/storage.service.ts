@@ -176,7 +176,7 @@ export class StorageService {
       phone: encryptPII(clientData.phone),
       email: clientData.email ? encryptPII(clientData.email) : undefined,
       cpfCnpj: clientData.cpfCnpj ? encryptPII(clientData.cpfCnpj) : undefined,
-      address: clientData.address ? encryptPII(clientData.address) : undefined,
+      address: encryptPII(clientData.address || ''),
       pets,
       notes: clientData.notes || '',
       asaasCustomerId: clientData.asaasCustomerId || '',
@@ -200,7 +200,7 @@ export class StorageService {
       name: clientData.name,
       phone: clientData.phone,
       email: clientData.email,
-      address: clientData.address,
+      address: clientData.address || '',
       pets,
     };
   }
