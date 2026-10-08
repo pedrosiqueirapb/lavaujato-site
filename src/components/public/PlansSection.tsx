@@ -88,20 +88,20 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
                       <div className="grid grid-cols-3 gap-2 bg-white/5 p-3 rounded-2xl border border-white/10 text-center">
                         <div>
                           <span className="text-[10px] text-white/60 font-semibold uppercase block">Pequeno</span>
-                          <span className="text-base font-extrabold text-white">
-                            {plan.priceSmall ? formatCurrency(plan.priceSmall) : '-'}
+                          <span className="text-sm font-extrabold text-white">
+                            {plan.priceSmall ? formatCurrency(plan.priceSmall) : 'Sob consulta'}
                           </span>
                         </div>
                         <div className="border-x border-white/10 px-1">
                           <span className="text-[10px] text-white/60 font-semibold uppercase block">Médio</span>
-                          <span className="text-base font-extrabold text-white">
-                            {plan.priceMedium ? formatCurrency(plan.priceMedium) : '-'}
+                          <span className="text-sm font-extrabold text-white">
+                            {plan.priceMedium ? formatCurrency(plan.priceMedium) : 'Sob consulta'}
                           </span>
                         </div>
                         <div>
                           <span className="text-[10px] text-white/60 font-semibold uppercase block">Grande</span>
                           <span className="text-base font-extrabold text-white">
-                            {plan.priceLarge ? formatCurrency(plan.priceLarge) : '-'}
+                            {plan.priceLarge ? formatCurrency(plan.priceLarge) : 'Sob consulta'}
                           </span>
                         </div>
                       </div>

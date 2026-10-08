@@ -1087,13 +1087,13 @@ export default function AdminDashboardPage() {
                         <div className="text-right">
                           {plan.priceSmall || plan.priceMedium || plan.priceLarge ? (
                             <div className="flex flex-col text-xs text-amber-400 font-bold space-y-0.5">
-                              {plan.priceSmall !== undefined && <span>Pequeno: {formatCurrency(plan.priceSmall)}</span>}
-                              {plan.priceMedium !== undefined && <span>Médio: {formatCurrency(plan.priceMedium)}</span>}
-                              {plan.priceLarge !== undefined && <span>Grande: {formatCurrency(plan.priceLarge)}</span>}
+                              <span>Pequeno: {plan.priceSmall ? formatCurrency(plan.priceSmall) : 'Sob consulta'}</span>
+                              <span>Médio: {plan.priceMedium ? formatCurrency(plan.priceMedium) : 'Sob consulta'}</span>
+                              <span>Grande: {plan.priceLarge ? formatCurrency(plan.priceLarge) : 'Sob consulta'}</span>
                             </div>
                           ) : (
-                            <span className="text-2xl font-black text-amber-400">
-                              {plan.price && plan.price > 0 ? formatCurrency(plan.price) : 'Sob consulta'}
+                            <span className="text-xl font-black text-amber-400">
+                              Sob consulta
                             </span>
                           )}
                         </div>
@@ -1958,7 +1958,7 @@ export default function AdminDashboardPage() {
             <h3 className="text-lg font-extrabold text-white">{editingPromo.id ? 'Editar promoção' : 'Criar promoção'}</h3>
             
             <div className="space-y-1">
-              <label>Título da promoção *</label>
+              <label>Título *</label>
               <input type="text" required value={editingPromo.title || ''} onChange={(e) => setEditingPromo({ ...editingPromo, title: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
@@ -2026,7 +2026,7 @@ export default function AdminDashboardPage() {
 
             {/* Upload Imagem do Produto */}
             <div className="space-y-1">
-              <label>Anexar imagem do produto</label>
+              <label>Imagem</label>
               <div className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-colors relative bg-slate-800/50 ${
                 editingProduct.photoUrl ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-700 hover:border-teal-500'
               }`}>
