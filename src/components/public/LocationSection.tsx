@@ -86,7 +86,7 @@ export function LocationSection({ config }: LocationSectionProps) {
             
             <div className="space-y-2">
               <h3 className="text-2xl font-bold text-white">Horário de funcionamento</h3>
-              <p className="text-sm text-brand-sky font-medium">Segunda a Sábado: 08h às 18h</p>
+              <p className="text-sm text-brand-sky font-medium">{config.businessHours || 'Segunda a Sábado: 08h às 18h'}</p>
             </div>
 
             <a

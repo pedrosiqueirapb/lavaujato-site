@@ -883,7 +883,7 @@ export default function AdminDashboardPage() {
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Gerador de cobranças Asaas</h1>
                 <p className="text-xs text-slate-400 font-medium">
-                  Cartão de crédito recorrente, parcelado e pagamentos via PIX.
+                  Ofereça pagamentos via PIX e cartão de crédito, à vista ou parcelado.
                 </p>
               </div>
               <button
@@ -980,7 +980,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Serviços prestados</h1>
-                <p className="text-xs text-slate-400 font-medium">Adicione e edite os serviços visíveis no site.</p>
+                <p className="text-xs text-slate-400 font-medium">Mantenha atualizadas as informações dos serviços oferecidos.</p>
               </div>
               <button
                 onClick={() => { setShowServiceModal(true); setEditingService({ isActive: true }); }}
@@ -1062,7 +1062,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Planos recorrentes</h1>
-                <p className="text-xs text-slate-400 font-medium">Configure os planos oferecidos aos clientes no site.</p>
+                <p className="text-xs text-slate-400 font-medium">Defina os planos disponíveis para seus clientes no site.</p>
               </div>
               <button
                 onClick={() => { setShowPlanModal(true); setEditingPlan({ period: 'mensal', benefits: [''] }); }}
@@ -1167,7 +1167,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Galeria de atendimentos</h1>
-                <p className="text-xs text-slate-400 font-medium">Poste e edite fotos dos pets atendidos com nome, data e serviço feito.</p>
+                <p className="text-xs text-slate-400 font-medium">Publique fotos dos pets atendidos com informações sobre o atendimento.</p>
               </div>
               <button
                 onClick={() => { setShowPortfolioModal(true); setEditingPost({ date: new Date().toISOString().split('T')[0] }); }}
@@ -1244,7 +1244,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Fotos do espaço de trabalho</h1>
-                <p className="text-xs text-slate-400 font-medium">Adicione, edite e remova imagens da seção "Nosso espaço".</p>
+                <p className="text-xs text-slate-400 font-medium">Compartilhe fotos para mostrar seu espaço de trabalho aos clientes.</p>
               </div>
               <button
                 onClick={() => { setShowWorkspaceModal(true); setEditingPhoto({ order: photos.length + 1 }); }}
@@ -1318,7 +1318,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Promoções</h1>
-                <p className="text-xs text-slate-400 font-medium">Ao excluir uma promoção, a seção sumirá automaticamente do site.</p>
+                <p className="text-xs text-slate-400 font-medium">Cadastre e edite as promoções exibidas para seus clientes.</p>
               </div>
               <button
                 onClick={() => { setShowPromoModal(true); setEditingPromo({ isActive: true }); }}
@@ -1396,7 +1396,7 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold text-white">Produtos da loja</h1>
-                <p className="text-xs text-slate-400 font-medium">Cadastre e edite produtos para exibição no catálogo público.</p>
+                <p className="text-xs text-slate-400 font-medium">Gerencie os produtos disponíveis na loja.</p>
               </div>
               <button
                 onClick={() => { setShowProductModal(true); setEditingProduct({ isAvailable: true }); }}
@@ -1474,7 +1474,7 @@ export default function AdminDashboardPage() {
           <form onSubmit={handleSaveConfig} className="space-y-6 max-w-2xl animate-in fade-in duration-300">
             <div>
               <h1 className="text-2xl font-extrabold text-white">Configurações gerais do site</h1>
-              <p className="text-xs text-slate-400 font-medium">Altere dados de contato e endereço.</p>
+              <p className="text-xs text-slate-400 font-medium">Altere dados de contato, endereço e horário de funcionamento.</p>
             </div>
 
             <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 text-xs font-bold text-slate-300">
@@ -1495,6 +1495,16 @@ export default function AdminDashboardPage() {
                   type="text"
                   value={config.instagram}
                   onChange={(e) => setConfig({ ...config, instagram: e.target.value })}
+                  className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label>Horário de funcionamento</label>
+                <input
+                  type="text"
+                  value={config.businessHours || ''}
+                  onChange={(e) => setConfig({ ...config, businessHours: e.target.value })}
                   className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
                 />
               </div>

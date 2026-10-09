@@ -16,6 +16,7 @@ export const initialSiteConfig: SiteConfig = {
   addressNeighborhood: 'Bairro Centro / Região Central',
   addressCity: 'Belo Horizonte',
   addressState: 'MG',
+  businessHours: 'Segunda a Sábado: 08h às 18h',
   isSandbox: true,
   asaasApiKey: '',
   is2FAEnabled: true,

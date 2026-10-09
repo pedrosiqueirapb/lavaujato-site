@@ -143,6 +143,7 @@ export interface SiteConfig {
   addressNeighborhood: string;
   addressCity: string;
   addressState: string;
+  businessHours?: string;
   isSandbox: boolean;
   asaasApiKey: string;
   is2FAEnabled: boolean;
