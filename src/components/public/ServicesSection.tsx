@@ -54,14 +54,17 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {displayedServices.map((service) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {displayedServices.map((service, index) => {
             const serviceWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Gostaria%20de%20agendar%20o%20serviço%20"${encodeURIComponent(service.title)}"`;
+            const isOddLast = displayedServices.length % 2 !== 0 && index === displayedServices.length - 1;
 
             return (
               <div
                 key={service.id}
-                className="glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group hover:border-brand-caramel/50 shadow-md hover:shadow-xl transition-all"
+                className={`glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group hover:border-brand-caramel/50 shadow-md hover:shadow-xl transition-all ${
+                  isOddLast ? 'md:col-span-2 md:max-w-xl md:mx-auto w-full' : ''
+                }`}
               >
                 <div className="space-y-4">
                   

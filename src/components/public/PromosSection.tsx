@@ -49,13 +49,16 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
 
         {/* Promos Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {displayedPromos.map((promo) => {
+          {displayedPromos.map((promo, index) => {
             const promoWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Quero%20aproveitar%20a%20promoção%20"${encodeURIComponent(promo.title)}"`;
+            const isOddLast = displayedPromos.length % 2 !== 0 && index === displayedPromos.length - 1;
 
             return (
               <div
                 key={promo.id}
-                className="bg-white rounded-3xl p-6 shadow-xl border-2 border-amber-400 flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-all"
+                className={`bg-white rounded-3xl p-6 shadow-xl border-2 border-amber-400 flex flex-col justify-between relative overflow-hidden group hover:scale-[1.02] transition-all ${
+                  isOddLast ? 'md:col-span-2 md:max-w-md md:mx-auto w-full' : ''
+                }`}
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">

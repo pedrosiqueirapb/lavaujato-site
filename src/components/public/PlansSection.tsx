@@ -54,8 +54,9 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
 
         {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
-          {displayedPlans.map((plan) => {
+          {displayedPlans.map((plan, index) => {
             const planWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Tenho%20interesse%20em%20contratar%20o%20"${encodeURIComponent(plan.name)}"`;
+            const isOddLast = displayedPlans.length % 2 !== 0 && index === displayedPlans.length - 1;
 
             return (
               <div
@@ -64,6 +65,8 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
                   plan.isPopular
                     ? 'bg-gradient-to-b from-brand-navy-light to-brand-navy border-2 border-brand-caramel shadow-2xl scale-105 z-10'
                     : 'glass-panel-dark border border-white/10 hover:border-brand-sky/40'
+                } ${
+                  isOddLast ? 'md:col-span-2 md:max-w-lg md:mx-auto w-full' : ''
                 }`}
               >
                 {/* Popular Badge */}
