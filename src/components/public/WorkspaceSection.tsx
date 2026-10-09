@@ -72,7 +72,7 @@ export function WorkspaceSection({ photos }: WorkspaceSectionProps) {
               <span>Ambiente preparado e seguro</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-navy tracking-tight">
-              Conheça nosso espaço de trabalho
+              Nosso espaço de trabalho
             </h2>
             <p className="text-brand-navy/70 text-base sm:text-lg font-medium">
               Um ambiente feito sob medida para que seu pet se sinta acolhido, calmo e seguro durante todo o procedimento.
