@@ -48,7 +48,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
             Planos para seu pet
           </h2>
           <p className="text-white/80 text-base sm:text-lg font-medium">
-            Mantenha seu pet sempre limpo e cheiroso com nossas opções de banho e tosa, além de facilidade no pagamento via cartão ou PIX.
+            Garanta os cuidados que seu pet merece com nossos planos de banho e tosa e escolha entre pagar com cartão ou PIX.
           </p>
         </div>
 
