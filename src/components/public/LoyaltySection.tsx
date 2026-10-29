@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Gift, PawPrint, Stamp, Sparkles } from 'lucide-react';
+import { Gift, PawPrint, CreditCard, Sparkles } from 'lucide-react';
 import { SiteConfig } from '@/lib/types';
 
 interface LoyaltySectionProps {
@@ -7,8 +7,8 @@ interface LoyaltySectionProps {
 }
 
 const STEPS = [
-  { icon: PawPrint, title: 'Receba seu cartão', text: 'Peça o cartão fidelidade no primeiro banho do seu pet.' },
-  { icon: Stamp, title: 'Ganhe uma patinha a cada banho', text: 'A cada banho, uma patinha é marcada. Lembre-se de apresentar o cartão!' },
+  { icon: CreditCard, title: 'Receba seu cartão', text: 'Peça o cartão fidelidade no primeiro banho do seu pet.' },
+  { icon: PawPrint, title: 'Ganhe uma patinha a cada banho', text: 'A cada banho, uma patinha é marcada. Lembre-se de apresentar o cartão!' },
   { icon: Gift, title: 'O 10º é grátis', text: 'Completou 9 banhos? O próximo é por nossa conta.' },
 ];
 

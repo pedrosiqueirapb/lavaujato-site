@@ -33,6 +33,9 @@ export default async function HomePage() {
     <main className="min-h-screen bg-[#FAF6F0] selection:bg-brand-sky selection:text-brand-navy">
       <Navbar
         config={config}
+        hasServices={services.length > 0}
+        hasWorkspace={workspacePhotos.length > 0}
+        hasPortfolio={portfolioPosts.length > 0}
         hasPlans={plans.length > 0}
         hasPromos={promotions.length > 0}
         hasProducts={products.length > 0}
@@ -58,6 +61,9 @@ export default async function HomePage() {
 
       <Footer
         config={config}
+        hasServices={services.length > 0}
+        hasWorkspace={workspacePhotos.length > 0}
+        hasPortfolio={portfolioPosts.length > 0}
         hasPlans={plans.length > 0}
         hasPromos={promotions.length > 0}
         hasProducts={products.length > 0}

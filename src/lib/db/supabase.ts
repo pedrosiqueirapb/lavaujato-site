@@ -30,6 +30,8 @@ export function getSupabase(): SupabaseClient {
   }
   client = createClient(normalizeUrl(url), key.trim().replace(/^["']|["']$/g, ''), {
     auth: { persistSession: false },
+    // Nunca usar o cache de dados do Next.js: o que é cadastrado no painel deve aparecer no site na hora.
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
   });
   return client;
 }

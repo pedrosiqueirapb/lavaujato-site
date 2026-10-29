@@ -9,12 +9,15 @@ import { SiteConfig } from '@/lib/types';
 
 interface NavbarProps {
   config: SiteConfig;
+  hasServices?: boolean;
+  hasWorkspace?: boolean;
+  hasPortfolio?: boolean;
   hasPlans?: boolean;
   hasPromos?: boolean;
   hasProducts?: boolean;
 }
 
-export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps) {
+export function Navbar({ config, hasServices, hasWorkspace, hasPortfolio, hasPlans, hasPromos, hasProducts }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -58,20 +61,26 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/#servicos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+          {hasServices && (
+            <Link href="/#servicos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Serviços
           </Link>
-          <Link href="/#espaco" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+          )}
+          {hasWorkspace && (
+            <Link href="/#espaco" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Nosso espaço
           </Link>
+          )}
           {hasPlans && (
             <Link href="/#planos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
               Planos
             </Link>
           )}
-          <Link href="/#portfolio" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+          {hasPortfolio && (
+            <Link href="/#portfolio" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
             Galeria
           </Link>
+          )}
           {hasPromos && (
             <Link href="/#promocoes" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
               Promoções
@@ -113,20 +122,24 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden glass-panel border-t border-brand-sky/30 px-4 pt-4 pb-6 mt-2 space-y-3 animate-in slide-in-from-top duration-200">
-          <Link
+          {hasServices && (
+            <Link
             href="/#servicos"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
             Serviços
           </Link>
-          <Link
+          )}
+          {hasWorkspace && (
+            <Link
             href="/#espaco"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
             Nosso espaço
           </Link>
+          )}
           {hasPlans && (
             <Link
               href="/#planos"
@@ -136,13 +149,15 @@ export function Navbar({ config, hasPlans, hasPromos, hasProducts }: NavbarProps
               Planos
             </Link>
           )}
-          <Link
+          {hasPortfolio && (
+            <Link
             href="/#portfolio"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
           >
             Galeria
           </Link>
+          )}
           {hasPromos && (
             <Link
               href="/#promocoes"

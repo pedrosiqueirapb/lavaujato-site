@@ -372,7 +372,7 @@ export default function AdminDashboardPage() {
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <RefreshCw className="w-8 h-8 text-brand-sky animate-spin" />
-          <p className="text-sm font-bold tracking-wide">Carregando Admin Painel...</p>
+          <p className="text-sm font-bold tracking-wide">Carregando...</p>
         </div>
       </div>
     );
@@ -444,6 +444,16 @@ export default function AdminDashboardPage() {
             </button>
 
             <button
+              onClick={() => setActiveTab('loyalty')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+                activeTab === 'loyalty' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Gift className="w-4 h-4 text-pink-400" />
+              <span>Cartão fidelidade</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('services')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
                 activeTab === 'services' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -501,16 +511,6 @@ export default function AdminDashboardPage() {
             >
               <ShoppingBag className="w-4 h-4 text-teal-400" />
               <span>Produtos da loja ({products.length})</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('loyalty')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                activeTab === 'loyalty' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              }`}
-            >
-              <Gift className="w-4 h-4 text-pink-400" />
-              <span>Cartão fidelidade</span>
             </button>
 
             <button

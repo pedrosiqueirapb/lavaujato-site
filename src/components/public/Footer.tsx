@@ -8,12 +8,15 @@ import { SiteConfig } from '@/lib/types';
 
 interface FooterProps {
   config: SiteConfig;
+  hasServices?: boolean;
+  hasWorkspace?: boolean;
+  hasPortfolio?: boolean;
   hasPlans?: boolean;
   hasPromos?: boolean;
   hasProducts?: boolean;
 }
 
-export function Footer({ config, hasPlans = true, hasPromos = true, hasProducts = true }: FooterProps) {
+export function Footer({ config, hasServices = false, hasWorkspace = false, hasPortfolio = false, hasPlans = false, hasPromos = false, hasProducts = false }: FooterProps) {
   const whatsappClean = config.phone.replace(/\D/g, '');
 
   return (
@@ -69,12 +72,18 @@ export function Footer({ config, hasPlans = true, hasPromos = true, hasProducts 
           <div className="md:col-span-3 space-y-3">
             <h3 className="text-sm font-extrabold text-brand-sky uppercase tracking-wider">Navegação</h3>
             <ul className="space-y-2 text-sm text-white/80 font-medium">
-              <li><Link href="/#servicos" className="hover:text-brand-caramel transition-colors">Serviços</Link></li>
-              <li><Link href="/#espaco" className="hover:text-brand-caramel transition-colors">Nosso espaço</Link></li>
+              {hasServices && (
+                <li><Link href="/#servicos" className="hover:text-brand-caramel transition-colors">Serviços</Link></li>
+              )}
+              {hasWorkspace && (
+                <li><Link href="/#espaco" className="hover:text-brand-caramel transition-colors">Nosso espaço</Link></li>
+              )}
               {hasPlans && (
                 <li><Link href="/#planos" className="hover:text-brand-caramel transition-colors">Planos</Link></li>
               )}
-              <li><Link href="/#portfolio" className="hover:text-brand-caramel transition-colors">Galeria</Link></li>
+              {hasPortfolio && (
+                <li><Link href="/#portfolio" className="hover:text-brand-caramel transition-colors">Galeria</Link></li>
+              )}
               {hasPromos && (
                 <li><Link href="/#promocoes" className="hover:text-brand-caramel transition-colors">Promoções</Link></li>
               )}
