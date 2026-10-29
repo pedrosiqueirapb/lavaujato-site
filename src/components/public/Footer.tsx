@@ -20,7 +20,6 @@ export function Footer({ config, hasServices = false, hasWorkspace = false, hasP
   // Mesma ordem das seções na página principal
   const navItems = [
     { href: '/#servicos', label: 'Serviços', show: hasServices },
-    { href: '/#fidelidade', label: 'Cartão fidelidade', show: true },
     { href: '/#planos', label: 'Planos', show: hasPlans },
     { href: '/#promocoes', label: 'Promoções', show: hasPromos },
     { href: '/#espaco', label: 'Nosso espaço', show: hasWorkspace },

@@ -35,7 +35,6 @@ export function Navbar({ config, hasServices, hasWorkspace, hasPortfolio, hasPla
   // Mesma ordem das seções na página principal
   const items = [
     { href: '/#servicos', label: 'Serviços', show: !!hasServices },
-    { href: '/#fidelidade', label: 'Cartão fidelidade', show: true },
     { href: '/#planos', label: 'Planos', show: !!hasPlans },
     { href: '/#promocoes', label: 'Promoções', show: !!hasPromos },
     { href: '/#espaco', label: 'Nosso espaço', show: !!hasWorkspace },
