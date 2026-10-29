@@ -316,7 +316,7 @@ export default function AdminDashboardPage() {
     remove('client', id, 'Tem certeza que deseja excluir este cliente?', 'Cliente removido.');
 
   const handleDeleteCharge = (id: string) =>
-    remove('paymentLink', id, 'Deseja excluir este link? A cobrança também será cancelada no Asaas.', 'Link removido.');
+    remove('paymentLink', id, 'Deseja excluir este link? Ele também será excluído no Asaas.', 'Link removido.');
 
   const handleSaveService = (e: React.FormEvent) =>
     save(e, 'service', editingService, 'Serviço salvo!', () => setShowServiceModal(false));
@@ -553,7 +553,7 @@ export default function AdminDashboardPage() {
             <div>
               <h1 className="text-3xl font-extrabold text-white">Bem-vinda, Camilly! 👋</h1>
               <p className="text-sm text-slate-400 font-medium">
-                Gerencie seus clientes, cobranças e todo o conteúdo do site
+                Gerencie seus clientes, links de pagamento e todo o conteúdo do site
               </p>
             </div>
 
@@ -798,7 +798,7 @@ export default function AdminDashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {charges.length === 0 ? (
                 <EmptyState>
-                  Nenhum link gerado ainda. Clique em &quot;Gerar link&quot; para começar.
+                  Nenhum link gerado ainda.
                 </EmptyState>
               ) : (
                 charges

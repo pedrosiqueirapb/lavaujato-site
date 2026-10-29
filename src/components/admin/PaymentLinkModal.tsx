@@ -193,8 +193,8 @@ export function PaymentLinkModal({ services, plans, onClose, onCreated }: Props)
                     <input type="number" step="0.01" min="0.01" required value={value} onChange={e => setValue(e.target.value)} className={input} />
                   </div>
                   <div className="space-y-1">
-                    <label>Tipo de cobrança</label>
-                    <input readOnly value={isPlan ? 'Assinatura recorrente' : 'Cobrança única'} className={readonly} />
+                    <label>Tipo de link</label>
+                    <input readOnly value={isPlan ? 'Assinatura recorrente' : 'Pagamento único'} className={readonly} />
                   </div>
                 </div>
 
