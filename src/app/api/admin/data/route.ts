@@ -165,14 +165,14 @@ export async function POST(request: Request) {
         let pixPayload: string | undefined;
 
         if (chargeType === 'RECURRENT') {
-          const sub = await AsaasService.createSubscription({ customer: asaasCustomerId, value, description: desc });
-          asaasSubscriptionId = sub.id;
-          cardUrl = sub.invoiceUrl;
+          const pl = await AsaasService.createPaymentLink({ name: `${itemName} - ${customerName}`, value, description: desc, recurrent: true, installmentCount: 1 });
+          asaasPaymentId = pl.id;
+          cardUrl = pl.url;
         } else {
           if (paymentMethod !== 'PIX') {
-            const pay = await AsaasService.createCardPayment({ customer: asaasCustomerId, value, description: desc, installmentCount });
-            asaasPaymentId = pay.id;
-            cardUrl = pay.invoiceUrl;
+            const pl = await AsaasService.createPaymentLink({ name: `${itemName} - ${customerName}`, value, description: desc, recurrent: false, installmentCount });
+            asaasPaymentId = pl.id;
+            cardUrl = pl.url;
           }
           if (paymentMethod !== 'CREDIT_CARD') {
             pixPayload = buildPixPayload({ amount: value, txid: `LAJ${Date.now()}` });

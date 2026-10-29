@@ -85,46 +85,35 @@ export class AsaasService {
     return all.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
   }
 
-  /** Cobrança única no cartão (número de parcelas definido pela usuária). */
-  static async createCardPayment(p: { customer: string; value: number; description: string; installmentCount: number }) {
+  /** Link de pagamento do Asaas (aparece em "Links de pagamento" no Asaas), aceita SOMENTE cartão de crédito. */
+  static async createPaymentLink(p: {
+    name: string; value: number; description: string; recurrent: boolean; installmentCount: number;
+  }) {
     const payload: Record<string, any> = {
-      customer: p.customer,
-      billingType: 'CREDIT_CARD',
-      dueDate: dueDate(),
+      name: p.name.slice(0, 100),
       description: p.description,
+      billingType: 'CREDIT_CARD',
+      chargeType: p.recurrent ? 'RECURRENT' : p.installmentCount > 1 ? 'INSTALLMENT' : 'DETACHED',
+      value: p.value,
+      dueDateLimitDays: 10,
+      notificationEnabled: false,
     };
-    if (p.installmentCount > 1) {
-      payload.installmentCount = p.installmentCount;
-      payload.totalValue = p.value;
-    } else {
-      payload.value = p.value;
-    }
-    const r = await asaas('/payments', { method: 'POST', body: JSON.stringify(payload) });
-    return { id: r.id as string, invoiceUrl: r.invoiceUrl as string };
-  }
-
-  /** Assinatura mensal no cartão. Retorna a fatura da 1ª mensalidade (onde o cliente cadastra o cartão). */
-  static async createSubscription(p: { customer: string; value: number; description: string }) {
-    const sub = await asaas('/subscriptions', {
-      method: 'POST',
-      body: JSON.stringify({
-        customer: p.customer,
-        billingType: 'CREDIT_CARD',
-        cycle: 'MONTHLY',
-        value: p.value,
-        nextDueDate: dueDate(1),
-        description: p.description,
-      }),
-    });
-    const payments = await asaas<{ data: any[] }>(`/subscriptions/${sub.id}/payments`);
-    const first = payments.data?.[0];
-    return { id: sub.id as string, invoiceUrl: (first?.invoiceUrl as string) || '' };
+    if (p.recurrent) payload.subscriptionCycle = 'MONTHLY';
+    if (!p.recurrent && p.installmentCount > 1) payload.maxInstallmentCount = p.installmentCount;
+    const r = await asaas('/paymentLinks', { method: 'POST', body: JSON.stringify(payload) });
+    return { id: r.id as string, url: r.url as string };
   }
 
   static async cancel(link: { asaasPaymentId?: string; asaasSubscriptionId?: string }) {
     try {
       if (link.asaasSubscriptionId) await asaas(`/subscriptions/${link.asaasSubscriptionId}`, { method: 'DELETE' });
-      if (link.asaasPaymentId) await asaas(`/payments/${link.asaasPaymentId}`, { method: 'DELETE' });
+      if (link.asaasPaymentId) {
+        try {
+          await asaas(`/paymentLinks/${link.asaasPaymentId}`, { method: 'DELETE' });
+        } catch {
+          await asaas(`/payments/${link.asaasPaymentId}`, { method: 'DELETE' });
+        }
+      }
     } catch (e) {
       console.error('[Asaas] Não foi possível cancelar:', e);
     }

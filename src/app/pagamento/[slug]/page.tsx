@@ -1,10 +1,8 @@
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import QRCode from 'qrcode';
 import { CreditCard, ShieldCheck, Repeat } from 'lucide-react';
 import { StorageService } from '@/lib/services/storage.service';
 import { formatCurrency } from '@/lib/utils/formatters';
-import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { CopyPixButton } from './CopyPixButton';
 
 export const dynamic = 'force-dynamic';
@@ -18,8 +16,6 @@ export default async function PaymentPage({ params }: { params: { slug: string }
   const link = await StorageService.getPaymentLinkBySlug(params.slug).catch(() => null);
   if (!link || link.status === 'CANCELLED') notFound();
 
-  const config = await StorageService.getPublicSiteConfig();
-  const whatsapp = config.phone.replace(/\D/g, '');
   const qr = link.pixPayload
     ? await QRCode.toDataURL(link.pixPayload, { width: 320, margin: 1, color: { dark: '#062f54', light: '#ffffff' } })
     : null;
@@ -29,10 +25,6 @@ export default async function PaymentPage({ params }: { params: { slug: string }
   return (
     <main className="min-h-screen bg-gradient-to-br from-brand-navy via-[#0a3d6b] to-brand-navy flex items-center justify-center p-4 py-10">
       <div className="w-full max-w-lg">
-        <div className="flex justify-center mb-6">
-          <Image src="/images/logo-transparent.png" alt="Lav Au Jato" width={160} height={80} className="h-16 w-auto drop-shadow" />
-        </div>
-
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
           {/* Cabeçalho */}
           <div className="bg-brand-sky/60 px-6 sm:px-8 py-6 text-center space-y-1">
@@ -97,19 +89,11 @@ export default async function PaymentPage({ params }: { params: { slug: string }
                   </section>
                 )}
 
-                <a
-                  href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`Olá! Segue o comprovante do pagamento de ${link.itemName}.`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition-all"
-                >
-                  <WhatsAppIcon className="w-4 h-4 fill-white" /> Enviar comprovante no WhatsApp
-                </a>
             </>
           </div>
         </div>
 
-        <p className="text-center text-xs text-white/60 mt-6">Lav Au Jato · Banho e tosa com carinho</p>
+        <p className="text-center text-xs text-white/60 mt-6">Lav Au Jato Banho e Tosa</p>
       </div>
     </main>
   );
