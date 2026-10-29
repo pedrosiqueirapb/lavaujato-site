@@ -108,7 +108,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
                     ) : (
                       <div>
                         <span className="text-xs font-semibold text-brand-navy/60 block">Valor</span>
-                        <span className="text-sm sm:text-base font-extrabold text-brand-caramel">Consultar Valor</span>
+                        <span className="text-sm sm:text-base font-extrabold text-brand-caramel">Sob consulta</span>
                       </div>
                     )}
                   </div>

@@ -444,16 +444,6 @@ export default function AdminDashboardPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab('loyalty')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                activeTab === 'loyalty' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              }`}
-            >
-              <Gift className="w-4 h-4 text-pink-400" />
-              <span>Cartão fidelidade</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('services')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
                 activeTab === 'services' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -461,6 +451,16 @@ export default function AdminDashboardPage() {
             >
               <Scissors className="w-4 h-4 text-purple-400" />
               <span>Serviços ({services.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('loyalty')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+                activeTab === 'loyalty' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Gift className="w-4 h-4 text-pink-400" />
+              <span>Cartão fidelidade</span>
             </button>
 
             <button
@@ -474,13 +474,13 @@ export default function AdminDashboardPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab('portfolio')}
+              onClick={() => setActiveTab('promotions')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                activeTab === 'portfolio' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                activeTab === 'promotions' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
             >
-              <Heart className="w-4 h-4 text-rose-400" />
-              <span>Galeria ({posts.length})</span>
+              <Tag className="w-4 h-4 text-amber-500" />
+              <span>Promoções ({promos.length})</span>
             </button>
 
             <button
@@ -494,13 +494,13 @@ export default function AdminDashboardPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab('promotions')}
+              onClick={() => setActiveTab('portfolio')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
-                activeTab === 'promotions' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                activeTab === 'portfolio' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
             >
-              <Tag className="w-4 h-4 text-amber-500" />
-              <span>Promoções ({promos.length})</span>
+              <Heart className="w-4 h-4 text-rose-400" />
+              <span>Galeria ({posts.length})</span>
             </button>
 
             <button

@@ -45,15 +45,15 @@ export default async function HomePage() {
 
       <ServicesSection services={services} config={config} />
 
-      <WorkspaceSection photos={workspacePhotos} />
+      <LoyaltySection config={config} />
 
       <PlansSection plans={plans} config={config} />
 
-      <LoyaltySection config={config} />
+      <PromosSection promotions={promotions} config={config} />
+
+      <WorkspaceSection photos={workspacePhotos} />
 
       <PortfolioSection posts={portfolioPosts} />
-
-      <PromosSection promotions={promotions} config={config} />
 
       <ProductsSection products={products} config={config} />
 

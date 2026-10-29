@@ -43,7 +43,7 @@ export function LocationSection({ config }: LocationSectionProps) {
                 <div>
                   <span className="text-xs font-bold text-brand-caramel uppercase">Local de atendimento</span>
                   <p className="text-base font-extrabold text-brand-navy">
-                    {config.addressNeighborhood} - {config.addressCity} / {config.addressState}
+                    {[config.addressNeighborhood, config.addressCity].filter(Boolean).join(' - ')}{config.addressState ? ` / ${config.addressState}` : ''}
                   </p>
                 </div>
               </div>

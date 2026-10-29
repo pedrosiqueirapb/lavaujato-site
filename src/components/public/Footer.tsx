@@ -17,6 +17,19 @@ interface FooterProps {
 }
 
 export function Footer({ config, hasServices = false, hasWorkspace = false, hasPortfolio = false, hasPlans = false, hasPromos = false, hasProducts = false }: FooterProps) {
+  // Mesma ordem das seções na página principal
+  const navItems = [
+    { href: '/#servicos', label: 'Serviços', show: hasServices },
+    { href: '/#fidelidade', label: 'Cartão fidelidade', show: true },
+    { href: '/#planos', label: 'Planos', show: hasPlans },
+    { href: '/#promocoes', label: 'Promoções', show: hasPromos },
+    { href: '/#espaco', label: 'Nosso espaço', show: hasWorkspace },
+    { href: '/#portfolio', label: 'Galeria', show: hasPortfolio },
+    { href: '/produtos', label: 'Produtos', show: hasProducts },
+    { href: '/#localizacao', label: 'Onde estamos', show: true },
+  ];
+  const address = [config.addressNeighborhood, config.addressCity].filter(Boolean).join(', ') +
+    (config.addressState ? ` - ${config.addressState}` : '');
   const whatsappClean = config.phone.replace(/\D/g, '');
 
   return (
@@ -72,25 +85,13 @@ export function Footer({ config, hasServices = false, hasWorkspace = false, hasP
           <div className="md:col-span-3 space-y-3">
             <h3 className="text-sm font-extrabold text-brand-sky uppercase tracking-wider">Navegação</h3>
             <ul className="space-y-2 text-sm text-white/80 font-medium">
-              {hasServices && (
-                <li><Link href="/#servicos" className="hover:text-brand-caramel transition-colors">Serviços</Link></li>
+              {navItems.map((it) =>
+                it.show ? (
+                  <li key={it.href}>
+                    <Link href={it.href} className="hover:text-brand-caramel transition-colors">{it.label}</Link>
+                  </li>
+                ) : null
               )}
-              {hasWorkspace && (
-                <li><Link href="/#espaco" className="hover:text-brand-caramel transition-colors">Nosso espaço</Link></li>
-              )}
-              {hasPlans && (
-                <li><Link href="/#planos" className="hover:text-brand-caramel transition-colors">Planos</Link></li>
-              )}
-              {hasPortfolio && (
-                <li><Link href="/#portfolio" className="hover:text-brand-caramel transition-colors">Galeria</Link></li>
-              )}
-              {hasPromos && (
-                <li><Link href="/#promocoes" className="hover:text-brand-caramel transition-colors">Promoções</Link></li>
-              )}
-              {hasProducts && (
-                <li><Link href="/produtos" className="hover:text-brand-caramel transition-colors">Produtos</Link></li>
-              )}
-              <li><Link href="/#localizacao" className="hover:text-brand-caramel transition-colors">Onde estamos</Link></li>
             </ul>
           </div>
 
@@ -98,7 +99,7 @@ export function Footer({ config, hasServices = false, hasWorkspace = false, hasP
           <div className="md:col-span-4 space-y-3">
             <h3 className="text-sm font-extrabold text-brand-sky uppercase tracking-wider">Atendimento</h3>
             <p className="text-sm text-white/80 font-medium">
-              📍 {config.addressNeighborhood}, {config.addressCity} - {config.addressState}
+              📍 {address}
             </p>
             <p className="text-sm text-white/80 font-medium">
               📞 {config.phone}

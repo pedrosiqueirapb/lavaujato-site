@@ -32,6 +32,18 @@ export function Navbar({ config, hasServices, hasWorkspace, hasPortfolio, hasPla
   const whatsappClean = config.phone.replace(/\D/g, '');
   const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Gostaria%20de%20agendar%20um%20banho/tosa%20para%20o%20meu%20pet.`;
 
+  // Mesma ordem das seções na página principal
+  const items = [
+    { href: '/#servicos', label: 'Serviços', show: !!hasServices },
+    { href: '/#fidelidade', label: 'Cartão fidelidade', show: true },
+    { href: '/#planos', label: 'Planos', show: !!hasPlans },
+    { href: '/#promocoes', label: 'Promoções', show: !!hasPromos },
+    { href: '/#espaco', label: 'Nosso espaço', show: !!hasWorkspace },
+    { href: '/#portfolio', label: 'Galeria', show: !!hasPortfolio },
+    { href: '/produtos', label: 'Produtos', show: !!hasProducts },
+    { href: '/#localizacao', label: 'Onde estamos', show: true },
+  ];
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled ? 'py-2 glass-panel shadow-md' : 'py-4 bg-transparent'
@@ -61,39 +73,13 @@ export function Navbar({ config, hasServices, hasWorkspace, hasPortfolio, hasPla
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {hasServices && (
-            <Link href="/#servicos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Serviços
-          </Link>
+          {items.map((it) =>
+            it.show ? (
+              <Link key={it.href} href={it.href} className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
+                {it.label}
+              </Link>
+            ) : null
           )}
-          {hasWorkspace && (
-            <Link href="/#espaco" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Nosso espaço
-          </Link>
-          )}
-          {hasPlans && (
-            <Link href="/#planos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-              Planos
-            </Link>
-          )}
-          {hasPortfolio && (
-            <Link href="/#portfolio" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Galeria
-          </Link>
-          )}
-          {hasPromos && (
-            <Link href="/#promocoes" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-              Promoções
-            </Link>
-          )}
-          {hasProducts && (
-            <Link href="/produtos" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-              Produtos
-            </Link>
-          )}
-          <Link href="/#localizacao" className="text-sm font-semibold text-brand-navy hover:text-brand-caramel transition-colors">
-            Localização
-          </Link>
         </nav>
 
         {/* CTA */}
@@ -122,67 +108,18 @@ export function Navbar({ config, hasServices, hasWorkspace, hasPortfolio, hasPla
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden glass-panel border-t border-brand-sky/30 px-4 pt-4 pb-6 mt-2 space-y-3 animate-in slide-in-from-top duration-200">
-          {hasServices && (
-            <Link
-            href="/#servicos"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-          >
-            Serviços
-          </Link>
+          {items.map((it) =>
+            it.show ? (
+              <Link
+                key={it.href}
+                href={it.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
+              >
+                {it.label}
+              </Link>
+            ) : null
           )}
-          {hasWorkspace && (
-            <Link
-            href="/#espaco"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-          >
-            Nosso espaço
-          </Link>
-          )}
-          {hasPlans && (
-            <Link
-              href="/#planos"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-            >
-              Planos
-            </Link>
-          )}
-          {hasPortfolio && (
-            <Link
-            href="/#portfolio"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-          >
-            Galeria
-          </Link>
-          )}
-          {hasPromos && (
-            <Link
-              href="/#promocoes"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-            >
-              Promoções
-            </Link>
-          )}
-          {hasProducts && (
-            <Link
-              href="/produtos"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-            >
-              Produtos
-            </Link>
-          )}
-          <Link
-            href="/#localizacao"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-base font-semibold text-brand-navy hover:text-brand-caramel py-2"
-          >
-            Localização
-          </Link>
           <div className="pt-2 border-t border-brand-sky/20 flex flex-col gap-2">
             <a
               href={whatsappUrl}
