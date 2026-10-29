@@ -41,7 +41,7 @@ export function HeroSection({ config, hasPlans }: HeroSectionProps) {
             {/* Top Pill Badge */}
             <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/90 border border-brand-navy/20 text-brand-navy text-xs sm:text-sm font-extrabold shadow-md">
               <Sparkles className="w-4 h-4 text-brand-caramel" />
-              <span>Banho e tosa com cuidado em cada detalhe</span>
+              <span className="uppercase tracking-wide">Banho e tosa com cuidado em cada detalhe</span>
             </div>
 
             {/* Main Headline */}

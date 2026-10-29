@@ -1,9 +1,14 @@
 import 'server-only';
 import { AsaasCustomerSummary } from '@/lib/types';
+import { UserError, ASAAS_UNAVAILABLE } from '@/lib/utils/errors';
 
 function config() {
-  const apiKey = process.env.ASAAS_API_KEY;
-  if (!apiKey) throw new Error('ASAAS_API_KEY não configurada no .env');
+  // Remove aspas, espaços e a barra de escape (\\$) que costuma ser colada junto com a chave
+  const apiKey = (process.env.ASAAS_API_KEY || '').trim().replace(/^["']|["']$/g, '').replace(/^\\+/, '');
+  if (!apiKey) {
+    console.error('[Asaas] ASAAS_API_KEY ausente nas variáveis de ambiente.');
+    throw new UserError(ASAAS_UNAVAILABLE);
+  }
   const sandbox = process.env.ASAAS_IS_SANDBOX === 'true';
   const baseUrl = sandbox ? 'https://api-sandbox.asaas.com/v3' : 'https://api.asaas.com/v3';
   return { apiKey, baseUrl };
@@ -11,20 +16,29 @@ function config() {
 
 async function asaas<T = any>(path: string, init: RequestInit = {}): Promise<T> {
   const { apiKey, baseUrl } = config();
-  const res = await fetch(`${baseUrl}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      'User-Agent': 'LavAuJato',
-      access_token: apiKey,
-      ...(init.headers || {}),
-    },
-    cache: 'no-store',
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${baseUrl}${path}`, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'LavAuJato',
+        access_token: apiKey,
+        ...(init.headers || {}),
+      },
+      cache: 'no-store',
+    });
+  } catch (err) {
+    console.error('[Asaas] Falha de rede:', err);
+    throw new UserError(ASAAS_UNAVAILABLE);
+  }
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const msg = body?.errors?.map((e: any) => e.description).join(' ') || res.statusText;
-    throw new Error(`Asaas: ${msg}`);
+    console.error(`[Asaas] ${init.method || 'GET'} ${path} -> ${res.status}`, JSON.stringify(body));
+    const msg: string | undefined = body?.errors?.map((e: any) => e.description).filter(Boolean).join(' ');
+    // 401/403 = chave inválida/sem permissão: detalhe técnico, não exibir.
+    if (res.status === 401 || res.status === 403 || !msg) throw new UserError(ASAAS_UNAVAILABLE);
+    throw new UserError(msg);
   }
   return body as T;
 }
@@ -112,7 +126,7 @@ export class AsaasService {
       if (link.asaasSubscriptionId) await asaas(`/subscriptions/${link.asaasSubscriptionId}`, { method: 'DELETE' });
       if (link.asaasPaymentId) await asaas(`/payments/${link.asaasPaymentId}`, { method: 'DELETE' });
     } catch (e) {
-      console.warn('Não foi possível cancelar no Asaas:', e);
+      console.error('[Asaas] Não foi possível cancelar:', e);
     }
   }
 }

@@ -14,13 +14,14 @@ import {
 } from '@/lib/types';
 import { encryptPII, decryptPII } from '@/lib/security/pii-crypto';
 import { getSupabase, IMAGE_BUCKET } from '@/lib/db/supabase';
+import { UserError, GENERIC_ERROR } from '@/lib/utils/errors';
 
 const db = () => getSupabase();
 
 function check<T>(res: { data: T | null; error: any }): T {
   if (res.error) {
     console.error('[Supabase]', res.error);
-    throw new Error(res.error.message || 'Erro no banco de dados');
+    throw new UserError(GENERIC_ERROR);
   }
   return res.data as T;
 }
@@ -196,7 +197,9 @@ export class StorageService {
     }
   }
 
-  static async updateSiteConfig(u: Partial<SiteConfig>): Promise<SiteConfig> {
+  static async updateSiteConfig(update: Partial<SiteConfig>): Promise<SiteConfig> {
+    // Mescla com o que já está salvo, para que salvar uma tela não apague os campos de outra.
+    const u = { ...(await this.getSiteConfig()), ...update };
     const row = {
       id: 'default',
       phone: u.phone ?? '',
@@ -444,7 +447,10 @@ export class StorageService {
     const ext = contentType === 'image/png' ? 'png' : contentType === 'image/webp' ? 'webp' : 'jpg';
     const path = `${folder}/${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${ext}`;
     const { error } = await db().storage.from(IMAGE_BUCKET).upload(path, buffer, { contentType, upsert: false });
-    if (error) throw new Error(`Falha no upload: ${error.message}`);
+    if (error) {
+      console.error('[Supabase Storage]', error);
+      throw new UserError('Não foi possível enviar a imagem. Tente novamente em instantes.');
+    }
     return db().storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
   }
 }

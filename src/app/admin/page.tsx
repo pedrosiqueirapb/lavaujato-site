@@ -24,7 +24,9 @@ import {
   Globe,
   Upload,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  AlertCircle,
+  Gift
 } from 'lucide-react';
 import { 
   Client,
@@ -56,7 +58,27 @@ type TabType =
   | 'plans' 
   | 'promotions' 
   | 'products' 
+  | 'loyalty'
   | 'config';
+
+const EMPTY_CONFIG: SiteConfig = {
+  phone: '',
+  instagram: '',
+  addressNeighborhood: '',
+  addressCity: '',
+  addressState: '',
+  businessHours: '',
+  loyaltyCardImage: '/images/loyalty-card.jpg',
+};
+
+/** Estado vazio padronizado das listas (mesmo estilo de "Nenhum cliente cadastrado ainda."). */
+function EmptyState({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="col-span-full p-8 text-center text-xs font-medium text-slate-500 bg-slate-900 border border-slate-800 rounded-2xl">
+      {children}
+    </div>
+  );
+}
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -64,6 +86,7 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   // Estados de Dados
   const [config, setConfig] = useState<SiteConfig | null>(null);
@@ -126,9 +149,10 @@ export default function AdminDashboardPage() {
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<Partial<WorkspacePhoto>>({});
 
-  const showToast = (msg: string) => {
+  const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4000);
+    setToastType(type);
+    setTimeout(() => setToastMessage(''), type === 'error' ? 7000 : 4000);
   };
 
   const loadAdminData = async () => {
@@ -140,7 +164,9 @@ export default function AdminDashboardPage() {
         return;
       }
       if (!res.ok) {
-        showToast('Erro ao carregar dados do painel.');
+        const body = await res.json().catch(() => ({}));
+        showToast(body.error || 'Não foi possível carregar os dados do painel. Tente novamente.', 'error');
+        setConfig(prev => prev ?? EMPTY_CONFIG);
         setLoading(false);
         return;
       }
@@ -159,7 +185,8 @@ export default function AdminDashboardPage() {
       setCharges(data.paymentLinks || []);
       setStats(data.stats);
     } catch (err) {
-      showToast('Erro ao carregar dados do painel.');
+      showToast('Sem conexão com o servidor. Verifique sua internet e tente novamente.', 'error');
+      setConfig(prev => prev ?? EMPTY_CONFIG);
     } finally {
       setLoading(false);
     }
@@ -186,7 +213,7 @@ export default function AdminDashboardPage() {
       callback(url);
       showToast('Imagem enviada!');
     } catch (err: any) {
-      showToast(err?.message || 'Falha ao enviar imagem.');
+      showToast(err?.message || 'Falha ao enviar imagem.', 'error');
     } finally {
       setUploading(false);
     }
@@ -234,224 +261,110 @@ export default function AdminDashboardPage() {
   };
 
   // HANDLERS CRUD
-  const handleSaveClient = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+  const send = async (payload: Record<string, unknown>): Promise<boolean> => {
     try {
       const res = await fetch('/api/admin/data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'upsert',
-          resource: 'client',
-          data: editingClient,
-        }),
+        body: JSON.stringify(payload),
       });
-      const result = await res.json().catch(() => ({}));
-      if (res.ok) {
-        showToast('Cliente salvo e sincronizado com o Asaas!');
-        setShowClientModal(false);
-        loadAdminData();
-      } else {
-        alert(result.error || 'Erro ao salvar cliente.');
+      if (res.status === 401) {
+        window.location.href = '/admin/login';
+        return false;
       }
-    } finally {
-      setSaving(false);
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showToast(result.error || 'Não foi possível concluir a operação. Tente novamente.', 'error');
+        return false;
+      }
+      return true;
+    } catch {
+      showToast('Sem conexão com o servidor. Verifique sua internet e tente novamente.', 'error');
+      return false;
     }
   };
 
-  const handleDeleteClient = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'client', id }),
-    });
-    showToast('Cliente removido.');
-    loadAdminData();
-  };
-
-  const handleDeleteCharge = async (id: string) => {
-    if (!confirm('Deseja excluir este link? A cobrança também será cancelada no Asaas.')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'paymentLink', id }),
-    });
-    showToast('Link removido.');
-    loadAdminData();
-  };
-
-  const handleSaveService = async (e: React.FormEvent) => {
+  const save = async (
+    e: React.FormEvent,
+    resource: string,
+    data: unknown,
+    doneMsg: string,
+    close?: () => void
+  ) => {
     e.preventDefault();
     setSaving(true);
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'upsert', resource: 'service', data: editingService }),
-    });
+    const ok = await send({ action: 'upsert', resource, data });
     setSaving(false);
-    setShowServiceModal(false);
-    showToast('Serviço salvo!');
-    loadAdminData();
+    if (ok) {
+      close?.();
+      showToast(doneMsg);
+      loadAdminData();
+    }
   };
 
-  const handleDeleteService = async (id: string) => {
-    if (!confirm('Excluir este serviço?')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'service', id }),
-    });
-    showToast('Serviço removido.');
-    loadAdminData();
+  const remove = async (resource: string, id: string, confirmMsg: string, doneMsg: string) => {
+    if (!confirm(confirmMsg)) return;
+    if (await send({ action: 'delete', resource, id })) {
+      showToast(doneMsg);
+      loadAdminData();
+    }
   };
 
-  const handleSavePlan = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'upsert', resource: 'plan', data: editingPlan }),
-    });
-    setSaving(false);
-    setShowPlanModal(false);
-    showToast('Plano salvo!');
-    loadAdminData();
-  };
+  const handleSaveClient = (e: React.FormEvent) =>
+    save(e, 'client', editingClient, 'Cliente salvo e sincronizado com o Asaas!', () => setShowClientModal(false));
+  const handleDeleteClient = (id: string) =>
+    remove('client', id, 'Tem certeza que deseja excluir este cliente?', 'Cliente removido.');
 
-  const handleDeletePlan = async (id: string) => {
-    if (!confirm('Excluir este plano?')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'plan', id }),
-    });
-    showToast('Plano removido.');
-    loadAdminData();
-  };
+  const handleDeleteCharge = (id: string) =>
+    remove('paymentLink', id, 'Deseja excluir este link? A cobrança também será cancelada no Asaas.', 'Link removido.');
 
-  const handleSavePromo = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'upsert',
-        resource: 'promotion',
-        data: { ...editingPromo, isActive: true },
-      }),
-    });
-    setSaving(false);
-    setShowPromoModal(false);
-    showToast('Promoção salva!');
-    loadAdminData();
-  };
+  const handleSaveService = (e: React.FormEvent) =>
+    save(e, 'service', editingService, 'Serviço salvo!', () => setShowServiceModal(false));
+  const handleDeleteService = (id: string) => remove('service', id, 'Excluir este serviço?', 'Serviço removido.');
 
-  const handleDeletePromo = async (id: string) => {
-    if (!confirm('Excluir esta promoção? Ela sumirá do site imediatamente.')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'promotion', id }),
-    });
-    showToast('Promoção excluída.');
-    loadAdminData();
-  };
+  const handleSavePlan = (e: React.FormEvent) =>
+    save(e, 'plan', editingPlan, 'Plano salvo!', () => setShowPlanModal(false));
+  const handleDeletePlan = (id: string) => remove('plan', id, 'Excluir este plano?', 'Plano removido.');
 
-  const handleSaveProduct = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'upsert', resource: 'product', data: editingProduct }),
-    });
-    setSaving(false);
-    setShowProductModal(false);
-    showToast('Produto salvo!');
-    loadAdminData();
-  };
+  const handleSavePromo = (e: React.FormEvent) =>
+    save(e, 'promotion', { ...editingPromo, isActive: true }, 'Promoção salva!', () => setShowPromoModal(false));
+  const handleDeletePromo = (id: string) =>
+    remove('promotion', id, 'Excluir esta promoção? Ela sumirá do site imediatamente.', 'Promoção excluída.');
 
-  const handleDeleteProduct = async (id: string) => {
-    if (!confirm('Excluir este produto?')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'product', id }),
-    });
-    showToast('Produto excluído.');
-    loadAdminData();
-  };
+  const handleSaveProduct = (e: React.FormEvent) =>
+    save(e, 'product', editingProduct, 'Produto salvo!', () => setShowProductModal(false));
+  const handleDeleteProduct = (id: string) => remove('product', id, 'Excluir este produto?', 'Produto excluído.');
 
-  const handleSavePortfolio = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'upsert', resource: 'portfolio', data: editingPost }),
-    });
-    setSaving(false);
-    setShowPortfolioModal(false);
-    showToast('Publicação salva!');
-    loadAdminData();
-  };
+  const handleSavePortfolio = (e: React.FormEvent) =>
+    save(e, 'portfolio', editingPost, 'Publicação salva!', () => setShowPortfolioModal(false));
+  const handleDeletePortfolio = (id: string) =>
+    remove('portfolio', id, 'Excluir esta publicação?', 'Publicação removida.');
 
-  const handleDeletePortfolio = async (id: string) => {
-    if (!confirm('Excluir esta publicação?')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'portfolio', id }),
-    });
-    showToast('Publicação removida.');
-    loadAdminData();
-  };
-
-  const handleSaveWorkspace = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveWorkspace = (e: React.FormEvent) => {
     if (!editingPhoto.url) {
-      alert('Por favor, anexe uma imagem do seu computador.');
-      return;
+      e.preventDefault();
+      showToast('Anexe uma imagem do seu computador.', 'error');
+      return Promise.resolve();
     }
-    setSaving(true);
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'upsert', resource: 'workspace', data: editingPhoto }),
-    });
-    setSaving(false);
-    setShowWorkspaceModal(false);
-    showToast('Foto do espaço salva!');
-    loadAdminData();
+    return save(e, 'workspace', editingPhoto, 'Foto do espaço salva!', () => setShowWorkspaceModal(false));
+  };
+  const handleDeleteWorkspace = (id: string) =>
+    remove('workspace', id, 'Excluir esta foto do espaço?', 'Foto removida.');
+
+  const handleSaveConfig = (e: React.FormEvent) => {
+    if (!config) {
+      e.preventDefault();
+      return Promise.resolve();
+    }
+    return save(e, 'config', config, 'Configurações salvas!');
   };
 
-  const handleDeleteWorkspace = async (id: string) => {
-    if (!confirm('Excluir esta foto do espaço?')) return;
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'workspace', id }),
-    });
-    showToast('Foto removida.');
-    loadAdminData();
-  };
-
-  const handleSaveConfig = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!config) return;
-    setSaving(true);
-    await fetch('/api/admin/data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'upsert', resource: 'config', data: config }),
-    });
-    setSaving(false);
-    showToast('Configurações salvas!');
-    loadAdminData();
+  const handleSaveLoyalty = (e: React.FormEvent) => {
+    if (!config) {
+      e.preventDefault();
+      return Promise.resolve();
+    }
+    return save(e, 'config', config, 'Imagem do cartão fidelidade atualizada!');
   };
 
   if (loading) {
@@ -470,8 +383,13 @@ export default function AdminDashboardPage() {
       
       {/* TOAST FEEDBACK */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 bg-emerald-600 text-white font-extrabold px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <CheckCircle2 className="w-5 h-5" />
+        <div
+          role={toastType === 'error' ? 'alert' : 'status'}
+          className={`fixed top-5 right-5 z-[60] max-w-sm text-white font-extrabold px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top duration-300 ${
+            toastType === 'error' ? 'bg-rose-600' : 'bg-emerald-600'
+          }`}
+        >
+          {toastType === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle2 className="w-5 h-5 shrink-0" />}
           <span>{toastMessage}</span>
         </div>
       )}
@@ -583,6 +501,16 @@ export default function AdminDashboardPage() {
             >
               <ShoppingBag className="w-4 h-4 text-teal-400" />
               <span>Produtos da loja ({products.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('loyalty')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all ${
+                activeTab === 'loyalty' ? 'bg-brand-navy text-white shadow-md border border-brand-sky/40' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+            >
+              <Gift className="w-4 h-4 text-pink-400" />
+              <span>Cartão fidelidade</span>
             </button>
 
             <button
@@ -869,9 +797,9 @@ export default function AdminDashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {charges.length === 0 ? (
-                <div className="col-span-2 p-12 text-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-500">
+                <EmptyState>
                   Nenhum link gerado ainda. Clique em &quot;Gerar link&quot; para começar.
-                </div>
+                </EmptyState>
               ) : (
                 charges
                   .slice((pageCharges - 1) * pageSizeCharges, pageCharges * pageSizeCharges)
@@ -937,7 +865,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Serviços prestados</h1>
+                <h1 className="text-2xl font-extrabold text-white">Serviços</h1>
                 <p className="text-xs text-slate-400 font-medium">Mantenha atualizadas as informações dos serviços oferecidos.</p>
               </div>
               <button
@@ -949,6 +877,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {services.length === 0 && <EmptyState>Nenhum serviço cadastrado ainda.</EmptyState>}
               {services
                 .slice((pageServices - 1) * pageSizeServices, pageServices * pageSizeServices)
                 .map((service, index) => {
@@ -1031,6 +960,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {plans.length === 0 && <EmptyState>Nenhum plano cadastrado ainda.</EmptyState>}
               {plans
                 .slice((pagePlans - 1) * pageSizePlans, pagePlans * pageSizePlans)
                 .map((plan, index) => {
@@ -1136,6 +1066,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {posts.length === 0 && <EmptyState>Nenhum atendimento publicado ainda.</EmptyState>}
               {posts
                 .slice((pagePortfolio - 1) * pageSizePortfolio, pagePortfolio * pageSizePortfolio)
                 .map((post, index) => {
@@ -1213,6 +1144,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {photos.length === 0 && <EmptyState>Nenhuma foto cadastrada ainda.</EmptyState>}
               {photos
                 .slice((pageWorkspace - 1) * pageSizeWorkspace, pageWorkspace * pageSizeWorkspace)
                 .map((photo, index) => {
@@ -1287,6 +1219,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {promos.length === 0 && <EmptyState>Nenhuma promoção cadastrada ainda.</EmptyState>}
               {promos
                 .slice((pagePromos - 1) * pageSizePromos, pagePromos * pageSizePromos)
                 .map((promo, index) => {
@@ -1365,6 +1298,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {products.length === 0 && <EmptyState>Nenhum produto cadastrado ainda.</EmptyState>}
               {products
                 .slice((pageProducts - 1) * pageSizeProducts, pageProducts * pageSizeProducts)
                 .map((prod, index) => {
@@ -1427,6 +1361,45 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
+        {/* TAB: CARTÃO FIDELIDADE */}
+        {activeTab === 'loyalty' && config && (
+          <form onSubmit={handleSaveLoyalty} className="space-y-6 max-w-2xl animate-in fade-in duration-300">
+            <div>
+              <h1 className="text-2xl font-extrabold text-white">Cartão fidelidade</h1>
+              <p className="text-xs text-slate-400 font-medium">Altere a imagem do cartão exibida na página principal do site.</p>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 text-xs font-bold text-slate-300">
+              <div className="relative w-full aspect-[1024/585] rounded-2xl overflow-hidden bg-slate-800 border border-slate-700">
+                {config.loyaltyCardImage && (
+                  <Image src={config.loyaltyCardImage} alt="Cartão fidelidade" fill className="object-cover" unoptimized />
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <label>Imagem</label>
+                <div className="relative border border-dashed border-slate-700 hover:border-sky-500 rounded-xl p-4 text-center bg-slate-800/60 cursor-pointer transition-colors">
+                  <input
+                    type="file"
+                    accept={IMAGE_ACCEPT}
+                    onChange={(e) => handleFileUpload(e, (url) => setConfig({ ...config, loyaltyCardImage: url }), 'config')}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-slate-300">{uploading ? 'Enviando...' : '+ Selecionar nova imagem'}</span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={saving || uploading}
+                className="w-full py-3.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold tracking-wider text-xs shadow-lg transition-all disabled:opacity-60"
+              >
+                {saving ? 'Salvando...' : 'Salvar alterações'}
+              </button>
+            </div>
+          </form>
+        )}
+
         {/* TAB 10: CONFIGURAÇÕES */}
         {activeTab === 'config' && config && (
           <form onSubmit={handleSaveConfig} className="space-y-6 max-w-2xl animate-in fade-in duration-300">
@@ -1445,26 +1418,6 @@ export default function AdminDashboardPage() {
                   onChange={(e) => setConfig({ ...config, phone: e.target.value })}
                   className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium"
                 />
-              </div>
-
-              <div className="space-y-1">
-                <label>Imagem do cartão fidelidade</label>
-                <div className="flex items-center gap-4">
-                  {config.loyaltyCardImage && (
-                    <div className="relative w-40 aspect-[1024/585] rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shrink-0">
-                      <Image src={config.loyaltyCardImage} alt="Cartão fidelidade" fill className="object-cover" unoptimized />
-                    </div>
-                  )}
-                  <div className="relative flex-1 border border-dashed border-slate-700 hover:border-sky-500 rounded-xl p-4 text-center bg-slate-800/60 cursor-pointer transition-colors">
-                    <input
-                      type="file"
-                      accept={IMAGE_ACCEPT}
-                      onChange={(e) => handleFileUpload(e, (url) => setConfig({ ...config, loyaltyCardImage: url }), 'config')}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
-                    <span className="text-xs font-bold text-slate-300">{uploading ? 'Enviando...' : 'Alterar imagem'}</span>
-                  </div>
-                </div>
               </div>
 
               <div className="space-y-1">

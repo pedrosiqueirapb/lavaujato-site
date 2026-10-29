@@ -5,6 +5,7 @@ import { AsaasService } from '@/lib/services/asaas.service';
 import { buildPixPayload } from '@/lib/utils/pix';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/security/session';
 import { PaymentMethod } from '@/lib/types';
+import { safeMessage, GENERIC_ERROR } from '@/lib/utils/errors';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,8 +14,14 @@ function isAuthenticated(): boolean {
   return !!verifySessionToken(token)?.authenticated;
 }
 
-const errorResponse = (e: unknown, status = 500) =>
-  NextResponse.json({ error: e instanceof Error ? e.message : 'Erro ao processar operação no servidor.' }, { status });
+/** Erros 4xx são validações escritas por nós (seguras). Erros 5xx nunca expõem detalhes técnicos. */
+const errorResponse = (e: unknown, status = 500) => {
+  if (status >= 500) {
+    console.error('[admin]', e);
+    return NextResponse.json({ error: safeMessage(e) }, { status });
+  }
+  return NextResponse.json({ error: e instanceof Error ? e.message : GENERIC_ERROR }, { status });
+};
 
 function isValidCpfCnpj(v: string): boolean {
   const d = (v || '').replace(/\D/g, '');

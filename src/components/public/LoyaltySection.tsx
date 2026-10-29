@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { Gift, PawPrint, Stamp, Sparkles } from 'lucide-react';
 import { SiteConfig } from '@/lib/types';
-import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 
 interface LoyaltySectionProps {
   config: SiteConfig;
@@ -9,14 +8,12 @@ interface LoyaltySectionProps {
 
 const STEPS = [
   { icon: PawPrint, title: 'Receba seu cartão', text: 'Peça o cartão fidelidade no primeiro banho do seu pet.' },
-  { icon: Stamp, title: 'Carimbe a cada banho', text: 'A cada banho, uma patinha é marcada. Lembre-se de apresentar o cartão!' },
+  { icon: Stamp, title: 'Ganhe uma patinha a cada banho', text: 'A cada banho, uma patinha é marcada. Lembre-se de apresentar o cartão!' },
   { icon: Gift, title: 'O 10º é grátis', text: 'Completou 9 banhos? O próximo é por nossa conta.' },
 ];
 
 export function LoyaltySection({ config }: LoyaltySectionProps) {
   const image = config.loyaltyCardImage || '/images/loyalty-card.jpg';
-  const whatsappClean = config.phone.replace(/\D/g, '');
-  const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Quero%20saber%20mais%20sobre%20o%20cartão%20fidelidade.`;
 
   return (
     <section id="fidelidade" className="py-20 bg-brand-sky/40 relative overflow-hidden">
@@ -42,7 +39,7 @@ export function LoyaltySection({ config }: LoyaltySectionProps) {
               A cada 9 banhos, o 10º é <span className="text-brand-caramel">grátis!</span>
             </h2>
             <p className="text-brand-navy/80 text-base sm:text-lg font-medium">
-              Quem é cliente fiel ganha carinho em dobro. Acumule banhos no seu cartão e ganhe um banho por nossa conta.
+              Cliente fiel tem recompensa! Acumule banhos no seu cartão e ganhe um banho por nossa conta.
             </p>
 
             <ol className="space-y-4 text-left">
@@ -58,16 +55,6 @@ export function LoyaltySection({ config }: LoyaltySectionProps) {
                 </li>
               ))}
             </ol>
-
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg transition-all hover:scale-105"
-            >
-              <WhatsAppIcon className="w-5 h-5 fill-white" />
-              Quero meu cartão fidelidade
-            </a>
           </div>
         </div>
       </div>

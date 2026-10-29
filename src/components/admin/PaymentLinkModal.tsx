@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Copy, Check, Loader2 } from 'lucide-react';
+import { Copy, Check, Loader2, AlertCircle } from 'lucide-react';
 import { AsaasCustomerSummary, ServiceItem, SubscriptionPlan, PaymentLink, PaymentMethod } from '@/lib/types';
 import { formatCurrency } from '@/lib/utils/formatters';
 
@@ -227,7 +227,12 @@ export function PaymentLinkModal({ services, plans, onClose, onCreated }: Props)
               </>
             )}
 
-            {error && <p className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 font-semibold">{error}</p>}
+            {error && (
+              <div role="alert" className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 font-semibold flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+                <span>{error}</span>
+              </div>
+            )}
 
             <div className="pt-2 flex gap-3">
               <button type="button" onClick={onClose} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>

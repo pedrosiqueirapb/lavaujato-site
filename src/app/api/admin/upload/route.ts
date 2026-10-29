@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { StorageService } from '@/lib/services/storage.service';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/security/session';
+import { safeMessage } from '@/lib/utils/errors';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ url });
   } catch (e) {
     console.error('Erro no upload:', e);
-    return NextResponse.json({ error: e instanceof Error ? e.message : 'Falha no upload.' }, { status: 500 });
+    return NextResponse.json({ error: safeMessage(e) }, { status: 500 });
   }
 }
