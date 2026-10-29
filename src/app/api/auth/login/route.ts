@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { checkRateLimit, recordFailedAttempt, resetRateLimit } from '@/lib/security/rate-limiter';
 import { createSessionToken, verify2FACode, SESSION_COOKIE_NAME } from '@/lib/security/session';
-import { StorageService } from '@/lib/services/storage.service';
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +20,7 @@ export async function POST(request: Request) {
     }
 
     const { password, twoFactorCode } = await request.json();
-    const config = StorageService.getSiteConfig();
+    const is2FAEnabled = Boolean(process.env.ADMIN_2FA_SECRET);
     const correctPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
     // 2. Valida Senha
@@ -37,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     // 3. Valida 2FA se habilitado
-    if (config.is2FAEnabled) {
+    if (is2FAEnabled) {
       if (!twoFactorCode) {
         return NextResponse.json(
           { require2FA: true, message: 'Digite o código de verificação 2FA (6 dígitos).' },
@@ -45,7 +44,7 @@ export async function POST(request: Request) {
         );
       }
 
-      const secret = process.env.ADMIN_2FA_SECRET || config.admin2FASecret;
+      const secret = process.env.ADMIN_2FA_SECRET;
       const isValid2FA = verify2FACode(twoFactorCode, secret);
       if (!isValid2FA) {
         const failed = recordFailedAttempt(ip);

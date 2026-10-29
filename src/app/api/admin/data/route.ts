@@ -2,185 +2,212 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { StorageService } from '@/lib/services/storage.service';
 import { AsaasService } from '@/lib/services/asaas.service';
+import { buildPixPayload } from '@/lib/utils/pix';
 import { verifySessionToken, SESSION_COOKIE_NAME } from '@/lib/security/session';
+import { PaymentMethod } from '@/lib/types';
+
+export const dynamic = 'force-dynamic';
 
 function isAuthenticated(): boolean {
-  const cookieStore = cookies();
-  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  const session = verifySessionToken(token);
-  return !!session?.authenticated;
+  const token = cookies().get(SESSION_COOKIE_NAME)?.value;
+  return !!verifySessionToken(token)?.authenticated;
 }
 
-export async function GET() {
-  if (!isAuthenticated()) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+const errorResponse = (e: unknown, status = 500) =>
+  NextResponse.json({ error: e instanceof Error ? e.message : 'Erro ao processar operação no servidor.' }, { status });
+
+function isValidCpfCnpj(v: string): boolean {
+  const d = (v || '').replace(/\D/g, '');
+  if (d.length === 11) {
+    if (/^(\d)\1+$/.test(d)) return false;
+    const calc = (len: number) => {
+      let sum = 0;
+      for (let i = 0; i < len; i++) sum += Number(d[i]) * (len + 1 - i);
+      const r = (sum * 10) % 11;
+      return r === 10 ? 0 : r;
+    };
+    return calc(9) === Number(d[9]) && calc(10) === Number(d[10]);
   }
+  return d.length === 14;
+}
 
-  const clients = StorageService.getClients();
-  const services = StorageService.getServices();
-  const plans = StorageService.getPlans();
-  const workspacePhotos = StorageService.getWorkspacePhotos();
-  const portfolioPosts = StorageService.getPortfolioPosts();
-  const promotions = StorageService.getPromotions(false);
-  const products = StorageService.getProducts(false);
-  const charges = StorageService.getCharges();
-  const config = StorageService.getSiteConfig();
+export async function GET(request: Request) {
+  if (!isAuthenticated()) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 
-  const stats = {
-    totalClients: clients.length,
-    activeServices: services.filter(s => s.isActive).length,
-    activePlans: plans.length,
-    activePromos: promotions.filter(p => p.isActive).length,
-    totalProducts: products.length,
-    pendingChargesCount: charges.filter(c => c.status === 'PENDING').length,
-  };
+  try {
+    const url = new URL(request.url);
+    if (url.searchParams.get('resource') === 'asaasCustomers') {
+      const customers = await AsaasService.listCustomers();
+      return NextResponse.json({ customers });
+    }
 
-  return NextResponse.json({
-    config,
-    clients,
-    services,
-    plans,
-    workspacePhotos,
-    portfolioPosts,
-    promotions,
-    products,
-    charges,
-    stats,
-  });
+    const [clients, services, plans, workspacePhotos, portfolioPosts, promotions, products, paymentLinks, config] =
+      await Promise.all([
+        StorageService.getClients(),
+        StorageService.getServices(),
+        StorageService.getPlans(),
+        StorageService.getWorkspacePhotos(),
+        StorageService.getPortfolioPosts(),
+        StorageService.getPromotions(false),
+        StorageService.getProducts(false),
+        StorageService.getPaymentLinks(),
+        StorageService.getSiteConfig(),
+      ]);
+
+    const stats = {
+      totalClients: clients.length,
+      activeServices: services.filter(s => s.isActive).length,
+      activePlans: plans.length,
+      activePromos: promotions.filter(p => p.isActive).length,
+      totalProducts: products.length,
+      pendingChargesCount: paymentLinks.length,
+    };
+
+    return NextResponse.json({
+      config, clients, services, plans, workspacePhotos, portfolioPosts, promotions, products, paymentLinks, stats,
+    });
+  } catch (e) {
+    console.error('Erro GET admin:', e);
+    return errorResponse(e);
+  }
 }
 
 export async function POST(request: Request) {
-  if (!isAuthenticated()) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
-  }
+  if (!isAuthenticated()) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 
   try {
     const body = await request.json();
     const { action, resource, data, id } = body;
 
-    // REORDENAÇÃO GENÉRICA DE ELEMENTOS
-    if (action === 'reorder') {
-      const { ids } = data || {};
-      if (Array.isArray(ids)) {
-        StorageService.reorderItems(resource, ids);
-        return NextResponse.json({ success: true });
-      }
-    }
-
-    // 1. CLIENTES (Com Sync Asaas)
-    if (resource === 'client') {
-      if (action === 'delete') {
-        StorageService.deleteClient(id);
-        return NextResponse.json({ success: true });
-      }
-      
-      // Sync automático no Asaas (Requisito 10)
-      let asaasCustomerId = data.asaasCustomerId;
-      if (!asaasCustomerId || asaasCustomerId.startsWith('cus_demo') || asaasCustomerId.startsWith('cus_fallback')) {
-        asaasCustomerId = await AsaasService.syncCustomer({
-          name: data.name,
-          phone: data.phone,
-          email: data.email,
-          cpfCnpj: data.cpfCnpj,
-        });
-      }
-
-      const client = StorageService.upsertClient({
-        ...data,
-        asaasCustomerId,
-      });
-
-      return NextResponse.json({ success: true, client });
-    }
-
-    // 2. GERADOR DE COBRANÇAS ASAAS (Requisito 6 & 7)
-    if (resource === 'charge' && action === 'create') {
-      const charge = await AsaasService.createCharge({
-        customerId: data.customerId,
-        customerName: data.customerName,
-        value: Number(data.value),
-        description: data.description,
-        billingType: data.billingType,
-        cycle: data.cycle,
-        installmentCount: data.installmentCount ? Number(data.installmentCount) : undefined,
-      });
-      return NextResponse.json({ success: true, charge });
-    }
-
-    if (resource === 'charge' && action === 'delete') {
-      StorageService.markChargeDeleted(id);
+    if (action === 'reorder' && Array.isArray(data?.ids)) {
+      await StorageService.reorderItems(resource, data.ids);
       return NextResponse.json({ success: true });
     }
 
-    // 3. SERVIÇOS
-    if (resource === 'service') {
+    // CLIENTES (sincronizado com o Asaas)
+    if (resource === 'client') {
       if (action === 'delete') {
-        StorageService.deleteService(id);
+        await StorageService.deleteClient(id);
         return NextResponse.json({ success: true });
       }
-      const service = StorageService.upsertService(data);
-      return NextResponse.json({ success: true, service });
+      if (!data?.name?.trim() || !data?.phone?.trim() || !data?.address?.trim()) {
+        return errorResponse(new Error('Preencha nome, telefone e endereço.'), 400);
+      }
+      if (!isValidCpfCnpj(data.cpfCnpj)) {
+        return errorResponse(new Error('CPF/CNPJ inválido.'), 400);
+      }
+      // Cria/atualiza no Asaas ANTES de salvar: se o Asaas recusar, nada é gravado.
+      const asaasCustomerId = await AsaasService.upsertCustomer({
+        asaasCustomerId: data.asaasCustomerId,
+        name: data.name,
+        cpfCnpj: data.cpfCnpj,
+        phone: data.phone,
+        email: data.email,
+        address: data.address,
+      });
+      const client = await StorageService.upsertClient({ ...data, asaasCustomerId });
+      return NextResponse.json({ success: true, client });
     }
 
-    // 4. PLANOS
-    if (resource === 'plan') {
+    // LINKS DE PAGAMENTO
+    if (resource === 'paymentLink') {
       if (action === 'delete') {
-        StorageService.deletePlan(id);
+        const links = await StorageService.getPaymentLinks();
+        const link = links.find(l => l.id === id);
+        if (link) await AsaasService.cancel(link);
+        await StorageService.updatePaymentLinkStatus(id, 'CANCELLED');
         return NextResponse.json({ success: true });
       }
-      const plan = StorageService.upsertPlan(data);
-      return NextResponse.json({ success: true, plan });
+      if (action === 'create') {
+        const { asaasCustomerId, customerName, description, itemType, itemId, petSize } = data || {};
+        if (!asaasCustomerId || !itemType || !itemId) {
+          return errorResponse(new Error('Selecione o cliente e o serviço/plano.'), 400);
+        }
+
+        let itemName = '';
+        let value = Number(data.value);
+        let paymentMethod: PaymentMethod = data.paymentMethod;
+        let installmentCount = Math.min(Math.max(Number(data.installmentCount) || 1, 1), 6);
+        const chargeType = itemType === 'plan' ? 'RECURRENT' : 'SINGLE';
+
+        if (itemType === 'plan') {
+          const plan = await StorageService.getPlanById(itemId);
+          if (!plan) return errorResponse(new Error('Plano não encontrado.'), 404);
+          itemName = plan.name;
+          const priceMap: Record<string, number | undefined> = {
+            Pequeno: plan.priceSmall, Médio: plan.priceMedium, Grande: plan.priceLarge,
+          };
+          value = Number(priceMap[petSize] ?? value);
+          paymentMethod = 'CREDIT_CARD';
+          installmentCount = 1;
+        } else {
+          const service = await StorageService.getServiceById(itemId);
+          if (!service) return errorResponse(new Error('Serviço não encontrado.'), 404);
+          itemName = service.title;
+        }
+
+        if (!value || value <= 0) return errorResponse(new Error('Informe um valor válido.'), 400);
+        if (!['PIX', 'CREDIT_CARD', 'BOTH'].includes(paymentMethod)) {
+          return errorResponse(new Error('Forma de pagamento inválida.'), 400);
+        }
+
+        const desc = description?.trim() || `${itemName}${petSize ? ` (porte ${petSize.toLowerCase()})` : ''} - Lav Au Jato`;
+        let asaasPaymentId: string | undefined;
+        let asaasSubscriptionId: string | undefined;
+        let cardUrl: string | undefined;
+        let pixPayload: string | undefined;
+
+        if (chargeType === 'RECURRENT') {
+          const sub = await AsaasService.createSubscription({ customer: asaasCustomerId, value, description: desc });
+          asaasSubscriptionId = sub.id;
+          cardUrl = sub.invoiceUrl;
+        } else {
+          if (paymentMethod !== 'PIX') {
+            const pay = await AsaasService.createCardPayment({ customer: asaasCustomerId, value, description: desc, installmentCount });
+            asaasPaymentId = pay.id;
+            cardUrl = pay.invoiceUrl;
+          }
+          if (paymentMethod !== 'CREDIT_CARD') {
+            pixPayload = buildPixPayload({ amount: value, txid: `LAJ${Date.now()}` });
+          }
+        }
+
+        const link = await StorageService.addPaymentLink({
+          asaasCustomerId, customerName, description: desc, itemType, itemId, itemName,
+          petSize: itemType === 'plan' ? petSize : undefined,
+          value, chargeType, paymentMethod, installmentCount,
+          asaasPaymentId, asaasSubscriptionId, cardUrl, pixPayload,
+        });
+        return NextResponse.json({ success: true, link });
+      }
     }
 
-    // 5. PORTFÓLIO
-    if (resource === 'portfolio') {
+    // CONTEÚDO DO SITE
+    const handlers: Record<string, { del: (id: string) => Promise<any>; save: (d: any) => Promise<any> }> = {
+      service: { del: StorageService.deleteService, save: d => StorageService.upsertService(d) },
+      plan: { del: StorageService.deletePlan, save: d => StorageService.upsertPlan(d) },
+      portfolio: { del: StorageService.deletePortfolioPost, save: d => StorageService.upsertPortfolioPost(d) },
+      workspace: { del: StorageService.deleteWorkspacePhoto, save: d => StorageService.upsertWorkspacePhoto(d) },
+      promotion: { del: StorageService.deletePromotion, save: d => StorageService.upsertPromotion(d) },
+      product: { del: StorageService.deleteProduct, save: d => StorageService.upsertProduct(d) },
+    };
+    if (handlers[resource]) {
       if (action === 'delete') {
-        StorageService.deletePortfolioPost(id);
+        await handlers[resource].del(id);
         return NextResponse.json({ success: true });
       }
-      const post = StorageService.upsertPortfolioPost(data);
-      return NextResponse.json({ success: true, post });
+      const item = await handlers[resource].save(data);
+      return NextResponse.json({ success: true, item });
     }
 
-    // 6. ESPAÇO DE TRABALHO
-    if (resource === 'workspace') {
-      if (action === 'delete') {
-        StorageService.deleteWorkspacePhoto(id);
-        return NextResponse.json({ success: true });
-      }
-      const photo = StorageService.upsertWorkspacePhoto(data);
-      return NextResponse.json({ success: true, photo });
-    }
-
-    // 7. PROMOÇÕES
-    if (resource === 'promotion') {
-      if (action === 'delete') {
-        StorageService.deletePromotion(id);
-        return NextResponse.json({ success: true });
-      }
-      const promo = StorageService.upsertPromotion(data);
-      return NextResponse.json({ success: true, promo });
-    }
-
-    // 8. PRODUTOS
-    if (resource === 'product') {
-      if (action === 'delete') {
-        StorageService.deleteProduct(id);
-        return NextResponse.json({ success: true });
-      }
-      const product = StorageService.upsertProduct(data);
-      return NextResponse.json({ success: true, product });
-    }
-
-    // 9. CONFIGURAÇÕES
     if (resource === 'config') {
-      const config = StorageService.updateSiteConfig(data);
+      const config = await StorageService.updateSiteConfig(data);
       return NextResponse.json({ success: true, config });
     }
 
-    return NextResponse.json({ error: 'Ação ou recurso inválido.' }, { status: 400 });
-  } catch (error) {
-    console.error('Erro na rota admin:', error);
-    return NextResponse.json({ error: 'Erro ao processar operação no servidor.' }, { status: 500 });
+    return errorResponse(new Error('Ação ou recurso inválido.'), 400);
+  } catch (e) {
+    console.error('Erro na rota admin:', e);
+    return errorResponse(e);
   }
 }

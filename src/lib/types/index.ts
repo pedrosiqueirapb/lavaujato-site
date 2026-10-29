@@ -119,22 +119,37 @@ export interface ProductItem {
   createdAt: string;
 }
 
-export type BillingType = 'CREDIT_CARD' | 'PIX' | 'BOLETO';
-export type ChargeCycle = 'SINGLE' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+export type PaymentMethod = 'PIX' | 'CREDIT_CARD' | 'BOTH';
+export type ChargeType = 'SINGLE' | 'RECURRENT';
+export type PaymentLinkStatus = 'PENDING' | 'PAID' | 'CANCELLED';
 
-export interface AsaasCharge {
+export interface PaymentLink {
   id: string;
-  customerId: string;
+  slug: string;
+  asaasCustomerId: string;
   customerName: string;
+  description?: string;
+  itemType: 'service' | 'plan';
+  itemId?: string;
+  itemName: string;
+  petSize?: string;
   value: number;
-  description: string;
-  billingType: BillingType;
-  cycle: ChargeCycle;
-  installmentCount?: number;
-  invoiceUrl?: string;
-  pixCopiaECola?: string;
-  status: 'PENDING' | 'RECEIVED' | 'CONFIRMED' | 'OVERDUE' | 'REFUNDED' | 'DELETED';
+  chargeType: ChargeType;
+  paymentMethod: PaymentMethod;
+  installmentCount: number;
+  asaasPaymentId?: string;
+  asaasSubscriptionId?: string;
+  cardUrl?: string;
+  pixPayload?: string;
+  status: PaymentLinkStatus;
   createdAt: string;
+}
+
+export interface AsaasCustomerSummary {
+  id: string;
+  name: string;
+  cpfCnpj?: string;
+  email?: string;
 }
 
 export interface SiteConfig {
@@ -144,12 +159,8 @@ export interface SiteConfig {
   addressCity: string;
   addressState: string;
   businessHours?: string;
-  isSandbox: boolean;
-  asaasApiKey: string;
-  is2FAEnabled: boolean;
-  admin2FASecret?: string;
-  createdAt: string;
-  updatedAt: string;
+  loyaltyCardImage?: string;
+  updatedAt?: string;
 }
 
 export interface DashboardStats {

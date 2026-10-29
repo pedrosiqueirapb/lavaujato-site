@@ -4,7 +4,7 @@ import { Navbar } from '@/components/public/Navbar';
 import { ProductsPageContent } from '@/components/public/ProductsPageContent';
 import { Footer } from '@/components/public/Footer';
 
-export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export function generateMetadata() {
   return {
@@ -13,11 +13,14 @@ export function generateMetadata() {
   };
 }
 
-export default function ProductsPage() {
-  const config = StorageService.getPublicSiteConfig();
-  const products = StorageService.getProducts(true); // Apenas disponíveis
-  const plans = StorageService.getPlans();
-  const promotions = StorageService.getPromotions(true);
+export default async function ProductsPage() {
+  const safe = async <T,>(p: Promise<T>, f: T) => { try { return await p; } catch { return f; } };
+  const [config, products, plans, promotions] = await Promise.all([
+    StorageService.getPublicSiteConfig(),
+    safe(StorageService.getProducts(true), []),
+    safe(StorageService.getPlans(), []),
+    safe(StorageService.getPromotions(true), []),
+  ]);
 
   // Se não houver produtos cadastrados/disponíveis, a rota /produtos não é acessível
   if (products.length === 0) {

@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: '**.supabase.co' }],
+  },
   // Configuracao universal de build para compatibilidade Hostinger/VPS
   webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };

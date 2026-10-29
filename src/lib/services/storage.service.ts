@@ -1,484 +1,450 @@
-import fs from 'fs';
-import path from 'path';
-import { 
-  Client, 
-  ServiceItem, 
-  WorkspacePhoto, 
-  PortfolioPost, 
-  SubscriptionPlan, 
-  PromotionItem, 
-  ProductItem, 
-  AsaasCharge, 
-  SiteConfig 
+import 'server-only';
+import crypto from 'crypto';
+import {
+  Client,
+  Pet,
+  ServiceItem,
+  WorkspacePhoto,
+  PortfolioPost,
+  SubscriptionPlan,
+  PromotionItem,
+  ProductItem,
+  PaymentLink,
+  SiteConfig,
 } from '@/lib/types';
-import { 
-  initialSiteConfig, 
-  initialServices, 
-  initialPlans, 
-  initialWorkspacePhotos, 
-  initialPortfolioPosts, 
-  initialPromotions, 
-  initialProducts, 
-  initialClients, 
-  initialCharges 
-} from './initial-data';
 import { encryptPII, decryptPII } from '@/lib/security/pii-crypto';
-import { prisma, isDatabaseConfigured } from '@/lib/db/prisma';
+import { getSupabase, IMAGE_BUCKET } from '@/lib/db/supabase';
 
-interface StorageSchema {
-  siteConfig: SiteConfig;
-  services: ServiceItem[];
-  plans: SubscriptionPlan[];
-  workspacePhotos: WorkspacePhoto[];
-  portfolioPosts: PortfolioPost[];
-  promotions: PromotionItem[];
-  products: ProductItem[];
-  clients: Client[];
-  charges: AsaasCharge[];
-  deletedChargeIds: string[];
-}
+const db = () => getSupabase();
 
-// Global memory cache para resiliência entre invocações Node.js
-declare global {
-  var __LAVA_AU_JATO_STORE__: StorageSchema | undefined;
-}
-
-const STORAGE_FILE_PATH = path.join(process.cwd(), '.data-store.json');
-
-function getInitialStore(): StorageSchema {
-  return {
-    siteConfig: { ...initialSiteConfig },
-    services: [...initialServices],
-    plans: [...initialPlans],
-    workspacePhotos: [...initialWorkspacePhotos],
-    portfolioPosts: [...initialPortfolioPosts],
-    promotions: [...initialPromotions],
-    products: [...initialProducts],
-    clients: [...initialClients],
-    charges: [...initialCharges],
-    deletedChargeIds: [],
-  };
-}
-
-function loadStore(): StorageSchema {
-  if (globalThis.__LAVA_AU_JATO_STORE__) {
-    return globalThis.__LAVA_AU_JATO_STORE__;
+function check<T>(res: { data: T | null; error: any }): T {
+  if (res.error) {
+    console.error('[Supabase]', res.error);
+    throw new Error(res.error.message || 'Erro no banco de dados');
   }
-
-  try {
-    if (fs.existsSync(STORAGE_FILE_PATH)) {
-      const fileData = fs.readFileSync(STORAGE_FILE_PATH, 'utf-8');
-      const parsed = JSON.parse(fileData) as StorageSchema;
-      globalThis.__LAVA_AU_JATO_STORE__ = parsed;
-      return parsed;
-    }
-  } catch (err) {
-    console.warn('Fallback para memória nativa (arquivo .data-store.json inacessível):', err);
-  }
-
-  const initial = getInitialStore();
-  globalThis.__LAVA_AU_JATO_STORE__ = initial;
-  saveStore(initial);
-  return initial;
+  return res.data as T;
 }
 
-function saveStore(store: StorageSchema): void {
-  globalThis.__LAVA_AU_JATO_STORE__ = store;
-  try {
-    fs.writeFileSync(STORAGE_FILE_PATH, JSON.stringify(store, null, 2), 'utf-8');
-  } catch (err) {
-    console.warn('Erro ao salvar em arquivo de cache local:', err);
-  }
+const num = (v: any): number | undefined => (v === null || v === undefined || v === '' ? undefined : Number(v));
+const orNull = (v: any) => (v === undefined || v === '' ? null : v);
+const isUuid = (v?: string) => !!v && /^[0-9a-f-]{36}$/i.test(v);
+
+const DEFAULT_LOYALTY_IMAGE = '/images/loyalty-card.jpg';
+
+// ------------------------- MAPEADORES -------------------------
+const mapConfig = (r: any): SiteConfig => ({
+  phone: r?.phone || '',
+  instagram: r?.instagram || '',
+  addressNeighborhood: r?.address_neighborhood || '',
+  addressCity: r?.address_city || '',
+  addressState: r?.address_state || '',
+  businessHours: r?.business_hours || '',
+  loyaltyCardImage: r?.loyalty_card_image || DEFAULT_LOYALTY_IMAGE,
+  updatedAt: r?.updated_at,
+});
+
+const mapPet = (r: any): Pet => ({
+  id: r.id,
+  name: r.name,
+  gender: r.gender || undefined,
+  breed: r.breed || undefined,
+  size: r.size || undefined,
+  coatColor: r.coat_color || undefined,
+  age: r.age || undefined,
+  photoUrl: r.photo_url || undefined,
+  notes: r.notes || undefined,
+});
+
+const mapClient = (r: any): Client => ({
+  id: r.id,
+  name: decryptPII(r.name),
+  phone: decryptPII(r.phone),
+  email: r.email ? decryptPII(r.email) : undefined,
+  cpfCnpj: r.cpf_cnpj ? decryptPII(r.cpf_cnpj) : undefined,
+  address: decryptPII(r.address),
+  notes: r.notes || '',
+  asaasCustomerId: r.asaas_customer_id || undefined,
+  pets: (r.pets || []).map(mapPet),
+  createdAt: r.created_at,
+  updatedAt: r.updated_at,
+});
+
+const mapService = (r: any): ServiceItem => ({
+  id: r.id,
+  title: r.title,
+  description: r.description,
+  image: r.image || '',
+  price: num(r.price),
+  duration: r.duration || undefined,
+  badge: r.badge || undefined,
+  isActive: r.is_active,
+  createdAt: r.created_at,
+  updatedAt: r.updated_at,
+});
+
+const mapPlan = (r: any): SubscriptionPlan => ({
+  id: r.id,
+  name: r.name,
+  description: r.description,
+  benefits: r.benefits || [],
+  bonus: r.bonus || undefined,
+  priceSmall: num(r.price_small),
+  priceMedium: num(r.price_medium),
+  priceLarge: num(r.price_large),
+  isPopular: r.is_popular,
+  buttonText: r.button_text || undefined,
+  period: 'mensal',
+  createdAt: r.created_at,
+});
+
+const mapPromo = (r: any): PromotionItem => ({
+  id: r.id,
+  title: r.title,
+  description: r.description,
+  discountText: r.discount_text,
+  badge: r.badge || undefined,
+  validUntil: r.valid_until || undefined,
+  image: r.image || undefined,
+  isActive: r.is_active,
+  createdAt: r.created_at,
+});
+
+const mapProduct = (r: any): ProductItem => ({
+  id: r.id,
+  name: r.name,
+  description: r.description,
+  price: num(r.price),
+  category: r.category || undefined,
+  photoUrl: r.photo_url || '',
+  isAvailable: r.is_available,
+  createdAt: r.created_at,
+});
+
+const mapPost = (r: any): PortfolioPost => ({
+  id: r.id,
+  petName: r.pet_name,
+  breed: r.breed || undefined,
+  serviceDone: r.service_done,
+  description: r.description,
+  photoUrl: r.photo_url || '',
+  date: r.date || '',
+  createdAt: r.created_at,
+});
+
+const mapPhoto = (r: any): WorkspacePhoto => ({
+  id: r.id,
+  url: r.url,
+  title: '',
+  order: r.sort_order,
+  createdAt: r.created_at,
+});
+
+const mapLink = (r: any): PaymentLink => ({
+  id: r.id,
+  slug: r.slug,
+  asaasCustomerId: r.asaas_customer_id,
+  customerName: r.customer_name,
+  description: r.description || undefined,
+  itemType: r.item_type,
+  itemId: r.item_id || undefined,
+  itemName: r.item_name,
+  petSize: r.pet_size || undefined,
+  value: Number(r.value),
+  chargeType: r.charge_type,
+  paymentMethod: r.payment_method,
+  installmentCount: r.installment_count,
+  asaasPaymentId: r.asaas_payment_id || undefined,
+  asaasSubscriptionId: r.asaas_subscription_id || undefined,
+  cardUrl: r.card_url || undefined,
+  pixPayload: r.pix_payload || undefined,
+  status: r.status,
+  createdAt: r.created_at,
+});
+
+async function nextOrder(table: string): Promise<number> {
+  const { data } = await db().from(table).select('sort_order').order('sort_order', { ascending: false }).limit(1);
+  return (data?.[0]?.sort_order ?? 0) + 1;
 }
 
+async function upsertRow(table: string, id: string | undefined, row: Record<string, any>) {
+  if (isUuid(id)) {
+    return check(await db().from(table).update(row).eq('id', id!).select().single());
+  }
+  const sort_order = await nextOrder(table);
+  return check(await db().from(table).insert({ ...row, sort_order }).select().single());
+}
+
+async function deleteRow(table: string, id: string) {
+  check(await db().from(table).delete().eq('id', id));
+  return true;
+}
+
+// ------------------------- SERVIÇO -------------------------
 export class StorageService {
-  // CONFIGS
-  static getSiteConfig(): SiteConfig {
-    const store = loadStore();
-    return store.siteConfig;
+  // CONFIGURAÇÕES
+  static async getSiteConfig(): Promise<SiteConfig> {
+    const r = check(await db().from('site_config').select('*').eq('id', 'default').maybeSingle());
+    return mapConfig(r);
   }
 
-  /**
-   * Retorna a configuração sanitizada para consumo em páginas e componentes públicos
-   * (Omitindo asaasApiKey e admin2FASecret para prevenir vazamento no RSC Payload / HTML)
-   */
-  static getPublicSiteConfig(): SiteConfig {
-    const config = this.getSiteConfig();
-    return {
-      ...config,
-      asaasApiKey: '',
-      admin2FASecret: undefined,
-    };
-  }
-
-  static updateSiteConfig(updates: Partial<SiteConfig>): SiteConfig {
-    const store = loadStore();
-    store.siteConfig = {
-      ...store.siteConfig,
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    };
-    saveStore(store);
-    return store.siteConfig;
-  }
-
-  // CLIENTES (Com Criptografia PII & Soft Delete & Múltiplos Pets)
-  static getClients(): Client[] {
-    const store = loadStore();
-    return store.clients
-      .filter(c => !c.isDeleted)
-      .map(c => {
-        // Migração graciosa de registros legados com petName individual para o array pets
-        let pets = Array.isArray(c.pets) ? [...c.pets] : [];
-        if (pets.length === 0 && c.petName) {
-          pets.push({
-            id: `pet-legacy-${c.id}`,
-            name: c.petName,
-            breed: c.petBreed || '',
-            size: c.petSize || 'Médio',
-            notes: c.notes || '',
-          });
-        }
-
-        return {
-          ...c,
-          name: decryptPII(c.name),
-          phone: decryptPII(c.phone),
-          email: decryptPII(c.email),
-          address: decryptPII(c.address),
-          pets,
-        };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
-  }
-
-  static getClientById(id: string): Client | null {
-    const clients = this.getClients();
-    return clients.find(c => c.id === id) || null;
-  }
-
-  static upsertClient(clientData: Partial<Client> & { name: string; phone: string; pets?: any[]; petName?: string }): Client {
-    const store = loadStore();
-    const now = new Date().toISOString();
-    const id = clientData.id || `cli-${Date.now()}`;
-
-    // Garante que a lista de pets seja um array válido
-    const pets = clientData.pets && clientData.pets.length > 0 
-      ? clientData.pets 
-      : clientData.petName 
-        ? [{ id: `pet-${Date.now()}`, name: clientData.petName, breed: clientData.petBreed || '', size: clientData.petSize || 'Médio', notes: clientData.notes || '' }] 
-        : [];
-
-    // Criptografar PII antes de gravar
-    const encryptedClient: Client = {
-      id,
-      name: encryptPII(clientData.name),
-      phone: encryptPII(clientData.phone),
-      email: clientData.email ? encryptPII(clientData.email) : undefined,
-      cpfCnpj: clientData.cpfCnpj ? encryptPII(clientData.cpfCnpj) : undefined,
-      address: encryptPII(clientData.address || ''),
-      pets,
-      notes: clientData.notes || '',
-      asaasCustomerId: clientData.asaasCustomerId || '',
-      createdAt: clientData.createdAt || now,
-      updatedAt: now,
-      isDeleted: false,
-    };
-
-    const index = store.clients.findIndex(c => c.id === id);
-    if (index >= 0) {
-      store.clients[index] = { ...store.clients[index], ...encryptedClient };
-    } else {
-      store.clients.unshift(encryptedClient);
+  /** Versão segura para páginas públicas (falha silenciosa para não derrubar o site). */
+  static async getPublicSiteConfig(): Promise<SiteConfig> {
+    try {
+      return await this.getSiteConfig();
+    } catch {
+      return mapConfig(null);
     }
-
-    saveStore(store);
-
-    // Retorna a versão descriptografada
-    return {
-      ...encryptedClient,
-      name: clientData.name,
-      phone: clientData.phone,
-      email: clientData.email,
-      address: clientData.address || '',
-      pets,
-    };
   }
 
-  static deleteClient(id: string): boolean {
-    const store = loadStore();
-    const index = store.clients.findIndex(c => c.id === id);
-    if (index >= 0) {
-      store.clients[index].isDeleted = true;
-      store.clients[index].updatedAt = new Date().toISOString();
-      saveStore(store);
-      return true;
+  static async updateSiteConfig(u: Partial<SiteConfig>): Promise<SiteConfig> {
+    const row = {
+      id: 'default',
+      phone: u.phone ?? '',
+      instagram: u.instagram ?? '',
+      address_neighborhood: u.addressNeighborhood ?? '',
+      address_city: u.addressCity ?? '',
+      address_state: u.addressState ?? '',
+      business_hours: u.businessHours ?? '',
+      loyalty_card_image: u.loyaltyCardImage && u.loyaltyCardImage !== DEFAULT_LOYALTY_IMAGE ? u.loyaltyCardImage : null,
+      updated_at: new Date().toISOString(),
+    };
+    return mapConfig(check(await db().from('site_config').upsert(row).select().single()));
+  }
+
+  // CLIENTES
+  static async getClients(): Promise<Client[]> {
+    const rows = check(await db().from('clients').select('*, pets(*)').eq('is_deleted', false));
+    return (rows as any[]).map(mapClient).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }));
+  }
+
+  static async upsertClient(c: Partial<Client> & { name: string; phone: string }): Promise<Client> {
+    const row = {
+      name: encryptPII(c.name),
+      phone: encryptPII(c.phone),
+      email: c.email ? encryptPII(c.email) : null,
+      cpf_cnpj: c.cpfCnpj ? encryptPII(c.cpfCnpj) : null,
+      address: encryptPII(c.address || ''),
+      notes: orNull(c.notes),
+      asaas_customer_id: orNull(c.asaasCustomerId),
+      updated_at: new Date().toISOString(),
+    };
+    const saved: any = isUuid(c.id)
+      ? check(await db().from('clients').update(row).eq('id', c.id!).select().single())
+      : check(await db().from('clients').insert(row).select().single());
+
+    // Substitui os pets do cliente
+    check(await db().from('pets').delete().eq('client_id', saved.id));
+    const pets = (c.pets || []).filter(p => p.name?.trim());
+    if (pets.length) {
+      check(
+        await db().from('pets').insert(
+          pets.map(p => ({
+            client_id: saved.id,
+            name: p.name,
+            gender: orNull(p.gender),
+            breed: orNull(p.breed),
+            size: orNull(p.size),
+            coat_color: orNull(p.coatColor),
+            age: orNull(p.age),
+            photo_url: orNull(p.photoUrl),
+            notes: orNull(p.notes),
+          }))
+        )
+      );
     }
-    return false;
+    const full = check(await db().from('clients').select('*, pets(*)').eq('id', saved.id).single());
+    return mapClient(full);
+  }
+
+  static async deleteClient(id: string) {
+    check(await db().from('clients').update({ is_deleted: true, updated_at: new Date().toISOString() }).eq('id', id));
+    return true;
   }
 
   // SERVIÇOS
-  static getServices(): ServiceItem[] {
-    const store = loadStore();
-    return store.services;
+  static async getServices(activeOnly = false): Promise<ServiceItem[]> {
+    let q = db().from('services').select('*').order('sort_order');
+    if (activeOnly) q = q.eq('is_active', true);
+    return (check(await q) as any[]).map(mapService);
   }
 
-  static upsertService(service: Omit<ServiceItem, 'createdAt' | 'updatedAt'> & { id?: string }): ServiceItem {
-    const store = loadStore();
-    const now = new Date().toISOString();
-    const id = service.id || `srv-${Date.now()}`;
-    const newService: ServiceItem = {
-      ...service,
-      id,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const index = store.services.findIndex(s => s.id === id);
-    if (index >= 0) {
-      store.services[index] = newService;
-    } else {
-      store.services.push(newService);
-    }
-    saveStore(store);
-    return newService;
+  static async upsertService(s: Partial<ServiceItem>): Promise<ServiceItem> {
+    return mapService(
+      await upsertRow('services', s.id, {
+        title: s.title,
+        description: s.description || '',
+        image: orNull(s.image),
+        price: num(s.price) ?? null,
+        duration: orNull(s.duration),
+        badge: orNull(s.badge),
+        is_active: s.isActive ?? true,
+        updated_at: new Date().toISOString(),
+      })
+    );
   }
-
-  static deleteService(id: string): boolean {
-    const store = loadStore();
-    store.services = store.services.filter(s => s.id !== id);
-    saveStore(store);
-    return true;
-  }
+  static deleteService = (id: string) => deleteRow('services', id);
 
   // PLANOS
-  static getPlans(): SubscriptionPlan[] {
-    const store = loadStore();
-    return store.plans;
+  static async getPlans(): Promise<SubscriptionPlan[]> {
+    return (check(await db().from('plans').select('*').order('sort_order')) as any[]).map(mapPlan);
   }
 
-  static upsertPlan(plan: Omit<SubscriptionPlan, 'createdAt'> & { id?: string }): SubscriptionPlan {
-    const store = loadStore();
-    const id = plan.id || `plan-${Date.now()}`;
-    const newPlan: SubscriptionPlan = {
-      ...plan,
-      id,
-      createdAt: new Date().toISOString(),
-    };
-
-    const index = store.plans.findIndex(p => p.id === id);
-    if (index >= 0) {
-      store.plans[index] = newPlan;
-    } else {
-      store.plans.push(newPlan);
-    }
-    saveStore(store);
-    return newPlan;
+  static async getPlanById(id: string): Promise<SubscriptionPlan | null> {
+    const r = check(await db().from('plans').select('*').eq('id', id).maybeSingle());
+    return r ? mapPlan(r) : null;
   }
 
-  static deletePlan(id: string): boolean {
-    const store = loadStore();
-    store.plans = store.plans.filter(p => p.id !== id);
-    saveStore(store);
-    return true;
+  static async getServiceById(id: string): Promise<ServiceItem | null> {
+    const r = check(await db().from('services').select('*').eq('id', id).maybeSingle());
+    return r ? mapService(r) : null;
   }
 
-  // PORTFÓLIO
-  static getPortfolioPosts(): PortfolioPost[] {
-    const store = loadStore();
-    return store.portfolioPosts;
+  static async upsertPlan(p: Partial<SubscriptionPlan>): Promise<SubscriptionPlan> {
+    return mapPlan(
+      await upsertRow('plans', p.id, {
+        name: p.name,
+        description: p.description || '',
+        benefits: (p.benefits || []).filter(b => b && b.trim()),
+        bonus: orNull(p.bonus),
+        price_small: num(p.priceSmall) ?? null,
+        price_medium: num(p.priceMedium) ?? null,
+        price_large: num(p.priceLarge) ?? null,
+        is_popular: !!p.isPopular,
+        button_text: orNull(p.buttonText),
+      })
+    );
   }
+  static deletePlan = (id: string) => deleteRow('plans', id);
 
-  static upsertPortfolioPost(post: Omit<PortfolioPost, 'createdAt'> & { id?: string }): PortfolioPost {
-    const store = loadStore();
-    const id = post.id || `port-${Date.now()}`;
-    const newPost: PortfolioPost = {
-      ...post,
-      id,
-      createdAt: new Date().toISOString(),
-    };
-
-    const index = store.portfolioPosts.findIndex(p => p.id === id);
-    if (index >= 0) {
-      store.portfolioPosts[index] = newPost;
-    } else {
-      store.portfolioPosts.unshift(newPost);
-    }
-    saveStore(store);
-    return newPost;
+  // GALERIA
+  static async getPortfolioPosts(): Promise<PortfolioPost[]> {
+    return (check(await db().from('portfolio_posts').select('*').order('sort_order')) as any[]).map(mapPost);
   }
-
-  static deletePortfolioPost(id: string): boolean {
-    const store = loadStore();
-    store.portfolioPosts = store.portfolioPosts.filter(p => p.id !== id);
-    saveStore(store);
-    return true;
+  static async upsertPortfolioPost(p: Partial<PortfolioPost>): Promise<PortfolioPost> {
+    return mapPost(
+      await upsertRow('portfolio_posts', p.id, {
+        pet_name: p.petName,
+        breed: orNull(p.breed),
+        service_done: p.serviceDone || '',
+        description: p.description || '',
+        photo_url: orNull(p.photoUrl),
+        date: orNull(p.date),
+      })
+    );
   }
+  static deletePortfolioPost = (id: string) => deleteRow('portfolio_posts', id);
 
   // FOTOS DO ESPAÇO
-  static getWorkspacePhotos(): WorkspacePhoto[] {
-    const store = loadStore();
-    return store.workspacePhotos.sort((a, b) => a.order - b.order);
+  static async getWorkspacePhotos(): Promise<WorkspacePhoto[]> {
+    return (check(await db().from('workspace_photos').select('*').order('sort_order')) as any[]).map(mapPhoto);
   }
-
-  static upsertWorkspacePhoto(photo: Omit<WorkspacePhoto, 'createdAt'> & { id?: string }): WorkspacePhoto {
-    const store = loadStore();
-    const id = photo.id || `ws-${Date.now()}`;
-    const newPhoto: WorkspacePhoto = {
-      ...photo,
-      id,
-      createdAt: new Date().toISOString(),
-    };
-
-    const index = store.workspacePhotos.findIndex(p => p.id === id);
-    if (index >= 0) {
-      store.workspacePhotos[index] = newPhoto;
-    } else {
-      store.workspacePhotos.push(newPhoto);
-    }
-    saveStore(store);
-    return newPhoto;
+  static async upsertWorkspacePhoto(p: Partial<WorkspacePhoto>): Promise<WorkspacePhoto> {
+    return mapPhoto(await upsertRow('workspace_photos', p.id, { url: p.url }));
   }
-
-  static deleteWorkspacePhoto(id: string): boolean {
-    const store = loadStore();
-    store.workspacePhotos = store.workspacePhotos.filter(p => p.id !== id);
-    saveStore(store);
-    return true;
-  }
+  static deleteWorkspacePhoto = (id: string) => deleteRow('workspace_photos', id);
 
   // PROMOÇÕES
-  static getPromotions(activeOnly: boolean = false): PromotionItem[] {
-    const store = loadStore();
-    if (activeOnly) {
-      return store.promotions.filter(p => p.isActive);
-    }
-    return store.promotions;
+  static async getPromotions(activeOnly = false): Promise<PromotionItem[]> {
+    let q = db().from('promotions').select('*').order('sort_order');
+    if (activeOnly) q = q.eq('is_active', true);
+    return (check(await q) as any[]).map(mapPromo);
   }
-
-  static upsertPromotion(promo: Omit<PromotionItem, 'createdAt'> & { id?: string }): PromotionItem {
-    const store = loadStore();
-    const id = promo.id || `promo-${Date.now()}`;
-    const newPromo: PromotionItem = {
-      ...promo,
-      id,
-      createdAt: new Date().toISOString(),
-    };
-
-    const index = store.promotions.findIndex(p => p.id === id);
-    if (index >= 0) {
-      store.promotions[index] = newPromo;
-    } else {
-      store.promotions.unshift(newPromo);
-    }
-    saveStore(store);
-    return newPromo;
+  static async upsertPromotion(p: Partial<PromotionItem>): Promise<PromotionItem> {
+    return mapPromo(
+      await upsertRow('promotions', p.id, {
+        title: p.title,
+        description: p.description || '',
+        discount_text: p.discountText || '',
+        badge: orNull(p.badge),
+        valid_until: orNull(p.validUntil),
+        image: orNull(p.image),
+        is_active: p.isActive ?? true,
+      })
+    );
   }
-
-  static deletePromotion(id: string): boolean {
-    const store = loadStore();
-    store.promotions = store.promotions.filter(p => p.id !== id);
-    saveStore(store);
-    return true;
-  }
+  static deletePromotion = (id: string) => deleteRow('promotions', id);
 
   // PRODUTOS
-  static getProducts(availableOnly: boolean = false): ProductItem[] {
-    const store = loadStore();
-    if (availableOnly) {
-      return store.products.filter(p => p.isAvailable);
-    }
-    return store.products;
+  static async getProducts(availableOnly = false): Promise<ProductItem[]> {
+    let q = db().from('products').select('*').order('sort_order');
+    if (availableOnly) q = q.eq('is_available', true);
+    return (check(await q) as any[]).map(mapProduct);
+  }
+  static async upsertProduct(p: Partial<ProductItem>): Promise<ProductItem> {
+    return mapProduct(
+      await upsertRow('products', p.id, {
+        name: p.name,
+        description: p.description || '',
+        price: num(p.price) ?? null,
+        category: orNull(p.category),
+        photo_url: orNull(p.photoUrl),
+        is_available: p.isAvailable ?? true,
+      })
+    );
+  }
+  static deleteProduct = (id: string) => deleteRow('products', id);
+
+  // LINKS DE PAGAMENTO
+  static async getPaymentLinks(): Promise<PaymentLink[]> {
+    const rows = check(await db().from('payment_links').select('*').neq('status', 'CANCELLED').order('created_at', { ascending: false }));
+    return (rows as any[]).map(mapLink);
   }
 
-  static upsertProduct(prod: Omit<ProductItem, 'createdAt'> & { id?: string }): ProductItem {
-    const store = loadStore();
-    const id = prod.id || `prod-${Date.now()}`;
-    const newProd: ProductItem = {
-      ...prod,
-      id,
-      createdAt: new Date().toISOString(),
+  static async getPaymentLinkBySlug(slug: string): Promise<PaymentLink | null> {
+    const r = check(await db().from('payment_links').select('*').eq('slug', slug).maybeSingle());
+    return r ? mapLink(r) : null;
+  }
+
+  static async addPaymentLink(l: Omit<PaymentLink, 'id' | 'createdAt' | 'status' | 'slug'>): Promise<PaymentLink> {
+    const slug = crypto.randomBytes(12).toString('base64url');
+    const row = {
+      slug,
+      asaas_customer_id: l.asaasCustomerId,
+      customer_name: l.customerName,
+      description: orNull(l.description),
+      item_type: l.itemType,
+      item_id: orNull(l.itemId),
+      item_name: l.itemName,
+      pet_size: orNull(l.petSize),
+      value: l.value,
+      charge_type: l.chargeType,
+      payment_method: l.paymentMethod,
+      installment_count: l.installmentCount,
+      asaas_payment_id: orNull(l.asaasPaymentId),
+      asaas_subscription_id: orNull(l.asaasSubscriptionId),
+      card_url: orNull(l.cardUrl),
+      pix_payload: orNull(l.pixPayload),
     };
-
-    const index = store.products.findIndex(p => p.id === id);
-    if (index >= 0) {
-      store.products[index] = newProd;
-    } else {
-      store.products.unshift(newProd);
-    }
-    saveStore(store);
-    return newProd;
+    return mapLink(check(await db().from('payment_links').insert(row).select().single()));
   }
 
-  static deleteProduct(id: string): boolean {
-    const store = loadStore();
-    store.products = store.products.filter(p => p.id !== id);
-    saveStore(store);
+  static async updatePaymentLinkStatus(id: string, status: PaymentLink['status']) {
+    check(await db().from('payment_links').update({ status }).eq('id', id));
     return true;
   }
 
-  // COBRANÇAS ASAAS (Filtro de Deletados / Soft Delete conforme Pilar 3 & 4)
-  static getCharges(): AsaasCharge[] {
-    const store = loadStore();
-    return store.charges.filter(c => c.status !== 'DELETED' && !store.deletedChargeIds.includes(c.id));
-  }
-
-  static addCharge(charge: AsaasCharge): AsaasCharge {
-    const store = loadStore();
-    store.charges.unshift(charge);
-    saveStore(store);
-    return charge;
-  }
-
-  static markChargeDeleted(id: string): void {
-    const store = loadStore();
-    if (!store.deletedChargeIds.includes(id)) {
-      store.deletedChargeIds.push(id);
-    }
-    const index = store.charges.findIndex(c => c.id === id);
-    if (index >= 0) {
-      store.charges[index].status = 'DELETED';
-    }
-    saveStore(store);
-  }
-
-  // REORDENAÇÃO DE REGISTROS
-  static reorderItems(resource: string, ids: string[]): boolean {
-    const store = loadStore();
-
-    const sortByIds = <T extends { id: string }>(items: T[]): T[] => {
-      const map = new Map(items.map(item => [item.id, item]));
-      const reordered: T[] = [];
-      ids.forEach(id => {
-        const item = map.get(id);
-        if (item) reordered.push(item);
-      });
-      items.forEach(item => {
-        if (!ids.includes(item.id)) reordered.push(item);
-      });
-      return reordered;
+  // REORDENAÇÃO
+  static async reorderItems(resource: string, ids: string[]): Promise<boolean> {
+    const tables: Record<string, string> = {
+      service: 'services',
+      plan: 'plans',
+      portfolio: 'portfolio_posts',
+      workspace: 'workspace_photos',
+      promotion: 'promotions',
+      product: 'products',
     };
-
-    if (resource === 'service') {
-      store.services = sortByIds(store.services);
-    } else if (resource === 'plan') {
-      store.plans = sortByIds(store.plans);
-    } else if (resource === 'portfolio') {
-      store.portfolioPosts = sortByIds(store.portfolioPosts);
-    } else if (resource === 'workspace') {
-      store.workspacePhotos = sortByIds(store.workspacePhotos).map((photo, idx) => ({
-        ...photo,
-        order: idx + 1,
-      }));
-    } else if (resource === 'promotion') {
-      store.promotions = sortByIds(store.promotions);
-    } else if (resource === 'product') {
-      store.products = sortByIds(store.products);
-    } else {
-      return false;
-    }
-
-    saveStore(store);
+    const table = tables[resource];
+    if (!table) return false;
+    await Promise.all(ids.map((id, idx) => db().from(table).update({ sort_order: idx + 1 }).eq('id', id)));
     return true;
+  }
+
+  // UPLOAD DE IMAGENS (Supabase Storage)
+  static async uploadImage(buffer: Buffer, contentType: string, folder: string): Promise<string> {
+    const ext = contentType === 'image/png' ? 'png' : contentType === 'image/webp' ? 'webp' : 'jpg';
+    const path = `${folder}/${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${ext}`;
+    const { error } = await db().storage.from(IMAGE_BUCKET).upload(path, buffer, { contentType, upsert: false });
+    if (error) throw new Error(`Falha no upload: ${error.message}`);
+    return db().storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
   }
 }

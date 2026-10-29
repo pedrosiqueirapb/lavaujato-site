@@ -37,12 +37,14 @@ import {
   PromotionItem, 
   ProductItem, 
   PRODUCT_CATEGORIES,
-  AsaasCharge, 
+  PaymentLink, 
   SiteConfig,
   DashboardStats 
 } from '@/lib/types';
 import { formatCurrency, formatDate, formatPhone } from '@/lib/utils/formatters';
 import PaginationControl from '@/components/ui/PaginationControl';
+import { PaymentLinkModal } from '@/components/admin/PaymentLinkModal';
+import { uploadImage, IMAGE_ACCEPT } from '@/lib/utils/image-upload';
 
 type TabType = 
   | 'dashboard'
@@ -72,7 +74,7 @@ export default function AdminDashboardPage() {
   const [posts, setPosts] = useState<PortfolioPost[]>([]);
   const [promos, setPromos] = useState<PromotionItem[]>([]);
   const [products, setProducts] = useState<ProductItem[]>([]);
-  const [charges, setCharges] = useState<AsaasCharge[]>([]);
+  const [charges, setCharges] = useState<PaymentLink[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
 
   // Estados de Paginação para cada Aba
@@ -105,15 +107,6 @@ export default function AdminDashboardPage() {
   const [editingClient, setEditingClient] = useState<Partial<Client>>({});
 
   const [showChargeModal, setShowChargeModal] = useState(false);
-  const [newCharge, setNewCharge] = useState({
-    customerId: '',
-    customerName: '',
-    value: '',
-    description: '',
-    billingType: 'CREDIT_CARD' as const,
-    cycle: 'MONTHLY' as const,
-    installmentCount: '1',
-  });
 
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [editingService, setEditingService] = useState<Partial<ServiceItem>>({});
@@ -163,7 +156,7 @@ export default function AdminDashboardPage() {
       setPosts(data.portfolioPosts || []);
       setPromos(data.promotions || []);
       setProducts(data.products || []);
-      setCharges(data.charges || []);
+      setCharges(data.paymentLinks || []);
       setStats(data.stats);
     } catch (err) {
       showToast('Erro ao carregar dados do painel.');
@@ -181,17 +174,21 @@ export default function AdminDashboardPage() {
     router.push('/admin/login');
   };
 
-  // UPLOAD DE FOTO DO COMPUTADOR (Base64 Data URL)
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+  // UPLOAD DE IMAGEM (converte HEIC, comprime e envia ao Supabase Storage)
+  const [uploading, setUploading] = useState(false);
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void, folder = 'misc') => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          callback(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+    e.target.value = '';
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadImage(file, folder);
+      callback(url);
+      showToast('Imagem enviada!');
+    } catch (err: any) {
+      showToast(err?.message || 'Falha ao enviar imagem.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -250,10 +247,13 @@ export default function AdminDashboardPage() {
           data: editingClient,
         }),
       });
+      const result = await res.json().catch(() => ({}));
       if (res.ok) {
-        showToast('Cliente salvo!');
+        showToast('Cliente salvo e sincronizado com o Asaas!');
         setShowClientModal(false);
         loadAdminData();
+      } else {
+        alert(result.error || 'Erro ao salvar cliente.');
       }
     } finally {
       setSaving(false);
@@ -271,41 +271,14 @@ export default function AdminDashboardPage() {
     loadAdminData();
   };
 
-  const handleCreateCharge = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      const selectedClient = clients.find(c => c.id === newCharge.customerId);
-      const res = await fetch('/api/admin/data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'create',
-          resource: 'charge',
-          data: {
-            ...newCharge,
-            customerName: selectedClient?.name || newCharge.customerName || 'Cliente Pet',
-          },
-        }),
-      });
-      if (res.ok) {
-        showToast('Cobrança Asaas gerada!');
-        setShowChargeModal(false);
-        loadAdminData();
-      }
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleDeleteCharge = async (id: string) => {
-    if (!confirm('Deseja excluir esta cobrança?')) return;
+    if (!confirm('Deseja excluir este link? A cobrança também será cancelada no Asaas.')) return;
     await fetch('/api/admin/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', resource: 'charge', id }),
+      body: JSON.stringify({ action: 'delete', resource: 'paymentLink', id }),
     });
-    showToast('Cobrança removida.');
+    showToast('Link removido.');
     loadAdminData();
   };
 
@@ -549,7 +522,7 @@ export default function AdminDashboardPage() {
               }`}
             >
               <CreditCard className="w-4 h-4 text-emerald-400" />
-              <span>Cobranças Asaas ({charges.length})</span>
+              <span>Links de pagamento ({charges.length})</span>
             </button>
 
             <button
@@ -687,11 +660,11 @@ export default function AdminDashboardPage() {
 
               <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-2">
                 <div className="flex items-center justify-between text-emerald-400">
-                  <span className="text-xs font-bold uppercase tracking-wider">Cobranças Pendentes</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">Links gerados</span>
                   <CreditCard className="w-5 h-5" />
                 </div>
                 <span className="text-3xl font-extrabold text-white block">{stats?.pendingChargesCount || 0}</span>
-                <span className="text-[11px] text-slate-500">Links ativos no Asaas</span>
+                <span className="text-[11px] text-slate-500">Total de links criados</span>
               </div>
             </div>
 
@@ -707,10 +680,10 @@ export default function AdminDashboardPage() {
                 </button>
 
                 <button
-                  onClick={() => { setShowChargeModal(true); setNewCharge({ customerId: '', customerName: '', value: '', description: '', billingType: 'CREDIT_CARD', cycle: 'MONTHLY', installmentCount: '1' }); }}
+                  onClick={() => setShowChargeModal(true)}
                   className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
                 >
-                  <CreditCard className="w-4 h-4" /> Gerar Cobrança Asaas
+                  <CreditCard className="w-4 h-4" /> Gerar link de pagamento
                 </button>
 
                 <button
@@ -876,88 +849,73 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* TAB 3: COBRANÇAS ASAAS */}
+        {/* TAB 3: LINKS DE PAGAMENTO */}
         {activeTab === 'charges' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-extrabold text-white">Gerador de cobranças Asaas</h1>
+                <h1 className="text-2xl font-extrabold text-white">Links de pagamento</h1>
                 <p className="text-xs text-slate-400 font-medium">
                   Ofereça pagamentos via PIX e cartão de crédito, à vista ou parcelado.
                 </p>
               </div>
               <button
-                onClick={() => { setShowChargeModal(true); setNewCharge({ customerId: '', customerName: '', value: '', description: '', billingType: 'CREDIT_CARD', cycle: 'MONTHLY', installmentCount: '1' }); }}
+                onClick={() => setShowChargeModal(true)}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all"
               >
-                <Plus className="w-4 h-4" /> Gerar Nova Cobrança
+                <Plus className="w-4 h-4" /> Gerar link
               </button>
             </div>
 
-            {/* Charges List */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {charges.length === 0 ? (
                 <div className="col-span-2 p-12 text-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-500">
-                  Nenhuma cobrança gerada ainda. Clique em "Gerar Nova Cobrança" para começar.
+                  Nenhum link gerado ainda. Clique em &quot;Gerar link&quot; para começar.
                 </div>
               ) : (
                 charges
                   .slice((pageCharges - 1) * pageSizeCharges, pageCharges * pageSizeCharges)
-                  .map((charge) => (
-                  <div key={charge.id} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 relative">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <span className="text-xs font-bold text-slate-400 block uppercase">Cliente</span>
-                        <h3 className="text-lg font-extrabold text-white">{charge.customerName}</h3>
+                  .map((link) => {
+                    const url = typeof window !== 'undefined' ? `${window.location.origin}/pagamento/${link.slug}` : '';
+                    return (
+                      <div key={link.id} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <span className="text-xs font-bold text-slate-400 block uppercase">Cliente</span>
+                            <h3 className="text-lg font-extrabold text-white">{link.customerName}</h3>
+                          </div>
+                          <span className="text-2xl font-black text-emerald-400 whitespace-nowrap">
+                            {formatCurrency(link.value)}{link.chargeType === 'RECURRENT' && <span className="text-xs">/mês</span>}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 font-medium">{link.itemName}{link.petSize ? ` · porte ${link.petSize.toLowerCase()}` : ''}</p>
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold">
+                          <span className="bg-slate-800 text-sky-400 px-3 py-1 rounded-full uppercase">
+                            {link.paymentMethod === 'BOTH' ? 'PIX ou cartão' : link.paymentMethod === 'PIX' ? 'PIX' : 'Cartão'}
+                            {link.paymentMethod !== 'PIX' && link.installmentCount > 1 ? ` · ${link.installmentCount}x` : ''}
+                          </span>
+                          <span className="bg-slate-800 text-amber-400 px-3 py-1 rounded-full uppercase">
+                            {link.chargeType === 'SINGLE' ? 'Única' : 'Recorrente'}
+                          </span>
+                          <span className="text-slate-500 font-medium">{formatDate(link.createdAt)}</span>
+                        </div>
+                        <div className="pt-4 border-t border-slate-800 flex flex-col gap-2">
+                          <button
+                            onClick={() => { navigator.clipboard.writeText(url); showToast('Link copiado!'); }}
+                            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/30 text-xs font-bold transition-all"
+                          >
+                            <Copy className="w-3.5 h-3.5" /> Copiar link
+                          </button>
+                          <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-sky-600/20 text-sky-300 hover:bg-sky-600/30 text-xs font-bold transition-all">
+                            <ExternalLink className="w-3.5 h-3.5" /> Abrir página de pagamento
+                          </a>
+                          <div className="flex justify-center gap-6 pt-1">
+                            <button onClick={() => handleDeleteCharge(link.id)} className="text-xs text-rose-400 hover:underline font-semibold">Excluir link</button>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-2xl font-black text-emerald-400">{formatCurrency(charge.value)}</span>
-                    </div>
-
-                    <p className="text-xs text-slate-300 font-medium">{charge.description}</p>
-
-                    <div className="flex items-center gap-3 text-xs font-bold">
-                      <span className="bg-slate-800 text-sky-400 px-3 py-1 rounded-full uppercase">
-                        {charge.billingType === 'CREDIT_CARD' ? '💳 Cartão de Crédito' : charge.billingType === 'PIX' ? '⚡ PIX' : '📄 Boleto'}
-                      </span>
-                      <span className="bg-slate-800 text-amber-400 px-3 py-1 rounded-full uppercase">
-                        {charge.cycle === 'SINGLE' ? 'Única' : 'Recorrente'}
-                      </span>
-                    </div>
-
-                    {/* Invoice Link & Copy WhatsApp */}
-                    <div className="pt-4 border-t border-slate-800 flex flex-col gap-2">
-                      {charge.invoiceUrl && (
-                        <a
-                          href={charge.invoiceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-sky-600/20 text-sky-300 hover:bg-sky-600/30 text-xs font-bold transition-all"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" /> Link de pagamento Asaas
-                        </a>
-                      )}
-
-                      {charge.pixCopiaECola && (
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(charge.pixCopiaECola || '');
-                            showToast('Código PIX Copiado!');
-                          }}
-                          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/30 text-xs font-bold transition-all"
-                        >
-                          <Copy className="w-3.5 h-3.5" /> Copiar Código PIX Copia-e-Cola
-                        </button>
-                      )}
-
-                      <button
-                        onClick={() => handleDeleteCharge(charge.id)}
-                        className="text-xs text-rose-400 hover:underline pt-1 text-center font-semibold"
-                      >
-                        Excluir cobrança
-                      </button>
-                    </div>
-                  </div>
-                ))
+                    );
+                  })
               )}
             </div>
 
@@ -969,7 +927,7 @@ export default function AdminDashboardPage() {
               onPageChange={setPageCharges}
               onPageSizeChange={setPageSizeCharges}
               pageSizeOptions={[4, 6, 8, 10]}
-              itemLabel="cobranças"
+              itemLabel="links"
             />
           </div>
         )}
@@ -1490,6 +1448,26 @@ export default function AdminDashboardPage() {
               </div>
 
               <div className="space-y-1">
+                <label>Imagem do cartão fidelidade</label>
+                <div className="flex items-center gap-4">
+                  {config.loyaltyCardImage && (
+                    <div className="relative w-40 aspect-[1024/585] rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shrink-0">
+                      <Image src={config.loyaltyCardImage} alt="Cartão fidelidade" fill className="object-cover" unoptimized />
+                    </div>
+                  )}
+                  <div className="relative flex-1 border border-dashed border-slate-700 hover:border-sky-500 rounded-xl p-4 text-center bg-slate-800/60 cursor-pointer transition-colors">
+                    <input
+                      type="file"
+                      accept={IMAGE_ACCEPT}
+                      onChange={(e) => handleFileUpload(e, (url) => setConfig({ ...config, loyaltyCardImage: url }), 'config')}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-slate-300">{uploading ? 'Enviando...' : 'Alterar imagem'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
                 <label>Link do Instagram</label>
                 <input
                   type="text"
@@ -1565,6 +1543,11 @@ export default function AdminDashboardPage() {
                 <label>E-mail</label>
                 <input type="email" value={editingClient.email || ''} onChange={(e) => setEditingClient({ ...editingClient, email: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
               </div>
+            </div>
+
+            <div className="space-y-1">
+              <label>CPF/CNPJ * <span className="text-slate-500 font-medium">(obrigatório para o Asaas)</span></label>
+              <input type="text" required inputMode="numeric" value={editingClient.cpfCnpj || ''} onChange={(e) => setEditingClient({ ...editingClient, cpfCnpj: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
             </div>
 
             <div className="space-y-1">
@@ -1721,7 +1704,7 @@ export default function AdminDashboardPage() {
                       <div className="relative flex-1 border border-dashed border-slate-700 hover:border-amber-500 rounded-xl p-2 text-center bg-slate-900/60 cursor-pointer transition-colors">
                         <input
                           type="file"
-                          accept="image/*"
+                          accept={IMAGE_ACCEPT}
                           onChange={(e) => handleFileUpload(e, (url) => {
                             const updatedPets = [...(editingClient.pets || [])];
                             updatedPets[pIdx] = { ...updatedPets[pIdx], photoUrl: url };
@@ -1747,60 +1730,14 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* MODAL COBRANÇA ASAAS */}
+      {/* MODAL LINK DE PAGAMENTO */}
       {showChargeModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleCreateCharge} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4 text-xs font-bold text-slate-300">
-            <h3 className="text-lg font-extrabold text-white">Gerar cobrança no Asaas</h3>
-            
-            <div className="space-y-1">
-              <label>Selecione o cliente *</label>
-              <select required value={newCharge.customerId} onChange={(e) => setNewCharge({ ...newCharge, customerId: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
-                <option value="">-- Escolha o Cliente --</option>
-                {clients.map(c => {
-                  const petSummary = c.pets && c.pets.length > 0
-                    ? c.pets.map(p => p.name).join(', ')
-                    : c.petName || 'Sem pet';
-                  return (
-                    <option key={c.id} value={c.id}>{c.name} (Pet(s): {petSummary})</option>
-                  );
-                })}
-              </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label>Valor (R$) *</label>
-                <input type="number" step="0.01" required value={newCharge.value} onChange={(e) => setNewCharge({ ...newCharge, value: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold" />
-              </div>
-              <div className="space-y-1">
-                <label>Forma de pagamento *</label>
-                <select value={newCharge.billingType} onChange={(e) => setNewCharge({ ...newCharge, billingType: e.target.value as any })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
-                  <option value="CREDIT_CARD">Cartão de crédito</option>
-                  <option value="PIX">PIX (QrCode / Copia e Cola)</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label>Tipo de recorrência *</label>
-              <select value={newCharge.cycle} onChange={(e) => setNewCharge({ ...newCharge, cycle: e.target.value as any })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-medium">
-                <option value="MONTHLY">Assinatura mensal recorrente</option>
-                <option value="SINGLE">Cobrança única</option>
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <label>Descrição para a fatura</label>
-              <input type="text" value={newCharge.description} onChange={(e) => setNewCharge({ ...newCharge, description: e.target.value })} className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" />
-            </div>
-
-            <div className="pt-4 flex gap-3">
-              <button type="button" onClick={() => setShowChargeModal(false)} className="w-1/2 py-3 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancelar</button>
-              <button type="submit" disabled={saving} className="w-1/2 py-3 rounded-xl bg-emerald-600 text-white font-extrabold uppercase">Gerar link Asaas</button>
-            </div>
-          </form>
-        </div>
+        <PaymentLinkModal
+          services={services}
+          plans={plans}
+          onClose={() => setShowChargeModal(false)}
+          onCreated={loadAdminData}
+        />
       )}
 
       {/* MODAL FORM SERVIÇO (Com Anexo de Imagem) */}
@@ -1844,7 +1781,7 @@ export default function AdminDashboardPage() {
               }`}>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept={IMAGE_ACCEPT}
                   onChange={(e) => handleFileUpload(e, (url) => setEditingService({ ...editingService, image: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
@@ -2042,7 +1979,7 @@ export default function AdminDashboardPage() {
               }`}>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept={IMAGE_ACCEPT}
                   onChange={(e) => handleFileUpload(e, (url) => setEditingProduct({ ...editingProduct, photoUrl: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
@@ -2114,7 +2051,7 @@ export default function AdminDashboardPage() {
               }`}>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept={IMAGE_ACCEPT}
                   onChange={(e) => handleFileUpload(e, (url) => setEditingPost({ ...editingPost, photoUrl: url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
@@ -2159,7 +2096,7 @@ export default function AdminDashboardPage() {
               }`}>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept={IMAGE_ACCEPT}
                   onChange={(e) => handleFileUpload(e, (url) => setEditingPhoto({ ...editingPhoto, url }))}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
