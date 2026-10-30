@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export function generateMetadata() {
   return {
-    title: 'Produtos e acessórios recomendados',
+    title: 'Produtos',
     description: 'Confira nossa linha de produtos, shampoos hipoalergênicos e acessórios para seu pet.',
   };
 }
