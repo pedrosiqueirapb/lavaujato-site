@@ -1,7 +1,15 @@
 import crypto from 'crypto';
 
 const SESSION_COOKIE_NAME = 'lava_admin_session';
-const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || 'lava-au-jato-session-secret-key-2026';
+/** Segredo obrigatório: sem valor padrão. Lido sob demanda para não quebrar o build. */
+function getSessionSecret(): string {
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret || secret.length < 32) {
+    console.error('[Segurança] ADMIN_SESSION_SECRET ausente ou com menos de 32 caracteres.');
+    throw new Error('Configuração de segurança ausente.');
+  }
+  return secret;
+}
 
 export interface SessionData {
   authenticated: boolean;
@@ -15,7 +23,7 @@ export interface SessionData {
 export function createSessionToken(data: SessionData): string {
   const jsonStr = JSON.stringify(data);
   const base64Str = Buffer.from(jsonStr).toString('base64url');
-  const signature = crypto.createHmac('sha256', SESSION_SECRET).update(base64Str).digest('base64url');
+  const signature = crypto.createHmac('sha256', getSessionSecret()).update(base64Str).digest('base64url');
   return `${base64Str}.${signature}`;
 }
 
@@ -26,7 +34,12 @@ export function verifySessionToken(token: string | undefined | null): SessionDat
   if (!token || !token.includes('.')) return null;
 
   const [base64Str, signature] = token.split('.');
-  const expectedSig = crypto.createHmac('sha256', SESSION_SECRET).update(base64Str).digest('base64url');
+  let expectedSig: string;
+  try {
+    expectedSig = crypto.createHmac('sha256', getSessionSecret()).update(base64Str).digest('base64url');
+  } catch {
+    return null; // sem segredo configurado, nenhuma sessão é válida
+  }
 
   if (signature !== expectedSig) {
     return null;

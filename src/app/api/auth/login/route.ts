@@ -21,7 +21,11 @@ export async function POST(request: Request) {
 
     const { password, twoFactorCode } = await request.json();
     const is2FAEnabled = Boolean(process.env.ADMIN_2FA_SECRET);
-    const correctPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const correctPassword = process.env.ADMIN_PASSWORD;
+    if (!correctPassword || !process.env.ADMIN_SESSION_SECRET) {
+      console.error('[Segurança] ADMIN_PASSWORD e/ou ADMIN_SESSION_SECRET não configurados.');
+      return NextResponse.json({ error: 'Erro interno ao processar autenticação.' }, { status: 500 });
+    }
 
     // 2. Valida Senha
     if (password !== correctPassword) {

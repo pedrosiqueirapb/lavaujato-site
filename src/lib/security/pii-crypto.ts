@@ -1,11 +1,18 @@
 import crypto from 'crypto';
 
 const ALGORITHM = 'aes-256-gcm';
-const SECRET_KEY = process.env.PII_ENCRYPTION_KEY 
-  ? crypto.createHash('sha256').update(process.env.PII_ENCRYPTION_KEY).digest() 
-  : crypto.createHash('sha256').update('lava-au-jato-camilly-secret-key-2026').digest();
+function requireEnv(name: string): string {
+  const v = process.env[name];
+  if (!v || v.length < 16) {
+    console.error(`[Segurança] ${name} ausente ou curta demais.`);
+    throw new Error('Configuração de segurança ausente.');
+  }
+  return v;
+}
 
-const HMAC_SECRET = process.env.PII_HMAC_SECRET || 'lava-au-jato-hmac-salt-secret-2026';
+/** Chaves obrigatórias, sem valor padrão. Lidas sob demanda para não quebrar o build. */
+const getSecretKey = () => crypto.createHash('sha256').update(requireEnv('PII_ENCRYPTION_KEY')).digest();
+const getHmacSecret = () => requireEnv('PII_HMAC_SECRET');
 
 /**
  * Criptografa uma string PII usando AES-256-GCM
@@ -14,7 +21,7 @@ export function encryptPII(text: string | undefined | null): string {
   if (!text) return '';
   try {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(ALGORITHM, SECRET_KEY, iv);
+    const cipher = crypto.createCipheriv(ALGORITHM, getSecretKey(), iv);
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     const authTag = cipher.getAuthTag().toString('hex');
@@ -41,7 +48,7 @@ export function decryptPII(encryptedFormatted: string | undefined | null): strin
     const [ivHex, authTagHex, encryptedHex] = parts;
     const iv = Buffer.from(ivHex, 'hex');
     const authTag = Buffer.from(authTagHex, 'hex');
-    const decipher = crypto.createDecipheriv(ALGORITHM, SECRET_KEY, iv);
+    const decipher = crypto.createDecipheriv(ALGORITHM, getSecretKey(), iv);
     decipher.setAuthTag(authTag);
     
     let decrypted = decipher.update(encryptedHex, 'hex', 'utf8');
@@ -59,5 +66,5 @@ export function decryptPII(encryptedFormatted: string | undefined | null): strin
 export function hashPII(text: string | undefined | null): string {
   if (!text) return '';
   const sanitized = text.trim().toLowerCase();
-  return crypto.createHmac('sha256', HMAC_SECRET).update(sanitized).digest('hex');
+  return crypto.createHmac('sha256', getHmacSecret()).update(sanitized).digest('hex');
 }

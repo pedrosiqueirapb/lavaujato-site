@@ -16,6 +16,19 @@ import { encryptPII, decryptPII } from '@/lib/security/pii-crypto';
 import { getSupabase, IMAGE_BUCKET } from '@/lib/db/supabase';
 import { UserError, GENERIC_ERROR } from '@/lib/utils/errors';
 
+/** Aceita só http(s). Sem esquema, assume https://. Bloqueia javascript:, data: etc. */
+function safeHttpUrl(v?: string | null): string {
+  const raw = (v || '').trim();
+  if (!raw) return '';
+  const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const u = new URL(withScheme);
+    return u.protocol === 'https:' || u.protocol === 'http:' ? u.toString() : '';
+  } catch {
+    return '';
+  }
+}
+
 const db = () => getSupabase();
 
 function check<T>(res: { data: T | null; error: any }): T {
@@ -35,7 +48,7 @@ const DEFAULT_LOYALTY_IMAGE = '/images/loyalty-card.jpg';
 // ------------------------- MAPEADORES -------------------------
 const mapConfig = (r: any): SiteConfig => ({
   phone: r?.phone || '',
-  instagram: r?.instagram || '',
+  instagram: safeHttpUrl(r?.instagram) || '',
   addressNeighborhood: r?.address_neighborhood || '',
   addressCity: r?.address_city || '',
   addressState: r?.address_state || '',
@@ -203,7 +216,13 @@ export class StorageService {
     const row = {
       id: 'default',
       phone: u.phone ?? '',
-      instagram: u.instagram ?? '',
+      instagram: (() => {
+        const raw = (u.instagram ?? '').trim();
+        if (!raw) return '';
+        const ok = safeHttpUrl(raw);
+        if (!ok) throw new UserError('O link do Instagram deve começar com https://');
+        return ok;
+      })(),
       address_neighborhood: u.addressNeighborhood ?? '',
       address_city: u.addressCity ?? '',
       address_state: u.addressState ?? '',
