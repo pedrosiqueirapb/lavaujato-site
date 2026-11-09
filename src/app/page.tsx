@@ -14,23 +14,44 @@ import { Footer } from '@/components/public/Footer';
 // Revalidação dinâmica a cada requisição
 export const dynamic = 'force-dynamic';
 
-const safe = async <T,>(p: Promise<T>, fallback: T): Promise<T> => {
-  try { return await p; } catch (e) { console.error(e); return fallback; }
-};
-
 export default async function HomePage() {
   const [config, services, workspacePhotos, plans, portfolioPosts, promotions, products] = await Promise.all([
-    StorageService.getPublicSiteConfig(),
-    safe(StorageService.getServices(true), []),
-    safe(StorageService.getWorkspacePhotos(), []),
-    safe(StorageService.getPlans(), []),
-    safe(StorageService.getPortfolioPosts(), []),
-    safe(StorageService.getPromotions(true), []),
-    safe(StorageService.getProducts(true), []),
+    StorageService.getSiteConfig(),
+    StorageService.getServices(true),
+    StorageService.getWorkspacePhotos(),
+    StorageService.getPlans(),
+    StorageService.getPortfolioPosts(),
+    StorageService.getPromotions(true),
+    StorageService.getProducts(true),
   ]);
+
+  // Dados estruturados (SEO) montados a partir do cadastro real do painel.
+  const phoneDigits = (config.phone || '').replace(/\D/g, '');
+  const jsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'PetGrooming',
+    name: 'Lav Au Jato Banho e Tosa',
+    image: 'https://lavaujato.com.br/images/logo-white-paws.png',
+    '@id': 'https://lavaujato.com.br',
+    url: 'https://lavaujato.com.br',
+    description: 'Banho e tosa com cuidado em cada detalhe. Atendimento individualizado, produtos hipoalergênicos e ambiente seguro e higienizado.',
+  };
+  if (phoneDigits) jsonLd.telephone = `+${phoneDigits.startsWith('55') ? phoneDigits : `55${phoneDigits}`}`;
+  if (config.addressCity || config.addressState) {
+    jsonLd.address = {
+      '@type': 'PostalAddress',
+      ...(config.addressCity ? { addressLocality: config.addressCity } : {}),
+      ...(config.addressState ? { addressRegion: config.addressState } : {}),
+      addressCountry: 'BR',
+    };
+  }
 
   return (
     <main className="min-h-screen bg-[#FAF6F0] selection:bg-brand-sky selection:text-brand-navy">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
       <Navbar
         config={config}
         hasServices={services.length > 0}

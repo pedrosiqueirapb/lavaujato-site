@@ -72,37 +72,6 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'PetGrooming',
-  name: 'Lav Au Jato Banho e Tosa',
-  image: 'https://lavaujato.com.br/images/logo-white-paws.png',
-  '@id': 'https://lavaujato.com.br',
-  url: 'https://lavaujato.com.br',
-  telephone: '+5583999999999',
-  priceRange: '$$',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'João Pessoa',
-    addressRegion: 'PB',
-    addressCountry: 'BR',
-  },
-  description: 'Banho e tosa com cuidado em cada detalhe. Atendimento individualizado, produtos hipoalergênicos e ambiente seguro e higienizado.',
-  openingHoursSpecification: {
-    '@type': 'OpeningHoursSpecification',
-    dayOfWeek: [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday'
-    ],
-    opens: '08:00',
-    closes: '18:00'
-  }
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -110,12 +79,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
-        />
-      </head>
       <body className="antialiased selection:bg-brand-sky selection:text-brand-navy">
         {children}
       </body>
