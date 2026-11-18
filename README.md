@@ -6,7 +6,7 @@
 
 `URL` [lavaujato.com.br](https://lavaujato.com.br)
 
-Site institucional e comercial do **Lav Au Jato Banho e Tosa**, desenvolvido em Next.js para apresentação dos serviços de estética pet, catálogo de produtos, divulgação de planos recorrentes e gestão administrativa de clientes e cobranças.
+Site institucional e comercial do **Lav Au Jato Banho e Tosa**, desenvolvido em Next.js para apresentação de serviços, catálogo de produtos, divulgação de planos recorrentes e gestão de clientes e cobranças.
 
 ---
 
@@ -47,7 +47,7 @@ http://localhost:3000
 - **Estilização:** Tailwind CSS
 - **Integrador de pagamentos:** API Asaas 
 - **Banco de dados:** Supabase / PostgreSQL
-- **Hospedagem:** Produção no domínio
+- **Hospedagem:** Hostinger
 
 ---
 
