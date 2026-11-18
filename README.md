@@ -20,7 +20,7 @@ Site institucional e comercial do **Lav Au Jato Banho e Tosa**, desenvolvido em 
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/pedrosiqueirapb/lavaujato.git
+git clone https://github.com/pedrosiqueirapb/lavaujato-site.git
 ```
 
 2. Instale as dependências:
