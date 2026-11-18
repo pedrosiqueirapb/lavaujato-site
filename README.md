@@ -53,6 +53,6 @@ http://localhost:3000
 
 ## 📌 Principais recursos
 
-- **Apresentação de serviços e planos:** Exibição dos banhos, tosas e modalidades de planos recorrentes com agendamento direto via WhatsApp.
+- **Apresentação de serviços e planos:** Exibição dos serviços e planos disponíveis, com direcionamento para atendimento via WhatsApp.
 - **Catálogo de produtos:** Vitrine de produtos e acessórios para pets com navegação por categorias.
 - **Painel de administrador:** Gestão interna de clientes e pets, emissão de cobranças via Asaas e controle dos conteúdos exibidos no site.
