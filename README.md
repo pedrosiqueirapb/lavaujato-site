@@ -47,6 +47,7 @@ http://localhost:3000
 - **Estilização:** Tailwind CSS
 - **Integrador de pagamentos:** API Asaas 
 - **Banco de dados:** Supabase / PostgreSQL
+- **IDE:** Google Antigravity
 - **Hospedagem:** Hostinger
 
 ---
