@@ -12,7 +12,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ config, hasPlans }: HeroSectionProps) {
   const whatsappClean = config.phone.replace(/\D/g, '');
-  const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20serviços.`;
+  const whatsappUrl = `https://wa.me/${whatsappClean}`;
 
   return (
     <section className="relative min-h-[92vh] pt-32 pb-24 flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#BCDAE6] via-[#CFE6F0] to-[#E9F3F7]">

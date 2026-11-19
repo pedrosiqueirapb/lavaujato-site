@@ -278,6 +278,12 @@ export class StorageService {
     return mapClient(full);
   }
 
+  static async getClientAsaasId(id: string): Promise<string | null> {
+    if (!isUuid(id)) return null;
+    const r: any = check(await db().from('clients').select('asaas_customer_id').eq('id', id).maybeSingle());
+    return r?.asaas_customer_id || null;
+  }
+
   static async deleteClient(id: string) {
     check(await db().from('clients').update({ is_deleted: true, updated_at: new Date().toISOString() }).eq('id', id));
     return true;

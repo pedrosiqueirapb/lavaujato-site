@@ -94,6 +94,9 @@ export async function POST(request: Request) {
     // CLIENTES (sincronizado com o Asaas)
     if (resource === 'client') {
       if (action === 'delete') {
+        // Remove no Asaas ANTES: se o Asaas recusar, o cliente continua no painel e o erro é exibido.
+        const asaasId = await StorageService.getClientAsaasId(id);
+        if (asaasId) await AsaasService.deleteCustomer(asaasId);
         await StorageService.deleteClient(id);
         return NextResponse.json({ success: true });
       }

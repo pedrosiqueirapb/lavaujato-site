@@ -50,7 +50,7 @@ export function PromosSection({ promotions, config }: PromosSectionProps) {
         {/* Promos Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {displayedPromos.map((promo, index) => {
-            const promoWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Quero%20aproveitar%20a%20promoção%20"${encodeURIComponent(promo.title)}"`;
+            const promoWhatsappUrl = `https://wa.me/${whatsappClean}`;
             const isOddLast = displayedPromos.length % 2 !== 0 && index === displayedPromos.length - 1;
 
             return (

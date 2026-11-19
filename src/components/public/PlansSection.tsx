@@ -11,22 +11,25 @@ interface PlansSectionProps {
   config: SiteConfig;
 }
 
+// "Ver mais" só aparece quando há mais de 4 planos cadastrados.
+const INITIAL_VISIBLE = 4;
+
 export function PlansSection({ plans, config }: PlansSectionProps) {
-  const [visibleCount, setVisibleCount] = useState(2);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
   const whatsappClean = config.phone.replace(/\D/g, '');
 
   if (plans.length === 0) return null;
 
   const displayedPlans = plans.slice(0, visibleCount);
   const hasMore = plans.length > visibleCount;
-  const isExpanded = visibleCount > 2;
+  const isExpanded = visibleCount > INITIAL_VISIBLE;
 
   const handleVerMais = () => {
     setVisibleCount(prev => prev + 2);
   };
 
   const handleVerMenos = () => {
-    setVisibleCount(2);
+    setVisibleCount(INITIAL_VISIBLE);
   };
 
   return (
@@ -55,7 +58,7 @@ export function PlansSection({ plans, config }: PlansSectionProps) {
         {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
           {displayedPlans.map((plan, index) => {
-            const planWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Tenho%20interesse%20em%20contratar%20o%20"${encodeURIComponent(plan.name)}"`;
+            const planWhatsappUrl = `https://wa.me/${whatsappClean}`;
             const isOddLast = displayedPlans.length % 2 !== 0 && index === displayedPlans.length - 1;
 
             return (

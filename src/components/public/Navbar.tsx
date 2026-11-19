@@ -30,7 +30,7 @@ export function Navbar({ config, hasServices, hasWorkspace, hasPortfolio, hasPla
   }, []);
 
   const whatsappClean = config.phone.replace(/\D/g, '');
-  const whatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Gostaria%20de%20agendar%20um%20banho/tosa%20para%20o%20meu%20pet.`;
+  const whatsappUrl = `https://wa.me/${whatsappClean}`;
 
   // Mesma ordem das seções na página principal
   const items = [

@@ -56,7 +56,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {displayedServices.map((service, index) => {
-            const serviceWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Gostaria%20de%20agendar%20o%20serviço%20"${encodeURIComponent(service.title)}"`;
+            const serviceWhatsappUrl = `https://wa.me/${whatsappClean}`;
             const isOddLast = displayedServices.length % 2 !== 0 && index === displayedServices.length - 1;
 
             return (

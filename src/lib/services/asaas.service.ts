@@ -37,8 +37,9 @@ async function asaas<T = any>(path: string, init: RequestInit = {}): Promise<T> 
     console.error(`[Asaas] ${init.method || 'GET'} ${path} -> ${res.status}`, JSON.stringify(body));
     const msg: string | undefined = body?.errors?.map((e: any) => e.description).filter(Boolean).join(' ');
     // 401/403 = chave inválida/sem permissão: detalhe técnico, não exibir.
-    if (res.status === 401 || res.status === 403 || !msg) throw new UserError(ASAAS_UNAVAILABLE);
-    throw new UserError(msg);
+    const err = new UserError(res.status === 401 || res.status === 403 || !msg ? ASAAS_UNAVAILABLE : msg);
+    (err as any).status = res.status;
+    throw err;
   }
   return body as T;
 }
@@ -83,6 +84,16 @@ export class AsaasService {
       offset += 100;
     }
     return all.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  }
+
+  /** Remove o cliente no Asaas. Se ele já não existir lá (404), considera concluído. */
+  static async deleteCustomer(asaasCustomerId: string): Promise<void> {
+    try {
+      await asaas(`/customers/${asaasCustomerId}`, { method: 'DELETE' });
+    } catch (e) {
+      if ((e as any)?.status === 404) return;
+      throw e;
+    }
   }
 
   /** Link de pagamento do Asaas (aparece em "Links de pagamento" no Asaas), aceita SOMENTE cartão de crédito. */

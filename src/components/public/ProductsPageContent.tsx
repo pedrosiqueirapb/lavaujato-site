@@ -103,7 +103,7 @@ export function ProductsPageContent({ products, config }: ProductsPageContentPro
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {paginatedProducts.map((product) => {
-            const productWhatsappUrl = `https://wa.me/${whatsappClean}?text=Olá!%20Tenho%20interesse%20em%20comprar%20o%20produto%20"${encodeURIComponent(product.name)}"`;
+            const productWhatsappUrl = `https://wa.me/${whatsappClean}`;
 
             return (
               <div
